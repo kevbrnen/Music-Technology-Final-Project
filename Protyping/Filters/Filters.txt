@@ -1,0 +1,26 @@
+W3 EQ Cookbook - https://www.w3.org/TR/audio-eq-cookbook/
+
+LowPass.ipynb:
+    LowPass.ipynb explores different methods of implementing a low pass filter. 
+    From difference equation, transfer function and using built in scipy.signal functions. 
+    I looked at the differences in using butterworth filters and chebyshev filters.
+    While chebyshev type 1 filters might be useful for having a resonant peak in the frequency
+    response, I decided butterworth filters would be more applicable for my uses.
+    I need to look into JUCE's built in filter design functions as they may have their own way of
+    creating this resonance.
+    I looked at the differences in orders of filters and steepness of the transition.
+
+
+HighPass.ipynb:
+    HighPass.ipynb looks at methods for implementing a high pass filter. I didn't do as much 
+    experimentation here as it is almost the exact same as a low pass.
+    I also looked at the differences in the orders of filters and the steepness of the transition.
+
+
+BandPass.ipynb:
+    BandPass.ipynb looks at implementations of band pass filters.
+
+
+Notch.ipynb:
+    Notch.ipynb looks at notch/bandstop filter implementations.
+
