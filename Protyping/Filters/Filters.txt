@@ -32,7 +32,6 @@ BandPass.ipynb:
     in more sideband frequencies being made louder
 
 
-
 Notch.ipynb:
     Notch.ipynb looks at notch/bandstop filter implementations.
     I tested the differences between bandwidth and Q, similar to BansPass.ipynb
@@ -40,6 +39,7 @@ Notch.ipynb:
 
     I tested the butterworth bandstop filter. I found it to be more accurate for lower orders 
     compared to the bandwidth and Q implementations, but not much other difference.
+
 
 AllPass.ipynb:
     AllPass.ipynb looks at first and second order allpass implementations
@@ -49,6 +49,7 @@ AllPass.ipynb:
     response is flat. They do however introduce a phase shift of different amounts at different
     frequencies. This phase shift, as well as the group delay of the filter can be used for some
     interesting outcomes.
+
 
 Shelves.ipynb:
     Shelves.ipynb looks at low and high shelf implementations.
