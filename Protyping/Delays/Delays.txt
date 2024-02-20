@@ -1,0 +1,14 @@
+CircularBuffer.py:
+    CircularBuffer.py has two classes. 
+
+    CircularBuffer implements a basic circular buffer and provides related 
+    methods for writing to and reading from it. It implements fractional delay
+    meaning the buffer size being inputted when creating the buffer can also be floats.
+
+    StereoDelay extends the functionality of CircularBuffer. It can take and
+    return stereo audio. It works by setting up two circular buffers, one for 
+    each channel, with their own delay times and operating on them individually.
+    Solves the problem of having to do this in the main code.
+
+    Examples of both of these classes in use can be seen in CircularBufferTest.ipynb.
+
