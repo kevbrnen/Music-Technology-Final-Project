@@ -12,3 +12,16 @@ CircularBuffer.py:
 
     Examples of both of these classes in use can be seen in CircularBufferTest.ipynb.
 
+DigitalDelay - 
+    DigitalDelay.ipynb uses the circular buffer class. It is similar to the testing
+    implementations, but also includes wet/dry control and feedback amount control
+
+SpectralDelay - 
+    SpectralDelay.ipynb uses cascading allpass filters and the associated delay 
+    introduced and phase response to delay different frequencies by different amounts.
+
+    A smaller amount, say 70 filters, works better with more transient sounds like
+    drums. It adds an extra punch, but doesn't change the sound too much
+
+    You can take it to an extreme if you use hundreds or thousands of filters, and 
+    get some really unique effects with less transient, smoother sounds.

@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "LowpassFilter.h"
 
 //==============================================================================
 /**
@@ -56,4 +57,6 @@ public:
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
+    
+    LowpassFilter LPF_Test;
 };
