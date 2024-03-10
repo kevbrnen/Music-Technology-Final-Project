@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xUrdHn" name="NewProject" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
-  <MAINGROUP id="fHQQqx" name="NewProject">
+<JUCERPROJECT id="xUrdHn" name="Effects-Suite Plug-in" projectType="audioplug"
+              useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
+              jucerFormatVersion="1">
+  <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
     <GROUP id="{29531D21-44FE-7A3E-3579-2A0BEC7FFF4A}" name="Filters">
       <FILE id="V1tr2X" name="LowpassFilter.h" compile="0" resource="0" file="Source/LowpassFilter.h"/>
       <FILE id="dgj5OC" name="LowpassFilter.cpp" compile="1" resource="0"
             file="Source/LowpassFilter.cpp"/>
+      <FILE id="EiVuI7" name="FilterComponent.cpp" compile="1" resource="0"
+            file="Source/FilterComponent.cpp"/>
+      <FILE id="J9feKV" name="FilterComponent.h" compile="0" resource="0"
+            file="Source/FilterComponent.h"/>
     </GROUP>
     <GROUP id="{CBDF06D9-8064-D029-CBA1-E68CC7318A83}" name="Source">
+      <FILE id="NGFJTe" name="GlobalControlsComponent.h" compile="0" resource="0"
+            file="Source/GlobalControlsComponent.h"/>
       <FILE id="PDEyyv" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="ioTOIj" name="PluginProcessor.h" compile="0" resource="0"

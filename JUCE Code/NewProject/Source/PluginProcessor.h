@@ -55,8 +55,12 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    juce::AudioProcessorValueTreeState Global_Parameters, Filter_Parameters;
+    std::atomic<float>* cutoffFrequency = nullptr;
+    std::atomic<float>* globalGain = nullptr;
+    float lastGain;
+    LowpassFilter LPF_Test;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
-    
-    LowpassFilter LPF_Test;
 };

@@ -12,16 +12,30 @@
 //==============================================================================
 NewProjectAudioProcessor::NewProjectAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
+    : AudioProcessor(
+          BusesProperties()
+#if !JucePlugin_IsMidiEffect
+#if !JucePlugin_IsSynth
+              .withInput("Input", juce::AudioChannelSet::stereo(), true)
 #endif
+              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+              ),
+#else
+    :
+#endif
+Global_Parameters(*this, nullptr, juce::Identifier("Global_Params"), {std::make_unique<juce::AudioParameterFloat>("global_gain", "Global_Gain", juce::NormalisableRange{0.0f, 1.0f, 0.001f, 0.2f, false}, 0.5)}),
+    Filter_Parameters(*this,nullptr, juce::Identifier("Filter_Params"),
+                {std::make_unique<juce::AudioParameterFloat>("lowpass_cutoff_frequency","Lowpass_Cutoff_Frequency",
+                    juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f)})
 {
+    //Setting up audio processor value tree state objects and parameters above
+    
+    //Retrieving Parameter values
+  cutoffFrequency =
+    Filter_Parameters.getRawParameterValue("lowpass_cutoff_frequency");
+    
+    globalGain = Global_Parameters.getRawParameterValue("global_gain");
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -93,15 +107,15 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 //==============================================================================
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-    
+    //Create Spec to set up effects
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = 2;
     
-    LPF_Test.setCutoff(1000, spec);
+    //Set up LowPass filter object
+    LPF_Test.setSpec(spec);
+    LPF_Test.setCutoff(750);
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -152,7 +166,16 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         buffer.clear (i, 0, buffer.getNumSamples());
 
     
+    //Get and set new cutoff frequency
+    const auto NewcutoffFrequency = cutoffFrequency->load();
+    LPF_Test.setCutoff(NewcutoffFrequency);
     LPF_Test.process(buffer);
+    
+    //get and set new gain and update previous(for ramp)
+    const auto NewGain = globalGain->load();
+    buffer.applyGainRamp(0, buffer.getNumSamples(), lastGain, NewGain);
+    lastGain = NewGain;
+    
 }
 
 //==============================================================================
@@ -163,21 +186,59 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor (*this);
+    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters);
 }
 
 //==============================================================================
 void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    /*
+    // Create a parent XML element to hold both trees
+    juce::XmlElement parentXml("PluginState");
+    
+    //Create state variables for each tree
+    auto GlobalState = Global_Parameters.copyState();
+    auto FilterState = Filter_Parameters.copyState();
+    
+    //Create XML from  state
+    std::unique_ptr<juce::XmlElement> globalXml (GlobalState.createXml());
+    std::unique_ptr<juce::XmlElement> filterXml (FilterState.createXml());
+    
+    //Add XML as children of parent XML
+    parentXml.addChildElement(globalXml.get());
+    parentXml.addChildElement(filterXml.get());
+    
+    //Save XML
+    copyXmlToBinary(parentXml, destData);
+     */
 }
 
 void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    /*
+    //Get parent XML for whole plugin
+    std::unique_ptr<juce::XmlElement> parentXml (getXmlFromBinary(data, sizeInBytes));
+    
+    
+    if(parentXml != nullptr && parentXml->hasTagName("PluginState"))
+    {
+        //Get child XML's from parent, one for each tree
+        juce::XmlElement* globalXml = parentXml->getFirstChildElement();
+        juce::XmlElement* filterXml = parentXml->getNextElement();
+        
+        //Set global parameter state from global XML
+        if(globalXml != nullptr && globalXml->hasTagName(Filter_Parameters.state.getType()))
+        {
+            Global_Parameters.state = juce::ValueTree::fromXml(*globalXml);
+        }
+        
+        //Set filter parameter state from filter XML
+        if(filterXml != nullptr && filterXml->hasTagName(Filter_Parameters.state.getType()))
+        {
+            Filter_Parameters.state = juce::ValueTree::fromXml(*filterXml);
+        }
+    }
+     */
 }
 
 //==============================================================================

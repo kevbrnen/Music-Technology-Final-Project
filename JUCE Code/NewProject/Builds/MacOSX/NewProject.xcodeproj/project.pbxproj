@@ -61,6 +61,7 @@
 		9FBB98106C472FBAF0015969 /* include_juce_audio_plugin_client_VST3.mm */ = {isa = PBXBuildFile; fileRef = 7F1C28EDC26088A562D26CEB; };
 		A3EDD9A8340F32463DAFDCCB /* include_juce_audio_processors.mm */ = {isa = PBXBuildFile; fileRef = 8FD767777A9B3B2777FF4F9F; };
 		A8FECAA6D679C1724C0328FB /* PluginEditor.cpp */ = {isa = PBXBuildFile; fileRef = E1C47A13749DEFF756417871; };
+		A93CAE26A71324502A971A7B /* FilterComponent.cpp */ = {isa = PBXBuildFile; fileRef = 12B512B370F5F41057E2EFAB; };
 		AD3C320CE62C77DFF5284920 /* Accelerate.framework */ = {isa = PBXBuildFile; fileRef = 030F274BE2C8AC5FF9DB01CB; };
 		B91353C9D929528A6FE3608D /* DiscRecording.framework */ = {isa = PBXBuildFile; fileRef = CA8AA82D1CB2F4DAC75E8D26; };
 		C4437CA6180AE34FA8E1D0FE /* Standalone Plugin */ = {isa = PBXBuildFile; fileRef = 992CA35F4E9CDE403CD20A8B; };
@@ -79,6 +80,7 @@
 		05E286CAEAA0616F29A527AE /* juce_data_structures */ /* juce_data_structures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_data_structures; path = /Users/kevinbrennan/JUCE/modules/juce_data_structures; sourceTree = "<absolute>"; };
 		09E2C663580ED20664643708 /* Cocoa.framework */ /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		0A89987F5BC8E76FD0AC1AC9 /* include_juce_core.mm */ /* include_juce_core.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_core.mm; path = ../../JuceLibraryCode/include_juce_core.mm; sourceTree = SOURCE_ROOT; };
+		12B512B370F5F41057E2EFAB /* FilterComponent.cpp */ /* FilterComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FilterComponent.cpp; path = ../../Source/FilterComponent.cpp; sourceTree = SOURCE_ROOT; };
 		1482D8015DA8CCEA2FE25801 /* Info-VST3_Manifest_Helper.plist */ /* Info-VST3_Manifest_Helper.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-VST3_Manifest_Helper.plist"; path = "Info-VST3_Manifest_Helper.plist"; sourceTree = SOURCE_ROOT; };
 		18BAC961DA9E395A5E6295C0 /* RecentFilesMenuTemplate.nib */ /* RecentFilesMenuTemplate.nib */ = {isa = PBXFileReference; lastKnownFileType = file.nib; name = RecentFilesMenuTemplate.nib; path = RecentFilesMenuTemplate.nib; sourceTree = SOURCE_ROOT; };
 		20DEA064D12C02D1A344EE41 /* juce_events */ /* juce_events */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_events; path = /Users/kevinbrennan/JUCE/modules/juce_events; sourceTree = "<absolute>"; };
@@ -91,6 +93,7 @@
 		3B4F22DC0D8B8AF211F98889 /* juce_core */ /* juce_core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_core; path = /Users/kevinbrennan/JUCE/modules/juce_core; sourceTree = "<absolute>"; };
 		3D6EB2B7FFA7D2EB6E9C12F8 /* Shared Code */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNewProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4076D3746140191E347BC565 /* PluginEditor.h */ /* PluginEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PluginEditor.h; path = ../../Source/PluginEditor.h; sourceTree = SOURCE_ROOT; };
+		454104D323A29D8E0CA1E144 /* FilterComponent.h */ /* FilterComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FilterComponent.h; path = ../../Source/FilterComponent.h; sourceTree = SOURCE_ROOT; };
 		48B15A296B784D802B4125E9 /* QuartzCore.framework */ /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		48D4ECFC7F86B1AFE55F807A /* PluginProcessor.h */ /* PluginProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PluginProcessor.h; path = ../../Source/PluginProcessor.h; sourceTree = SOURCE_ROOT; };
 		4C79D3E321CD84ADD9BC580B /* Security.framework */ /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -321,6 +324,8 @@
 			children = (
 				4DB4FC2B3BBF85CE5AF19BD6,
 				309601B7385744ACB7CA7567,
+				12B512B370F5F41057E2EFAB,
+				454104D323A29D8E0CA1E144,
 			);
 			name = Filters;
 			sourceTree = "<group>";
@@ -713,6 +718,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2D9F8EB58683DBCF8C96DEA,
+				A93CAE26A71324502A971A7B,
 				190392B7E335C708EA984188,
 				A8FECAA6D679C1724C0328FB,
 				3F97040E04D4BE69FC4CABC4,
