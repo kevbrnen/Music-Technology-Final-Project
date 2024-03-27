@@ -56,9 +56,14 @@ public:
 
 private:
     juce::AudioProcessorValueTreeState Global_Parameters, Filter_Parameters;
-    std::atomic<float>* cutoffFrequency = nullptr;
+    
+    //Global Parameters
     std::atomic<float>* globalGain = nullptr;
     float lastGain;
+    
+    //Filter Parameters
+    std::atomic<bool>* Filt_OnOff = nullptr;
+    std::atomic<float>* cutoffFrequency = nullptr;
     LowpassFilter LPF_Test;
     
     //==============================================================================

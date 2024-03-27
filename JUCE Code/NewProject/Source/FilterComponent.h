@@ -26,9 +26,14 @@ public:
 
 private:
     
+    juce::TextButton LPF_Toggle;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>Filter_OnOff_Attachment;
+
+    
     juce::Slider cutoffFrequencySlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoffFrequencyAttachment;
     juce::Label cutoffFrequencyLabel;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterComponent)
 };

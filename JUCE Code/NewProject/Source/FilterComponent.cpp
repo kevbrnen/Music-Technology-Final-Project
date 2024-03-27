@@ -12,21 +12,42 @@
 #include "FilterComponent.h"
 
 //==============================================================================
-FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts) 
+FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+    //Toggle
+    LPF_Toggle.setClickingTogglesState(true);
+    //LPF_Toggle.setState(juce::Button::ButtonState(false));
+    LPF_Toggle.setButtonText("OFF");
+    LPF_Toggle.setEnabled(true);
+    LPF_Toggle.setVisible(true);
+    LPF_Toggle.onClick = [this, &vts]()
+    {
+        if(LPF_Toggle.getToggleState())
+        {
+            LPF_Toggle.setColour(juce::TextButton::buttonOnColourId, juce::Colours::green);
+            LPF_Toggle.setButtonText("ON");
+            vts.state.setProperty("lpf_toggle", true, nullptr);
+            
+        }
+        else
+        {
+            LPF_Toggle.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+            LPF_Toggle.setButtonText("OFF");
+            vts.state.setProperty("lpf_toggle", false, nullptr);
+        }
+        
+    };
+    Filter_OnOff_Attachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(vts, "lpf_toggle", LPF_Toggle));
+    addAndMakeVisible(LPF_Toggle);
+    
+    
+    //Cutoff Slider
+    cutoffFrequencySlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    cutoffFrequencyAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "lowpass_cutoff_frequency", cutoffFrequencySlider));
     addAndMakeVisible(cutoffFrequencySlider);
     
-    cutoffFrequencySlider.setSliderStyle(
-          juce::Slider::SliderStyle::LinearVertical);
-      cutoffFrequencyAttachment.reset(
-          new juce::AudioProcessorValueTreeState::SliderAttachment(
-              vts, "lowpass_cutoff_frequency", cutoffFrequencySlider));
-    
+    cutoffFrequencyLabel.setText("Cutoff Frequency", juce::dontSendNotification);
     addAndMakeVisible(cutoffFrequencyLabel);
-     cutoffFrequencyLabel.setText("Cutoff Frequency",
-                                  juce::dontSendNotification);
     
     setSize(150, 300);
 }
@@ -57,10 +78,9 @@ void FilterComponent::paint (juce::Graphics& g)
 
 void FilterComponent::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
+    LPF_Toggle.setBounds(getWidth()-55, 20, 50, 25);
     
-    cutoffFrequencySlider.setBounds({15, 35, 100, 300});
-      cutoffFrequencyLabel.setBounds({cutoffFrequencySlider.getX() + 30,cutoffFrequencySlider.getY() - 30,200, 50});
+    cutoffFrequencySlider.setBounds(15, 35, 100, getHeight()-50);
+    cutoffFrequencyLabel.setBounds(10, 30, 75, 50);
 
 }

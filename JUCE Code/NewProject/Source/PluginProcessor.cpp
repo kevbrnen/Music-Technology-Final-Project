@@ -24,18 +24,32 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #else
     :
 #endif
-Global_Parameters(*this, nullptr, juce::Identifier("Global_Params"), {std::make_unique<juce::AudioParameterFloat>("global_gain", "Global_Gain", juce::NormalisableRange{0.0f, 1.0f, 0.001f, 0.2f, false}, 0.5)}),
+Global_Parameters(*this, //Audio Processor to connect to
+                  nullptr, //Undo Manager
+                  juce::Identifier("Global_Params"), //Value Tree identifier   //Parameter Layout
+                  {std::make_unique<juce::AudioParameterFloat>("global_gain", //Parameter ID
+                                                               "Global_Gain", //Parameter Name
+                                                               juce::NormalisableRange<float>(-48.0f, 0.0f), //Normalisable Range (Range of values for slider)
+                                                               -15.0f, //Default Value
+                                                               juce::String(), //PArameter Label (optional)
+                                                               juce::AudioProcessorParameter::genericParameter, //Parameter Category (optional)
+                                                               [](float value, int){return juce::String(value, 2);}) //String from Value Lambda function (allows us to display values in text box to 2                                                     decimal places
+                                                               }),
     Filter_Parameters(*this,nullptr, juce::Identifier("Filter_Params"),
                 {std::make_unique<juce::AudioParameterFloat>("lowpass_cutoff_frequency","Lowpass_Cutoff_Frequency",
-                    juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f)})
+                    juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f), //Lowpass cutoff frequency
+        std::make_unique<juce::AudioParameterBool>("lpf_toggle", "LPF_Toggle", false),//For toggling the lowpass on/off
+    })
 {
     //Setting up audio processor value tree state objects and parameters above
     
     //Retrieving Parameter values
-  cutoffFrequency =
-    Filter_Parameters.getRawParameterValue("lowpass_cutoff_frequency");
-    
+    //Global Parameters
     globalGain = Global_Parameters.getRawParameterValue("global_gain");
+    
+    //Filter Parameters
+    //Filt_OnOff = Filter_Parameters.getRawParameterValue("lpf_toggle");
+    cutoffFrequency = Filter_Parameters.getRawParameterValue("lowpass_cutoff_frequency");
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -113,6 +127,9 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = 2;
     
+    //Global Effects
+    lastGain = juce::Decibels::decibelsToGain(*Global_Parameters.getRawParameterValue("global_gain") + 0.0);
+    
     //Set up LowPass filter object
     LPF_Test.setSpec(spec);
     LPF_Test.setCutoff(750);
@@ -166,15 +183,24 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         buffer.clear (i, 0, buffer.getNumSamples());
 
     
-    //Get and set new cutoff frequency
-    const auto NewcutoffFrequency = cutoffFrequency->load();
-    LPF_Test.setCutoff(NewcutoffFrequency);
-    LPF_Test.process(buffer);
-    
+//Filtering
+    auto Filt_on = Filter_Parameters.getRawParameterValue("lpf_toggle")->load();
+    if((Filt_on != 0.0f))
+    {
+        //Get and set new cutoff frequency
+        const auto NewcutoffFrequency = cutoffFrequency->load();
+        LPF_Test.setCutoff(NewcutoffFrequency);
+        LPF_Test.process(buffer);
+    }
+   
+//Global parameters
     //get and set new gain and update previous(for ramp)
-    const auto NewGain = globalGain->load();
-    buffer.applyGainRamp(0, buffer.getNumSamples(), lastGain, NewGain);
-    lastGain = NewGain;
+    const auto NewGain = juce::Decibels::decibelsToGain(*Global_Parameters.getRawParameterValue("global_gain") + 0.0);
+    if(NewGain != lastGain)
+    {
+        buffer.applyGainRamp(0, buffer.getNumSamples(), lastGain, NewGain);
+        lastGain = NewGain;
+    }
     
 }
 

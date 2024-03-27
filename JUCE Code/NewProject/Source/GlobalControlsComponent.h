@@ -20,18 +20,21 @@ class GlobalControlsComponent  : public juce::Component
 public:
     GlobalControlsComponent(juce::AudioProcessorValueTreeState& vts)
     {
-        // In your constructor, you should add any child components, and
-        // initialise any special settings that your component needs.
+        gainSlider.setNumDecimalPlacesToDisplay(2);
+        gainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "global_gain", gainSlider));
+        gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        gainSlider.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 20);
+        gainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+        gainSlider.setRange(-48.0, 0.0);
+        gainSlider.setValue(-6.0);
+        gainSlider.setTextValueSuffix("dB");
+        gainSlider.setTextBoxIsEditable(true);
         addAndMakeVisible(gainSlider);
         
-        gainSlider.setSliderStyle(
-              juce::Slider::SliderStyle::LinearVertical);
-          gainAttachment.reset(
-              new juce::AudioProcessorValueTreeState::SliderAttachment(
-                  vts, "global_gain", gainSlider));
         
+        gainLabel.setText("Plugin Gain", juce::dontSendNotification);
+        gainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
         addAndMakeVisible(gainLabel);
-        gainLabel.setText("Gain", juce::dontSendNotification);
 
     }
 
@@ -48,12 +51,12 @@ public:
            drawing code..
         */
 
-        g.fillAll (juce::Colours::black);   // clear the background
+        g.fillAll (juce::Colours::lightgrey);   // clear the background
 
         g.setColour (juce::Colours::grey);
         g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
-        g.setColour (juce::Colours::white);
+        g.setColour (juce::Colours::black);
         g.setFont (14.0f);
         g.drawText ("GlobalControlsComponent", getLocalBounds(),
                     juce::Justification::centred, true);   // draw some placeholder text
@@ -61,12 +64,8 @@ public:
 
     void resized() override
     {
-        // This method is where you should set the bounds of any child
-        // components that your component contains..
-        gainSlider.setBounds({15, 35, 100, 300});
-          gainLabel.setBounds({gainSlider.getX() + 30,gainSlider.getY() - 30,200, 50});
-
-
+        gainSlider.setBounds(getLocalBounds().getWidth() * 3/4, getLocalBounds().getHeight()/4, getLocalBounds().getWidth() * 1/4, getLocalBounds().getHeight()/2);
+        gainLabel.attachToComponent(&gainSlider, true);
     }
 
 private:

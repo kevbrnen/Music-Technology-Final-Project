@@ -33,9 +33,14 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& audioProcessor;
     
+    //Buttons to select Effects
+    juce::TextButton Filter_show_button;
+    
     //Other components to show in main
-    GlobalControlsComponent globalComponent;
+    GlobalControlsComponent globalComponent; //Always Shown
+    
     FilterComponent filtComponent;
-
+    
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
 };
