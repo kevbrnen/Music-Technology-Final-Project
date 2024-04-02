@@ -4,16 +4,22 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
               jucerFormatVersion="1">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
-    <GROUP id="{29531D21-44FE-7A3E-3579-2A0BEC7FFF4A}" name="Filters">
-      <FILE id="V1tr2X" name="LowpassFilter.h" compile="0" resource="0" file="Source/LowpassFilter.h"/>
-      <FILE id="dgj5OC" name="LowpassFilter.cpp" compile="1" resource="0"
-            file="Source/LowpassFilter.cpp"/>
+    <GROUP id="{EA0628AA-3B71-C8DB-6815-4A285377DD60}" name="FilterEffect">
       <FILE id="EiVuI7" name="FilterComponent.cpp" compile="1" resource="0"
             file="Source/FilterComponent.cpp"/>
       <FILE id="J9feKV" name="FilterComponent.h" compile="0" resource="0"
             file="Source/FilterComponent.h"/>
+      <FILE id="GLKsrV" name="FilterEffectAudioProcessor.h" compile="0" resource="0"
+            file="Source/FilterEffectAudioProcessor.h"/>
+    </GROUP>
+    <GROUP id="{29531D21-44FE-7A3E-3579-2A0BEC7FFF4A}" name="Filters">
+      <FILE id="V1tr2X" name="LowpassFilter.h" compile="0" resource="0" file="Source/LowpassFilter.h"/>
+      <FILE id="dgj5OC" name="LowpassFilter.cpp" compile="1" resource="0"
+            file="Source/LowpassFilter.cpp"/>
     </GROUP>
     <GROUP id="{CBDF06D9-8064-D029-CBA1-E68CC7318A83}" name="Source">
+      <FILE id="QUj4fW" name="HomeScreenComponent.h" compile="0" resource="0"
+            file="Source/HomeScreenComponent.h"/>
       <FILE id="NGFJTe" name="GlobalControlsComponent.h" compile="0" resource="0"
             file="Source/GlobalControlsComponent.h"/>
       <FILE id="PDEyyv" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -23,6 +29,7 @@
       <FILE id="SV0k3n" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="dljFMB" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="PCsSLh" name="ProcessorBase.h" compile="0" resource="0" file="Source/ProcessorBase.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

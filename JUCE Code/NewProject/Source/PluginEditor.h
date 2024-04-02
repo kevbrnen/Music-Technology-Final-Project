@@ -11,7 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "GlobalControlsComponent.h"
-#include "FilterComponent.h"
+#include "HomeScreenComponent.h"
 
 //==============================================================================
 /**
@@ -28,18 +28,18 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
+    void showComponent();
+    void hideComponent();
+    
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     NewProjectAudioProcessor& audioProcessor;
     
-    //Buttons to select Effects
-    juce::TextButton Filter_show_button;
-    
     //Other components to show in main
     GlobalControlsComponent globalComponent; //Always Shown
     
-    FilterComponent filtComponent;
+    HomeScreenComponent homeScreenComponent;
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)

@@ -9,6 +9,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
 //==============================================================================
 NewProjectAudioProcessor::NewProjectAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -26,30 +27,15 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #endif
 Global_Parameters(*this, //Audio Processor to connect to
                   nullptr, //Undo Manager
-                  juce::Identifier("Global_Params"), //Value Tree identifier   //Parameter Layout
-                  {std::make_unique<juce::AudioParameterFloat>("global_gain", //Parameter ID
-                                                               "Global_Gain", //Parameter Name
-                                                               juce::NormalisableRange<float>(-48.0f, 0.0f), //Normalisable Range (Range of values for slider)
-                                                               -15.0f, //Default Value
-                                                               juce::String(), //PArameter Label (optional)
-                                                               juce::AudioProcessorParameter::genericParameter, //Parameter Category (optional)
-                                                               [](float value, int){return juce::String(value, 2);}) //String from Value Lambda function (allows us to display values in text box to 2                                                     decimal places
-                                                               }),
-    Filter_Parameters(*this,nullptr, juce::Identifier("Filter_Params"),
-                {std::make_unique<juce::AudioParameterFloat>("lowpass_cutoff_frequency","Lowpass_Cutoff_Frequency",
-                    juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f), //Lowpass cutoff frequency
-        std::make_unique<juce::AudioParameterBool>("lpf_toggle", "LPF_Toggle", false),//For toggling the lowpass on/off
-    })
+                  juce::Identifier("Global_Parameters"), createGlobalParameterLayout()),
+Filter_Parameters(*this, nullptr, juce::Identifier("Filter_Parameters"), createFilterParameterLayout()), filterAudioProcessor(Filter_Parameters)
 {
+    
     //Setting up audio processor value tree state objects and parameters above
     
     //Retrieving Parameter values
     //Global Parameters
     globalGain = Global_Parameters.getRawParameterValue("global_gain");
-    
-    //Filter Parameters
-    //Filt_OnOff = Filter_Parameters.getRawParameterValue("lpf_toggle");
-    cutoffFrequency = Filter_Parameters.getRawParameterValue("lowpass_cutoff_frequency");
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -57,6 +43,46 @@ NewProjectAudioProcessor::~NewProjectAudioProcessor()
 }
 
 //==============================================================================
+//Global Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createGlobalParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    
+    //gain parameter itself
+    auto gainParameter = std::make_unique<juce::AudioParameterFloat>("global_gain", //Parameter ID
+                                                                     "Global_Gain", //Parameter Name
+                                                                     juce::NormalisableRange<float>(-48.0f, 0.0f), //Normalisable Range (Range of values for slider)
+                                                                     -6.0f, //Default Value
+                                                                     juce::String(), //PArameter Label (optional)
+                                                                     juce::AudioProcessorParameter::genericParameter, //Parameter Category (optional)
+                                                                     [](float value, int){return juce::String(value, 2);});
+    
+    //Efficiently add parameter to list
+    params.push_back(std::move(gainParameter));
+    
+    return {params.begin(), params.end()}; //Returning vector
+}
+
+//Filter Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createFilterParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsFilt;
+    
+    auto cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("cutoff_frequency", "Cutoff_Frequency", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f);
+    
+    auto filterToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_toggle", "Filter_Toggle", false);
+    
+    //Efficiently add parameter to list
+    paramsFilt.push_back(std::move(cutoffFrequencyParameter));
+    paramsFilt.push_back(std::move(filterToggleParameter));
+    
+    return {paramsFilt.begin(), paramsFilt.end()}; //Returning vector
+
+}
+//==============================================================================
+
 const juce::String NewProjectAudioProcessor::getName() const
 {
     return JucePlugin_Name;
@@ -127,12 +153,13 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = 2;
     
+    
     //Global Effects
     lastGain = juce::Decibels::decibelsToGain(*Global_Parameters.getRawParameterValue("global_gain") + 0.0);
     
-    //Set up LowPass filter object
-    LPF_Test.setSpec(spec);
-    LPF_Test.setCutoff(750);
+    
+    filterAudioProcessor.initSpec(spec);
+    filterAudioProcessor.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -183,15 +210,8 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         buffer.clear (i, 0, buffer.getNumSamples());
 
     
-//Filtering
-    auto Filt_on = Filter_Parameters.getRawParameterValue("lpf_toggle")->load();
-    if((Filt_on != 0.0f))
-    {
-        //Get and set new cutoff frequency
-        const auto NewcutoffFrequency = cutoffFrequency->load();
-        LPF_Test.setCutoff(NewcutoffFrequency);
-        LPF_Test.process(buffer);
-    }
+//Filter Effect
+    filterAudioProcessor.processBlock(buffer, midiMessages);
    
 //Global parameters
     //get and set new gain and update previous(for ramp)
@@ -218,53 +238,43 @@ juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 //==============================================================================
 void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    /*
-    // Create a parent XML element to hold both trees
-    juce::XmlElement parentXml("PluginState");
+    //Tree to hold all "child" trees (any trees from any other audio processors/effects)
+    juce::ValueTree combinedValueTree(juce::Identifier("All_Params"));
+
+    //Global Parameters
+    juce::ValueTree globalChild("Global_Parameters");//Temporary **NAMED** tree (Must be named so it can be loaded in setStateInformation)
+    globalChild.copyPropertiesAndChildrenFrom(Global_Parameters.state, nullptr);//Copy APVTS state to temp tree
+    combinedValueTree.addChild(globalChild, -1, nullptr);//Add temp tree as child to combined tree
     
-    //Create state variables for each tree
-    auto GlobalState = Global_Parameters.copyState();
-    auto FilterState = Filter_Parameters.copyState();
+    //Filter Effect Parameters
+    juce::ValueTree filterChild("Filter_Parameters");
+    filterChild.copyPropertiesAndChildrenFrom(Filter_Parameters.state, nullptr);
+    combinedValueTree.addChild(filterChild, -1, nullptr);
     
-    //Create XML from  state
-    std::unique_ptr<juce::XmlElement> globalXml (GlobalState.createXml());
-    std::unique_ptr<juce::XmlElement> filterXml (FilterState.createXml());
-    
-    //Add XML as children of parent XML
-    parentXml.addChildElement(globalXml.get());
-    parentXml.addChildElement(filterXml.get());
-    
-    //Save XML
-    copyXmlToBinary(parentXml, destData);
-     */
+    //Create XML file from combined tree
+    std::unique_ptr<juce::XmlElement> CombinedXml (combinedValueTree.createXml());
+    copyXmlToBinary(*CombinedXml, destData);
 }
 
 void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    /*
-    //Get parent XML for whole plugin
-    std::unique_ptr<juce::XmlElement> parentXml (getXmlFromBinary(data, sizeInBytes));
-    
-    
-    if(parentXml != nullptr && parentXml->hasTagName("PluginState"))
+
+    // Load XML element
+    std::unique_ptr<juce::XmlElement> combinedXml(getXmlFromBinary(data, sizeInBytes));
+
+    if (combinedXml != nullptr)
     {
-        //Get child XML's from parent, one for each tree
-        juce::XmlElement* globalXml = parentXml->getFirstChildElement();
-        juce::XmlElement* filterXml = parentXml->getNextElement();
-        
-        //Set global parameter state from global XML
-        if(globalXml != nullptr && globalXml->hasTagName(Filter_Parameters.state.getType()))
-        {
-            Global_Parameters.state = juce::ValueTree::fromXml(*globalXml);
-        }
-        
-        //Set filter parameter state from filter XML
-        if(filterXml != nullptr && filterXml->hasTagName(Filter_Parameters.state.getType()))
-        {
-            Filter_Parameters.state = juce::ValueTree::fromXml(*filterXml);
-        }
+        // Get the combined ValueTree from the XML element
+        juce::ValueTree combinedValueTree = juce::ValueTree::fromXml(*combinedXml);
+
+        // Get individual value trees
+        juce::ValueTree globalValueTree = combinedValueTree.getChildWithName("Global_Parameters");
+        juce::ValueTree filterValueTree = combinedValueTree.getChildWithName("Filter_Parameters");
+
+        // Set the state of Global_Parameters and Filter_Parameters using their respective value trees
+        Global_Parameters.replaceState(globalValueTree);
+        Filter_Parameters.replaceState(filterValueTree);
     }
-     */
 }
 
 //==============================================================================

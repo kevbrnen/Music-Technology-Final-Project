@@ -9,6 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "FilterEffectAudioProcessor.h"
+
 #include "LowpassFilter.h"
 
 //==============================================================================
@@ -22,6 +24,9 @@ public:
     ~NewProjectAudioProcessor() override;
 
     //==============================================================================
+    juce::AudioProcessorValueTreeState::ParameterLayout createGlobalParameterLayout();
+    juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout();
+    
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
@@ -53,17 +58,21 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-
+    
+    
+    juce::AudioProcessorValueTreeState Global_Parameters;
+    juce::AudioProcessorValueTreeState Filter_Parameters;
 private:
-    juce::AudioProcessorValueTreeState Global_Parameters, Filter_Parameters;
     
     //Global Parameters
     std::atomic<float>* globalGain = nullptr;
     float lastGain;
     
     //Filter Parameters
+    FilterEffectAudioProcessor filterAudioProcessor;
+    
     std::atomic<bool>* Filt_OnOff = nullptr;
-    std::atomic<float>* cutoffFrequency = nullptr;
+    std::atomic<float>* FilterCutoffFrequency = nullptr;
     LowpassFilter LPF_Test;
     
     //==============================================================================

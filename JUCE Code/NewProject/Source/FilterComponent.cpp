@@ -26,24 +26,24 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
         {
             LPF_Toggle.setColour(juce::TextButton::buttonOnColourId, juce::Colours::green);
             LPF_Toggle.setButtonText("ON");
-            vts.state.setProperty("lpf_toggle", true, nullptr);
+            vts.state.setProperty("filter_toggle", true, nullptr);
             
         }
         else
         {
             LPF_Toggle.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
             LPF_Toggle.setButtonText("OFF");
-            vts.state.setProperty("lpf_toggle", false, nullptr);
+            vts.state.setProperty("filter_toggle", false, nullptr);
         }
         
     };
-    Filter_OnOff_Attachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(vts, "lpf_toggle", LPF_Toggle));
+    Filter_OnOff_Attachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(vts, "filter_toggle", LPF_Toggle));
     addAndMakeVisible(LPF_Toggle);
     
     
     //Cutoff Slider
     cutoffFrequencySlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    cutoffFrequencyAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "lowpass_cutoff_frequency", cutoffFrequencySlider));
+    cutoffFrequencyAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "cutoff_frequency", cutoffFrequencySlider));
     addAndMakeVisible(cutoffFrequencySlider);
     
     cutoffFrequencyLabel.setText("Cutoff Frequency", juce::dontSendNotification);
