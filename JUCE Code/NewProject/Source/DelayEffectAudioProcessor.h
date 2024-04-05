@@ -12,7 +12,6 @@
 #pragma once
 #include <JuceHeader.h>
 #include "ProcessorBase.h"
-#include "DelayLine.h"
 #include "SmoothingFilter.h"
 
 class DelayEffectAudioProcessor  : public ProcessorBase
@@ -37,59 +36,71 @@ public:
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
-        delayLine.setSpec(pluginSpec);
-        delayLine.initDelayLine();
+        delayLine.prepare(pluginSpec);
+        delayLine.setMaximumDelayInSamples((int)((48000.0f/1000.0f)*3000.0f));
+        delayLine.reset();
+        
         
         SmoothingLPF.setFc(100);
         
-        
         lastDelay = Delay_Time->load();
         delaySmoothed.setTargetValue(lastDelay);
-        delaySmoothed.reset(samplesPerBlock);
+        delaySmoothed.reset(sampleRate, 1);
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
-    {
-        auto effectOn = Delay_on->load();
-        if(effectOn != 0.0f)
         {
-            auto newDelayTime = Delay_Time->load();
-            
-            if(newDelayTime != lastDelay)
+            auto effectOn = Delay_on->load();
+            if(effectOn != 0.0f)
             {
-                delayLine.setDelayTime(newDelayTime);
-                lastDelay = newDelayTime;
-                delaySmoothed.setTargetValue(newDelayTime);
-                delaySmoothed.reset(buffer.getNumSamples());
-            }
-            
-            for(int channel = 0; channel < pluginSpec.numChannels; ++channel)
-            {
-                auto* inData = buffer.getReadPointer(channel);
-                auto* outData = buffer.getWritePointer(channel);
+                auto newDelayTime = Delay_Time->load();
                 
-                for(int i = 0; i < buffer.getNumSamples(); ++i)
-                {
-                    delayLine.processSample(channel, inData[i]);
+                newDelayTime = SmoothingLPF.process(newDelayTime);
                     
-                    auto time = SmoothingLPF.process(delaySmoothed.getCurrentValue());
-                    delayLine.setDelayTime(time);
-                    
-                    auto delayedSample = delayLine.getDelayedSample(channel);
-                    
-                    outData[i] = (delayedSample * WetAmount) + (inData[i] * (1 - WetAmount));
+                    for(int i = 0; i < buffer.getNumSamples(); ++i)
+                    {
+                        for(int channel = 0; channel < 2 ; ++channel)
+                        {
+                            auto* inData = buffer.getReadPointer(channel);
+                            auto* outData = buffer.getWritePointer(channel);
+                            delayLine.pushSample(channel, inData[i]);
+                            
+                            auto time = delaySmoothed.getNextValue();
+                            //delayLine.setDelayTime(time);
+                            
+                            auto delayedSample_oldVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*time), true);
+                            
+                            if(newDelayTime != lastDelay)
+                            {
+                                
+                                lastDelay = newDelayTime;
+                                delaySmoothed.setTargetValue(lastDelay);
+                                delaySmoothed.reset(pluginSpec.sampleRate);
+                                delaySmoothed.setTargetValue(newDelayTime);
+                                delaySmoothed.reset(pluginSpec.sampleRate);
+                                
+                                auto t_n = delaySmoothed.getNextValue();
+                                
+                                auto delayedSample_newVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*t_n), true);
+                                
+                                outData[i] = ((delayedSample_oldVal + delayedSample_newVal)/2 * WetAmount) + (inData[i] * (1 - WetAmount));
+                            }
+                            else
+                            {
+                                outData[i] = ((delayedSample_oldVal) * WetAmount) + (inData[i] * (1 - WetAmount));
+                            }
+                    }
                 }
-                
             }
-        }
-    };
+        };
     
     juce::AudioProcessorValueTreeState& Delay_Parameters;
     
 private:
     
     juce::dsp::ProcessSpec pluginSpec;
-    DelayLine delayLine;
+    //DelayLine delayLine;
+    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Thiran> delayLine;
     std::atomic<float>* Delay_on = nullptr;
     
     std::atomic<float>* Delay_Time = nullptr;

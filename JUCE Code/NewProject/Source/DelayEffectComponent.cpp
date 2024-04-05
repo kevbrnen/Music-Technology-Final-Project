@@ -46,7 +46,7 @@ DelayEffectComponent::DelayEffectComponent(juce::AudioProcessorValueTreeState& v
     DelayTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
     DelayTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
     DelayTimeSlider.setTextValueSuffix("ms");
-    DelayTimeSlider.setRange(0.0, 2000.0);
+    DelayTimeSlider.setRange(1.0, 2000.0);
     addAndMakeVisible(DelayTimeSlider);
     
     

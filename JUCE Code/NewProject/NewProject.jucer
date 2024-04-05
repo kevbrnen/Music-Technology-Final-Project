@@ -11,7 +11,6 @@
             file="Source/DelayEffectComponent.cpp"/>
       <FILE id="YsFeWR" name="DelayEffectComponent.h" compile="0" resource="0"
             file="Source/DelayEffectComponent.h"/>
-      <FILE id="DbH3wL" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
     </GROUP>
     <GROUP id="{EA0628AA-3B71-C8DB-6815-4A285377DD60}" name="FilterEffect">
       <FILE id="EiVuI7" name="FilterComponent.cpp" compile="1" resource="0"

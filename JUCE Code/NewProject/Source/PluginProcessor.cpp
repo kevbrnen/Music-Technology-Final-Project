@@ -113,7 +113,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     auto delayToggleParameter = std::make_unique<juce::AudioParameterBool>("delay_toggle", "Delay_Toggle", false);
     
-    auto delayTimeParameter = std::make_unique<juce::AudioParameterFloat>("delay_time", "Delay_Time", juce::NormalisableRange{0.0f, 2000.f, 1.0f, 0.5f, false}, 500.f);
+    auto delayTimeParameter = std::make_unique<juce::AudioParameterFloat>("delay_time", "Delay_Time", juce::NormalisableRange{1.0f, 2999.f, 1.0f, 0.5f, false}, 500.f);
     
     
     paramsDelay.push_back(std::move(delayToggleParameter));
