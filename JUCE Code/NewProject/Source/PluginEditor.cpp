@@ -10,11 +10,18 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts): AudioProcessorEditor (&p), homeScreenComponent(Fvts), audioProcessor (p), globalComponent(Gvts, homeScreenComponent)
+NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain): AudioProcessorEditor (&p), homeScreenComponent(Fvts), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), procChainComponent(ProcChain)
 {
     addAndMakeVisible(globalComponent);
     
     addAndMakeVisible(homeScreenComponent);
+    
+    addAndMakeVisible(procChainComponent);
+    procChainComponent.toFront(true);
+    procChainComponent.setEnabled(false);
+    procChainComponent.setVisible(false);
+
+    
     
     setSize (1000, 600);
 }
@@ -37,14 +44,11 @@ void NewProjectAudioProcessorEditor::resized()
     globalComponent.setBounds(0, 0, getWidth(), globalComponentHeight);
     
     homeScreenComponent.setBounds(0, globalComponentHeight, getWidth(), effectHeight);
-}
-
-void NewProjectAudioProcessorEditor::showComponent()
-{
     
+    procChainComponent.setBounds(0,  globalComponentHeight, getWidth()/2, effectHeight/2);
 }
 
-void NewProjectAudioProcessorEditor::hideComponent()
+void NewProjectAudioProcessorEditor::toggleChainMenu()
 {
     
 }

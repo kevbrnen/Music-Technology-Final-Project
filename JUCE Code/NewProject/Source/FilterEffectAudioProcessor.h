@@ -20,6 +20,8 @@ public:
     {
         FilterCutoffFrequency = Filter_Parameters.getRawParameterValue("cutoff_frequency");
         Filt_on = Filter_Parameters.getRawParameterValue("filter_toggle");
+        FilterGain = Filter_Parameters.getRawParameterValue("filter_gain");
+        
     };
     
     ~FilterEffectAudioProcessor(){};
@@ -31,8 +33,15 @@ public:
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override
     {
+        pluginSpec.sampleRate = sampleRate;
+        pluginSpec.maximumBlockSize = samplesPerBlock;
+        pluginSpec.numChannels = 2;
+        
         LPF.setSpec(pluginSpec);
         LPF.setCutoff(750);
+        
+        //Gain
+        lastGain = juce::Decibels::decibelsToGain(*Filter_Parameters.getRawParameterValue("filter_gain") + 0.0);
     };
     
 
@@ -45,6 +54,17 @@ public:
             const auto NewCutoffFrequency = FilterCutoffFrequency->load();
             LPF.setCutoff(NewCutoffFrequency);
             LPF.process(buffer);
+            
+            
+            //Filter Effect Gain
+            const auto NewGain = juce::Decibels::decibelsToGain(*Filter_Parameters.getRawParameterValue("filter_gain") + 0.0);
+            
+            if(NewGain != lastGain)
+            {
+                buffer.applyGainRamp(0, buffer.getNumSamples(), lastGain, NewGain);
+                lastGain = NewGain;
+            }
+            
         }
     };
 
@@ -54,23 +74,6 @@ public:
         pluginSpec = spec;
     };
     
-//    void getStateInformation(juce::MemoryBlock& destData)
-//    {
-//        std::unique_ptr<juce::XmlElement> GlobalXml (Filter_Parameters.state.createXml());
-//        
-//        copyXmlToBinary(*GlobalXml, destData);
-//    };
-//    
-//    void setStateInformation(const void* data, int sizeInBytes)
-//    {
-//        std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-//        
-//        if (xmlState.get() != nullptr)
-//        {
-//            Filter_Parameters.state = juce::ValueTree::fromXml (*xmlState);
-//        }
-//    };
-    
     juce::AudioProcessorValueTreeState& Filter_Parameters;
     
 private:
@@ -79,6 +82,8 @@ private:
     LowpassFilter LPF;
     std::atomic<float>* FilterCutoffFrequency = nullptr;
     std::atomic<float>* Filt_on = nullptr;
+    std::atomic<float>* FilterGain = nullptr;
+    float lastGain;
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FilterEffectAudioProcessor);

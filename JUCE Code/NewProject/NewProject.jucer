@@ -4,6 +4,11 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
               jucerFormatVersion="1">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
+    <GROUP id="{BD9E7109-7FE5-8B17-E687-37A5A353C336}" name="DelayEffect">
+      <FILE id="auSWaF" name="DelayEffectAudioProcessor.h" compile="0" resource="0"
+            file="Source/DelayEffectAudioProcessor.h"/>
+      <FILE id="DbH3wL" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
+    </GROUP>
     <GROUP id="{EA0628AA-3B71-C8DB-6815-4A285377DD60}" name="FilterEffect">
       <FILE id="EiVuI7" name="FilterComponent.cpp" compile="1" resource="0"
             file="Source/FilterComponent.cpp"/>
@@ -18,6 +23,8 @@
             file="Source/LowpassFilter.cpp"/>
     </GROUP>
     <GROUP id="{CBDF06D9-8064-D029-CBA1-E68CC7318A83}" name="Source">
+      <FILE id="goCPiO" name="ProcessingChainSelectionComponent.h" compile="0"
+            resource="0" file="Source/ProcessingChainSelectionComponent.h"/>
       <FILE id="QUj4fW" name="HomeScreenComponent.h" compile="0" resource="0"
             file="Source/HomeScreenComponent.h"/>
       <FILE id="NGFJTe" name="GlobalControlsComponent.h" compile="0" resource="0"

@@ -49,6 +49,21 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     cutoffFrequencyLabel.setText("Cutoff Frequency", juce::dontSendNotification);
     addAndMakeVisible(cutoffFrequencyLabel);
     
+    
+    //Gain
+    filterGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    gainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "filter_gain", filterGainSlider));
+    filterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    filterGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    filterGainSlider.setTextValueSuffix("dB");
+    filterGainSlider.setRange(-48.0, 0.0);
+    addAndMakeVisible(filterGainSlider);
+    
+    filterGainLabel.setText("Filter Gain", juce::dontSendNotification);
+    filterGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(filterGainLabel);
+    
+    
     setSize(150, 300);
 }
 
@@ -78,7 +93,10 @@ void FilterComponent::paint (juce::Graphics& g)
 
 void FilterComponent::resized()
 {
-    LPF_Toggle.setBounds(getWidth()-55, 20, 50, 25);
+    LPF_Toggle.setBounds(getWidth()-60, 20, 50, 25);
+    
+    filterGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
+    filterGainLabel.attachToComponent(&filterGainSlider, true);
     
     cutoffFrequencySlider.setBounds(15, 35, 100, getHeight()-50);
     cutoffFrequencyLabel.setBounds(10, 30, 75, 50);

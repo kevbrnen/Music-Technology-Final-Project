@@ -25,12 +25,13 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
 #else
     :
 #endif
-Global_Parameters(*this, //Audio Processor to connect to
-                  nullptr, //Undo Manager
-                  juce::Identifier("Global_Parameters"), createGlobalParameterLayout()),
-Filter_Parameters(*this, nullptr, juce::Identifier("Filter_Parameters"), createFilterParameterLayout()), filterAudioProcessor(Filter_Parameters)
+Processing_Chain(*this, nullptr, juce::Identifier("Processing_Chain"), createProcessingParameterLayout()),
+Global_Parameters(*this, nullptr,juce::Identifier("Global_Parameters"), createGlobalParameterLayout()),
+Filter_Parameters(*this, nullptr, juce::Identifier("Filter_Parameters"), createFilterParameterLayout()),
+Delay_Parameters(*this, nullptr, juce::Identifier("Delay_Parameters"), createDelayParameterLayout()),
+mainProcessor(new juce::AudioProcessorGraph()),
+filterAudioProcessor(Filter_Parameters), delayAudioProcessor(Delay_Parameters)
 {
-    
     //Setting up audio processor value tree state objects and parameters above
     
     //Retrieving Parameter values
@@ -43,6 +44,23 @@ NewProjectAudioProcessor::~NewProjectAudioProcessor()
 }
 
 //==============================================================================
+//Processing Chain
+juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createProcessingParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    
+    auto slot1 = std::make_unique<juce::AudioParameterChoice>("slot1", "Slot1", processorChoices, 0);
+    auto slot2 = std::make_unique<juce::AudioParameterChoice>("slot2", "Slot2", processorChoices, 1);
+    
+    //Efficiently add parameter to list
+    params.push_back(std::move(slot1));
+    params.push_back(std::move(slot2));
+    
+    return {params.begin(), params.end()};
+    
+}
+
 //Global Parameters
 juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createGlobalParameterLayout()
 {
@@ -74,12 +92,28 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     auto filterToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_toggle", "Filter_Toggle", false);
     
+    auto filterGainParameter = std::make_unique<juce::AudioParameterFloat>("filter_gain", "Filter_Gain", juce::NormalisableRange<float>(-48.0f, 0.0f), -6.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    
     //Efficiently add parameter to list
     paramsFilt.push_back(std::move(cutoffFrequencyParameter));
     paramsFilt.push_back(std::move(filterToggleParameter));
+    paramsFilt.push_back(std::move(filterGainParameter));
     
     return {paramsFilt.begin(), paramsFilt.end()}; //Returning vector
 
+}
+
+//Delay Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createDelayParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsDelay;
+    
+    auto delayToggleParameter = std::make_unique<juce::AudioParameterBool>("delay_toggle", "Delay_Toggle", false);
+    
+    
+    return {paramsDelay.begin(), paramsDelay.end()}; //Returning vector
 }
 //==============================================================================
 
@@ -147,25 +181,30 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 //==============================================================================
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    //Audio Proessor Graph Setup
+    mainProcessor->setPlayConfigDetails(getMainBusNumInputChannels(),
+                                        getMainBusNumOutputChannels(),
+                                        sampleRate, samplesPerBlock);
+    mainProcessor->prepareToPlay(sampleRate, samplesPerBlock);
+    initialiseGraph();
+    
+    
     //Create Spec to set up effects
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = 2;
     
-    
     //Global Effects
     lastGain = juce::Decibels::decibelsToGain(*Global_Parameters.getRawParameterValue("global_gain") + 0.0);
     
+    delayAudioProcessor.prepareToPlay(sampleRate, samplesPerBlock);
     
-    filterAudioProcessor.initSpec(spec);
-    filterAudioProcessor.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void NewProjectAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+    mainProcessor->releaseResources();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -208,10 +247,15 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
     
-//Filter Effect
-    filterAudioProcessor.processBlock(buffer, midiMessages);
+    
+//Audio processor graph setup and processing
+    updateGraph();
+    mainProcessor->processBlock(buffer, midiMessages);
+
+//Delay Effect **Test**
+    delayAudioProcessor.processBlock(buffer, midiMessages);
+
    
 //Global parameters
     //get and set new gain and update previous(for ramp)
@@ -232,7 +276,7 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters);
+    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain);
 }
 
 //==============================================================================
@@ -245,6 +289,13 @@ void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     juce::ValueTree globalChild("Global_Parameters");//Temporary **NAMED** tree (Must be named so it can be loaded in setStateInformation)
     globalChild.copyPropertiesAndChildrenFrom(Global_Parameters.state, nullptr);//Copy APVTS state to temp tree
     combinedValueTree.addChild(globalChild, -1, nullptr);//Add temp tree as child to combined tree
+    
+    
+    //Chain Parameters
+    juce::ValueTree chainChild("Processing_Chain");
+    chainChild.copyPropertiesAndChildrenFrom(Processing_Chain.state, nullptr);
+    combinedValueTree.addChild(chainChild, -1, nullptr);
+    
     
     //Filter Effect Parameters
     juce::ValueTree filterChild("Filter_Parameters");
@@ -269,10 +320,14 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
 
         // Get individual value trees
         juce::ValueTree globalValueTree = combinedValueTree.getChildWithName("Global_Parameters");
+        
+        juce::ValueTree chainValueTree = combinedValueTree.getChildWithName("Processing_Chain");
+        
         juce::ValueTree filterValueTree = combinedValueTree.getChildWithName("Filter_Parameters");
 
         // Set the state of Global_Parameters and Filter_Parameters using their respective value trees
         Global_Parameters.replaceState(globalValueTree);
+        Processing_Chain.replaceState(chainValueTree);
         Filter_Parameters.replaceState(filterValueTree);
     }
 }
@@ -283,3 +338,151 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new NewProjectAudioProcessor();
 }
+
+//================================ Audio Processor Graph Functions ==============================================
+
+void NewProjectAudioProcessor::initialiseGraph()
+{
+    mainProcessor->clear();
+    
+    audioInputNode  = mainProcessor->addNode (std::make_unique<AudioGraphIOProcessor> (AudioGraphIOProcessor::audioInputNode));
+    audioOutputNode = mainProcessor->addNode (std::make_unique<AudioGraphIOProcessor> (AudioGraphIOProcessor::audioOutputNode));
+    midiInputNode   = mainProcessor->addNode (std::make_unique<AudioGraphIOProcessor> (AudioGraphIOProcessor::midiInputNode));
+    midiOutputNode  = mainProcessor->addNode (std::make_unique<AudioGraphIOProcessor> (AudioGraphIOProcessor::midiOutputNode));
+    
+    connectAudioNodes();
+    connectMidiNodes();
+}
+
+void NewProjectAudioProcessor::connectAudioNodes()
+{
+    for(int channel = 0; channel < 2; ++channel)
+    {
+        mainProcessor->addConnection({{audioInputNode->nodeID, channel},
+                                        {audioOutputNode->nodeID, channel}});
+    }
+}
+
+void NewProjectAudioProcessor::connectMidiNodes()
+{
+    mainProcessor->addConnection({{midiInputNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex},
+                                    {midiOutputNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex}});
+}
+
+void NewProjectAudioProcessor::updateGraph()
+{
+    bool hasChanged = false;
+    
+    int NumOptions = processorChoices.size();
+    
+    
+    juce::Array<juce::AudioParameterChoice*> choices{dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot1")),
+                                                        dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot2"))};
+    
+    
+    juce::ReferenceCountedArray<Node> slots;
+    slots.add(slot1Node);
+    slots.add(slot2Node);
+    
+    
+    for(int i = 0; i<NumOptions; i++)
+    {
+        auto& choice = choices.getReference(i);
+        auto slot = slots.getUnchecked(i);
+        
+        if(choice->getIndex() == 0) //Empty
+        {
+            if(slot != nullptr)
+            {
+                mainProcessor->removeNode(slot.get());
+                slots.set(i, nullptr);
+                hasChanged = true;
+            }
+        }
+        else if(choice->getIndex() == 1) //Filter
+        {
+            if(slot != nullptr)
+            {
+                if(slot->getProcessor()->getName() == "Filter")
+                    continue;
+                
+                mainProcessor->removeNode(slot.get());
+            }
+            
+            slots.set(i, mainProcessor->addNode(std::make_unique<FilterEffectAudioProcessor>(Filter_Parameters)));
+            hasChanged = true;
+        }
+    }
+    
+    
+    if(hasChanged)
+    {
+        for(auto connection : mainProcessor->getConnections())
+        {
+            mainProcessor->removeConnection(connection);
+        }
+        
+        juce::ReferenceCountedArray<Node> activeSlots;
+        
+        for(auto slot : slots)
+        {
+            if(slot != nullptr)
+            {
+                activeSlots.add(slot);
+                
+                slot->getProcessor()->setPlayConfigDetails(getMainBusNumInputChannels(),
+                                                           getMainBusNumOutputChannels(),
+                                                           getSampleRate(), getBlockSize());
+            }
+        }
+        
+        if(activeSlots.isEmpty())
+        {
+            connectAudioNodes();
+        }
+        else
+        {
+            if(activeSlots.size() == 1)
+            {
+                for(int channel = 0; channel < 2; ++channel)
+                {
+                    mainProcessor->addConnection({{audioInputNode->nodeID, channel},
+                                                    {activeSlots.getFirst()->nodeID, channel}});
+                    
+                    mainProcessor->addConnection({{activeSlots.getFirst()->nodeID, channel},
+                                                    {audioOutputNode->nodeID, channel}});
+                }
+            }
+            else
+            {
+                for(int i = 0; i < activeSlots.size()-1; ++i)
+                {
+                    for(int channel = 0; channel < 2; ++channel)
+                    {
+                        mainProcessor->addConnection({{activeSlots.getUnchecked(i)->nodeID, channel},
+                                                        {activeSlots.getUnchecked(i + 1)->nodeID, channel}});
+                    }
+                    
+                    for(int channel = 0; channel < 2; ++channel)
+                    {
+                        mainProcessor->addConnection({{audioInputNode->nodeID, channel},
+                                                        {activeSlots.getFirst()->nodeID, channel}});
+                        
+                        mainProcessor->addConnection({{activeSlots.getLast()->nodeID, channel},
+                                                        {audioOutputNode->nodeID, channel}});
+                    }
+                }
+            }
+    
+            connectMidiNodes();
+            
+            for(auto node : mainProcessor->getNodes())
+                node->getProcessor()->enableAllBuses();
+        }
+    }
+
+    
+    slot1Node = slots.getUnchecked(0);
+    slot2Node = slots.getUnchecked(1);
+}
+

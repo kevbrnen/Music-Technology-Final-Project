@@ -34,6 +34,11 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoffFrequencyAttachment;
     juce::Label cutoffFrequencyLabel;
     
+    
+    juce::Slider filterGainSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
+    juce::Label filterGainLabel;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterComponent)
 };
