@@ -110,8 +110,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     //Container for all parameters
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsDelay;
     
+    
     auto delayToggleParameter = std::make_unique<juce::AudioParameterBool>("delay_toggle", "Delay_Toggle", false);
     
+    auto delayTimeParameter = std::make_unique<juce::AudioParameterFloat>("delay_time", "Delay_Time", juce::NormalisableRange{0.0f, 2000.f, 1.0f, 0.5f, false}, 500.f);
+    
+    
+    paramsDelay.push_back(std::move(delayToggleParameter));
+    paramsDelay.push_back(std::move(delayTimeParameter));
     
     return {paramsDelay.begin(), paramsDelay.end()}; //Returning vector
 }
@@ -198,6 +204,7 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     //Global Effects
     lastGain = juce::Decibels::decibelsToGain(*Global_Parameters.getRawParameterValue("global_gain") + 0.0);
     
+    //****TESTING****
     delayAudioProcessor.prepareToPlay(sampleRate, samplesPerBlock);
     
 }
@@ -235,25 +242,20 @@ bool NewProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 
 void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    //Block Processing Setup
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
     
 //Audio processor graph setup and processing
-    updateGraph();
-    mainProcessor->processBlock(buffer, midiMessages);
+    updateGraph(); //Check for any changes to the graph
+    mainProcessor->processBlock(buffer, midiMessages); //Process this block through the graph
 
-//Delay Effect **Test**
+//Delay Effect **TESTING**
     delayAudioProcessor.processBlock(buffer, midiMessages);
 
    
@@ -262,6 +264,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     const auto NewGain = juce::Decibels::decibelsToGain(*Global_Parameters.getRawParameterValue("global_gain") + 0.0);
     if(NewGain != lastGain)
     {
+        //For Smoothing between gain values
         buffer.applyGainRamp(0, buffer.getNumSamples(), lastGain, NewGain);
         lastGain = NewGain;
     }
@@ -276,10 +279,11 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain);
+    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain, Delay_Parameters);
 }
 
 //==============================================================================
+//Copies all parameters and their values into an XML file to save
 void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     //Tree to hold all "child" trees (any trees from any other audio processors/effects)
@@ -302,11 +306,17 @@ void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     filterChild.copyPropertiesAndChildrenFrom(Filter_Parameters.state, nullptr);
     combinedValueTree.addChild(filterChild, -1, nullptr);
     
+    //Delay Effect Parameters
+    juce::ValueTree delayChild("Delay_Parameters");
+    delayChild.copyPropertiesAndChildrenFrom(Delay_Parameters.state, nullptr);
+    combinedValueTree.addChild(delayChild, -1, nullptr);
+    
     //Create XML file from combined tree
     std::unique_ptr<juce::XmlElement> CombinedXml (combinedValueTree.createXml());
     copyXmlToBinary(*CombinedXml, destData);
 }
 
+//Opens the XML file created above and resets all parameters to their saved values
 void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
 
@@ -324,11 +334,14 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
         juce::ValueTree chainValueTree = combinedValueTree.getChildWithName("Processing_Chain");
         
         juce::ValueTree filterValueTree = combinedValueTree.getChildWithName("Filter_Parameters");
+        
+        juce::ValueTree delayValueTree = combinedValueTree.getChildWithName("Delay_Parameters");
 
         // Set the state of Global_Parameters and Filter_Parameters using their respective value trees
         Global_Parameters.replaceState(globalValueTree);
         Processing_Chain.replaceState(chainValueTree);
         Filter_Parameters.replaceState(filterValueTree);
+        Delay_Parameters.replaceState(delayValueTree);
     }
 }
 
@@ -340,7 +353,9 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 //================================ Audio Processor Graph Functions ==============================================
+//Following Cascading Plugin Effects tutorial
 
+//Initial setup for graph
 void NewProjectAudioProcessor::initialiseGraph()
 {
     mainProcessor->clear();
@@ -354,6 +369,7 @@ void NewProjectAudioProcessor::initialiseGraph()
     connectMidiNodes();
 }
 
+//Connect audio input to output (if no nodes in graph for example)
 void NewProjectAudioProcessor::connectAudioNodes()
 {
     for(int channel = 0; channel < 2; ++channel)
@@ -363,17 +379,19 @@ void NewProjectAudioProcessor::connectAudioNodes()
     }
 }
 
+//Connect midi nodes (not really used in this plugin)
 void NewProjectAudioProcessor::connectMidiNodes()
 {
     mainProcessor->addConnection({{midiInputNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex},
                                     {midiOutputNode->nodeID, juce::AudioProcessorGraph::midiChannelIndex}});
 }
 
+//Update the graph
 void NewProjectAudioProcessor::updateGraph()
 {
-    bool hasChanged = false;
+    bool hasChanged = false; //Flag to say wether processing chain has changed or not
     
-    int NumOptions = processorChoices.size();
+    int NumOptions = processorChoices.size(); //Number of choices cor slots
     
     
     juce::Array<juce::AudioParameterChoice*> choices{dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot1")),
@@ -384,7 +402,8 @@ void NewProjectAudioProcessor::updateGraph()
     slots.add(slot1Node);
     slots.add(slot2Node);
     
-    
+    //Loop through all choice parameters (the dropdown boxes in the chain menu) and check if any have changed, and if so what they have changed to
+    //Null for empty, Filter for filter etc.
     for(int i = 0; i<NumOptions; i++)
     {
         auto& choice = choices.getReference(i);
@@ -415,15 +434,17 @@ void NewProjectAudioProcessor::updateGraph()
     }
     
     
+    //If a slot has changed update the graph
     if(hasChanged)
     {
+        //Remove all graph connections
         for(auto connection : mainProcessor->getConnections())
         {
             mainProcessor->removeConnection(connection);
         }
         
+        //Add all active (non empty) slots to an array
         juce::ReferenceCountedArray<Node> activeSlots;
-        
         for(auto slot : slots)
         {
             if(slot != nullptr)
@@ -436,14 +457,16 @@ void NewProjectAudioProcessor::updateGraph()
             }
         }
         
+        //If there are no active slots (all empty) connect audio to output
         if(activeSlots.isEmpty())
         {
             connectAudioNodes();
         }
         else
         {
-            if(activeSlots.size() == 1)
+            if(activeSlots.size() == 1) //If there is one active slot
             {
+                //Connect input and output through the active node
                 for(int channel = 0; channel < 2; ++channel)
                 {
                     mainProcessor->addConnection({{audioInputNode->nodeID, channel},
@@ -453,10 +476,12 @@ void NewProjectAudioProcessor::updateGraph()
                                                     {audioOutputNode->nodeID, channel}});
                 }
             }
-            else
+            else //If there are multiple active slots
             {
                 for(int i = 0; i < activeSlots.size()-1; ++i)
                 {
+                    //Connect input and output through the active nodes
+                    
                     for(int channel = 0; channel < 2; ++channel)
                     {
                         mainProcessor->addConnection({{activeSlots.getUnchecked(i)->nodeID, channel},

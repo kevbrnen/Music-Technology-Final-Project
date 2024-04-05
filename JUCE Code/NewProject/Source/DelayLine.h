@@ -5,6 +5,7 @@
     Created: 4 Apr 2024 10:30:21pm
     Author:  Kevin Brennan
 
+    Delay Line Class
   ==============================================================================
 */
 
@@ -27,8 +28,9 @@ public:
     void initDelayLine()
     {
         delayLine.prepare(Spec);
-        delayLine.setMaximumDelayInSamples(((48000.0f/1000.0f)*2000.0f));
-        setDelayTime(500.0);
+        delayLine.setMaximumDelayInSamples(((48000.0f/1000.0f)*3000.0f));
+        setDelayTime(500);
+        delayLine.setDelay(this->delaySamples);
         resetDelayLine();
     };
     
@@ -55,7 +57,6 @@ public:
         this->delayMs = delayInMs;
         auto delayS = (Spec.sampleRate/1000) * this->delayMs;
         this->delaySamples = delayS;
-        delayLine.setDelay(delayS);
     };
     
     void setSpec(const juce::dsp::ProcessSpec& spec)
@@ -74,7 +75,7 @@ private:
         delayLine.prepare(Spec);
     };
     
-    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> delayLine;
+    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Thiran> delayLine;
     
     juce::dsp::ProcessSpec Spec;
     

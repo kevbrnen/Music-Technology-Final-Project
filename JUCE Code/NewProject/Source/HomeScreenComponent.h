@@ -5,6 +5,7 @@
     Created: 30 Mar 2024 5:05:34pm
     Author:  Kevin Brennan
 
+    Home Screen Component UI
   ==============================================================================
 */
 
@@ -12,6 +13,7 @@
 
 #include <JuceHeader.h>
 #include "FilterComponent.h"
+#include "DelayEffectComponent.h"
 
 //==============================================================================
 /*
@@ -19,9 +21,9 @@
 class HomeScreenComponent  : public juce::Component
 {
 public:
-    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts): filtComponent(Fvts)
+    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& Dvts): filtComponent(Fvts), delayComponent(Dvts)
     {
-        
+//Filter
         //Filter Component
         addAndMakeVisible(filtComponent); //Add it
         filtComponent.setEnabled(false); //Deactivate it and make it invisible
@@ -39,6 +41,25 @@ public:
         };
         
         addAndMakeVisible(Filter_show_button);
+
+//Delay
+        //Delay Component
+        addAndMakeVisible(delayComponent);
+        delayComponent.setEnabled(false);
+        delayComponent.setVisible(false);
+        
+        //Delay Button
+        Delay_show_button.setButtonText("Delay");
+        Delay_show_button.onClick = [this]()
+        {
+            hideHomeScreenComponents();
+            delayComponent.setEnabled(true);
+            delayComponent.setVisible(true);
+            
+            currentlyShowingComponent = 'D';
+        };
+        
+        addAndMakeVisible(Delay_show_button);
 
     }
 
@@ -63,27 +84,40 @@ public:
     void resized() override
     {
         filtComponent.setBounds(getLocalBounds());
+        delayComponent.setBounds(getLocalBounds());
         
         auto sideMargin = getWidth()/8;
         auto topMargin = getHeight()/8;
         auto buttonWidth = getWidth()/8;
         Filter_show_button.setBounds(sideMargin, topMargin, buttonWidth, buttonWidth);
+        Delay_show_button.setBounds(sideMargin + buttonWidth + sideMargin, topMargin, buttonWidth, buttonWidth);
+        
 
     }
     
+    //Hide any of the home screens native components (Filter selection buttons, etc.)
     void hideHomeScreenComponents()
     {
         Filter_show_button.setEnabled(false);
         Filter_show_button.setVisible(false);
+        
+        Delay_show_button.setEnabled(false);
+        Delay_show_button.setVisible(false);
     }
     
+    //Shows all home screen native components and hides whatever effect component was showing
     void showHomeScreenComponents()
     {
         switch(currentlyShowingComponent)
         {
-            case 'F':
+            case 'F': //Filter
                 filtComponent.setEnabled(false);
                 filtComponent.setVisible(false);
+                currentlyShowingComponent = 0;
+                break;
+            case 'D': //Delay
+                delayComponent.setEnabled(false);
+                delayComponent.setVisible(false);
                 currentlyShowingComponent = 0;
                 break;
             default:
@@ -93,15 +127,20 @@ public:
         Filter_show_button.setEnabled(true);
         Filter_show_button.setVisible(true);
         
+        Delay_show_button.setEnabled(true);
+        Delay_show_button.setVisible(true);
+        
     }
 
 private:
-    char currentlyShowingComponent = 0;
+    char currentlyShowingComponent = 0; //Keeps track of what Effect is currently on screen
     
     FilterComponent filtComponent;
+    DelayEffectComponent delayComponent;
     
     //Buttons to select Effects
     juce::TextButton Filter_show_button;
+    juce::TextButton Delay_show_button;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HomeScreenComponent)
 };

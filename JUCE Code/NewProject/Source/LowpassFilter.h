@@ -4,7 +4,8 @@
     LowpassFilter.h
     Created: 5 Mar 2024 3:14:36pm
     Author:  Kevin Brennan
-
+ 
+    A Class for impementing a JUCE lowpass filter (StateVariableTPTFilter)
   ==============================================================================
 */
 

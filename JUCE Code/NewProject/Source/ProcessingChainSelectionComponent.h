@@ -5,6 +5,7 @@
     Created: 4 Apr 2024 2:34:06pm
     Author:  Kevin Brennan
 
+    UI for the processing chain menu
   ==============================================================================
 */
 
@@ -60,13 +61,11 @@ public:
     }
 
 private:
-    juce::StringArray processorChoices{"Empty", "Filter"};
+    juce::StringArray processorChoices{"Empty", "Filter"}; //Available Processor choices, should match  choices in plugin editor
     
-    juce::Array<juce::ComboBox*> comboBoxes;
+    juce::ComboBox Slot1, Slot2; //combo boxes
     
-    juce::ComboBox Slot1, Slot2;
-    
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Slot1_attachment, Slot2_attachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Slot1_attachment, Slot2_attachment; //Attachment to APVTS for processing chain choices
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProcessingChainSelectionComponent)
 };

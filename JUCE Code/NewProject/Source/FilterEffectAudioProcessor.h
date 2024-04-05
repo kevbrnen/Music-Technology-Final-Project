@@ -5,6 +5,7 @@
     Created: 1 Apr 2024 11:55:01pm
     Author:  Kevin Brennan
 
+    Class to process audio for the Filter Effect
   ==============================================================================
 */
 
@@ -18,10 +19,10 @@ class FilterEffectAudioProcessor  : public ProcessorBase
 public:
     FilterEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts) : Filter_Parameters(vts)
     {
+        //Variables from APVTS for Filter parameters
         FilterCutoffFrequency = Filter_Parameters.getRawParameterValue("cutoff_frequency");
         Filt_on = Filter_Parameters.getRawParameterValue("filter_toggle");
         FilterGain = Filter_Parameters.getRawParameterValue("filter_gain");
-        
     };
     
     ~FilterEffectAudioProcessor(){};
@@ -33,10 +34,12 @@ public:
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override
     {
+        //Setup Spec for LPF implementation
         pluginSpec.sampleRate = sampleRate;
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
+        //Setup LPF
         LPF.setSpec(pluginSpec);
         LPF.setCutoff(750);
         
@@ -47,7 +50,7 @@ public:
 
     void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
     {
-        auto effectOn = Filt_on->load();
+        auto effectOn = Filt_on->load(); //Process if effect on
         if(effectOn != 0.0f)
         {
             //Get and set new cutoff frequency
@@ -61,6 +64,7 @@ public:
             
             if(NewGain != lastGain)
             {
+                //Smooth gain to remove artefacts
                 buffer.applyGainRamp(0, buffer.getNumSamples(), lastGain, NewGain);
                 lastGain = NewGain;
             }
@@ -77,7 +81,7 @@ public:
     juce::AudioProcessorValueTreeState& Filter_Parameters;
     
 private:
-    
+    //Filter variables
     juce::dsp::ProcessSpec pluginSpec;
     LowpassFilter LPF;
     std::atomic<float>* FilterCutoffFrequency = nullptr;

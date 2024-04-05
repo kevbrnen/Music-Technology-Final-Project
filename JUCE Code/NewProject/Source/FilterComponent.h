@@ -5,6 +5,7 @@
     Created: 9 Mar 2024 10:36:04pm
     Author:  Kevin Brennan
 
+    Component to show UI for Filter Effect
   ==============================================================================
 */
 

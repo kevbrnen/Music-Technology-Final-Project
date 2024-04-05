@@ -23,13 +23,15 @@ public:
     //Audio Processor Graph Public
     using AudioGraphIOProcessor = juce::AudioProcessorGraph::AudioGraphIOProcessor;
     using Node = juce::AudioProcessorGraph::Node;
-    juce::StringArray processorChoices{"Empty", "Filter"};
+    
+    juce::StringArray processorChoices{"Empty", "Filter"};  //Effects that can be added to the chain
 
     //==============================================================================
     NewProjectAudioProcessor();
     ~NewProjectAudioProcessor() override;
 
     //==============================================================================
+    //Parameter layouts for different tree types
     juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLayout();
     juce::AudioProcessorValueTreeState::ParameterLayout createGlobalParameterLayout();
     juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout();
@@ -72,7 +74,7 @@ public:
     juce::AudioProcessorValueTreeState Filter_Parameters;
     juce::AudioProcessorValueTreeState Delay_Parameters;
 private:
-    //For AudioProcessorGraph
+    //For AudioProcessorGraph (Chain of effects)
     void initialiseGraph();
     void connectAudioNodes();
     void connectMidiNodes();

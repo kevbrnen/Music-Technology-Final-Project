@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain): AudioProcessorEditor (&p), homeScreenComponent(Fvts), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), procChainComponent(ProcChain)
+NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain, juce::AudioProcessorValueTreeState& Dvts): AudioProcessorEditor (&p), homeScreenComponent(Fvts, Dvts), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), procChainComponent(ProcChain)
 {
     addAndMakeVisible(globalComponent);
     

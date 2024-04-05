@@ -4,7 +4,9 @@
     GlobalControlsComponent.h
     Created: 10 Mar 2024 9:08:45pm
     Author:  Kevin Brennan
-
+    
+    The global controls component
+    Bar at the top of the plugin
   ==============================================================================
 */
 
@@ -23,14 +25,13 @@ class GlobalControlsComponent  : public juce::Component
 public:
     GlobalControlsComponent(juce::AudioProcessorValueTreeState& vts, HomeScreenComponent& hs, ProcessingChainSelectionComponent& pc): hs(hs), pc(pc)
     {
-        
+//Gain Slider
         gainSlider.setNumDecimalPlacesToDisplay(2);
         gainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "global_gain", gainSlider));
         gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
         gainSlider.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 20);
         gainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
         gainSlider.setRange(-48.0, 0.0);
-        //gainSlider.setValue(-6.0);
         gainSlider.setTextValueSuffix("dB");
         gainSlider.setTextBoxIsEditable(true);
         addAndMakeVisible(gainSlider);
@@ -39,9 +40,8 @@ public:
         gainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
         addAndMakeVisible(gainLabel);
         
-        
+//Home Button
         homeButton.setButtonText("Home");
-        //homeButton.setClickingTogglesState(true); //All of this can be moved to the "Home Screen" When created
         homeButton.onClick = [this, &hs](){ //Enables/disables depending on button state
                 hs.showHomeScreenComponents();
         };
@@ -49,7 +49,7 @@ public:
         homeButton.setVisible(true);
         addAndMakeVisible(homeButton);
         
-        
+//Chain Menu Button
         chainMenuButton.setButtonText("Chain");
         chainMenuButton.setClickingTogglesState(true);
         chainMenuButton.onClick = [this, &pc](){
@@ -82,6 +82,8 @@ public:
 
     void resized() override
     {
+        //Setting bounds of components
+        
         gainSlider.setBounds(getLocalBounds().getWidth() * 3/4, getLocalBounds().getHeight()/4, getLocalBounds().getWidth() * 1/4, getLocalBounds().getHeight()/2);
         gainLabel.attachToComponent(&gainSlider, true);
         

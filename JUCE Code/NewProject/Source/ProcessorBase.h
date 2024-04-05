@@ -5,6 +5,7 @@
     Created: 2 Apr 2024 12:09:17pm
     Author:  Kevin Brennan
 
+    A base Audio processor class for all secondary Audio Processors (Effect Processors) to inherit from
   ==============================================================================
 */
 

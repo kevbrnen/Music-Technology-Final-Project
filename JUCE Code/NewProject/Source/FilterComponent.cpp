@@ -4,7 +4,8 @@
     FilterComponent.cpp
     Created: 9 Mar 2024 10:36:04pm
     Author:  Kevin Brennan
-
+    
+    Component to show UI for Filter Effect
   ==============================================================================
 */
 
@@ -14,9 +15,8 @@
 //==============================================================================
 FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
 {
-    //Toggle
+//Toggle
     LPF_Toggle.setClickingTogglesState(true);
-    //LPF_Toggle.setState(juce::Button::ButtonState(false));
     LPF_Toggle.setButtonText("OFF");
     LPF_Toggle.setEnabled(true);
     LPF_Toggle.setVisible(true);
@@ -41,7 +41,7 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     addAndMakeVisible(LPF_Toggle);
     
     
-    //Cutoff Slider
+//Cutoff Slider
     cutoffFrequencySlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     cutoffFrequencyAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "cutoff_frequency", cutoffFrequencySlider));
     addAndMakeVisible(cutoffFrequencySlider);
@@ -50,7 +50,7 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     addAndMakeVisible(cutoffFrequencyLabel);
     
     
-    //Gain
+//Gain Slider
     filterGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     gainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "filter_gain", filterGainSlider));
     filterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
@@ -73,13 +73,6 @@ FilterComponent::~FilterComponent()
 
 void FilterComponent::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
     g.fillAll (juce::Colours::blue);   // clear the background
 
     g.setColour (juce::Colours::grey);
