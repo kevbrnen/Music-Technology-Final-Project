@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "ProcessorBase.h"
 #include "SmoothingFilter.h"
+#include "CircularBuffer.h"
 
 class DelayEffectAudioProcessor  : public ProcessorBase
 {
@@ -36,16 +37,18 @@ public:
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
-        delayLine.prepare(pluginSpec);
-        delayLine.setMaximumDelayInSamples((int)((48000.0f/1000.0f)*3000.0f));
-        delayLine.reset();
+        //delayLine.prepare(pluginSpec);
+        //delayLine.setMaximumDelayInSamples((int)((48000.0f/1000.0f)*3000.0f));
+        //delayLine.reset();
+        
+        circularBuffer.initBuffer(2, (int)((48000.0f/1000.0f)*3000.0f), sampleRate);
         
         
-        SmoothingLPF.setFc(100);
+        SmoothingLPF.setFc(5);
         
         lastDelay = Delay_Time->load();
         delaySmoothed.setTargetValue(lastDelay);
-        delaySmoothed.reset(sampleRate, 1);
+        delaySmoothed.reset(sampleRate, 0.002);
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
@@ -63,12 +66,14 @@ public:
                         {
                             auto* inData = buffer.getReadPointer(channel);
                             auto* outData = buffer.getWritePointer(channel);
-                            delayLine.pushSample(channel, inData[i]);
+                            //delayLine.pushSample(channel, inData[i]);
+                            circularBuffer.pushSampleToBuffer(channel, inData[i]);
                             
                             auto time = delaySmoothed.getNextValue();
                             //delayLine.setDelayTime(time);
                             
-                            auto delayedSample_oldVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*time), true);
+                            //auto delayedSample_oldVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*time), true);
+                            auto delayedSample_oldVal = circularBuffer.getDelayedSample(channel, (time));
                             
                             if(newDelayTime != lastDelay)
                             {
@@ -81,13 +86,14 @@ public:
                                 
                                 auto t_n = delaySmoothed.getNextValue();
                                 
-                                auto delayedSample_newVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*t_n), true);
+                               // auto delayedSample_newVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*t_n), true);
+                                auto delayedSample_newVal = circularBuffer.getDelayedSample(channel, (t_n));
                                 
-                                outData[i] = ((delayedSample_oldVal + delayedSample_newVal)/2 * WetAmount) + (inData[i] * (1 - WetAmount));
+                                outData[i] = ((*delayedSample_oldVal + *delayedSample_newVal)/2 * WetAmount) + (inData[i] * (1 - WetAmount));
                             }
                             else
                             {
-                                outData[i] = ((delayedSample_oldVal) * WetAmount) + (inData[i] * (1 - WetAmount));
+                                outData[i] = ((*delayedSample_oldVal) * WetAmount) + (inData[i] * (1 - WetAmount));
                             }
                     }
                 }
@@ -100,7 +106,8 @@ private:
     
     juce::dsp::ProcessSpec pluginSpec;
     //DelayLine delayLine;
-    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Thiran> delayLine;
+    //juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Thiran> delayLine;
+    CircularBuffer circularBuffer;
     std::atomic<float>* Delay_on = nullptr;
     
     std::atomic<float>* Delay_Time = nullptr;

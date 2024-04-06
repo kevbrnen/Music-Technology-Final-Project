@@ -7,6 +7,8 @@
     <GROUP id="{BD9E7109-7FE5-8B17-E687-37A5A353C336}" name="DelayEffect">
       <FILE id="auSWaF" name="DelayEffectAudioProcessor.h" compile="0" resource="0"
             file="Source/DelayEffectAudioProcessor.h"/>
+      <FILE id="N043FY" name="CircularBuffer.h" compile="0" resource="0"
+            file="Source/CircularBuffer.h"/>
       <FILE id="QJnXoE" name="DelayEffectComponent.cpp" compile="1" resource="0"
             file="Source/DelayEffectComponent.cpp"/>
       <FILE id="YsFeWR" name="DelayEffectComponent.h" compile="0" resource="0"
