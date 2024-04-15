@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    juce::StringArray processorChoices{"Empty", "Filter"}; //Available Processor choices, should match  choices in plugin editor
+    juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution"}; //Available Processor choices, should match  choices in plugin editor
     
     juce::ComboBox Slot1, Slot2; //combo boxes
     

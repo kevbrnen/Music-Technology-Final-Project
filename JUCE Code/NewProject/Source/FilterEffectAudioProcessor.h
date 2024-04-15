@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "ProcessorBase.h"
 #include "LowpassFilter.h"
+#include "LFOProcessor.h"
 
 class FilterEffectAudioProcessor  : public ProcessorBase
 {
@@ -23,6 +24,7 @@ public:
         FilterCutoffFrequency = Filter_Parameters.getRawParameterValue("cutoff_frequency");
         Filt_on = Filter_Parameters.getRawParameterValue("filter_toggle");
         FilterGain = Filter_Parameters.getRawParameterValue("filter_gain");
+        Filter_LFO_on = Filter_Parameters.getRawParameterValue("filter_LFO_toggle");
     };
     
     ~FilterEffectAudioProcessor(){};
@@ -54,10 +56,21 @@ public:
         if(effectOn != 0.0f)
         {
             //Get and set new cutoff frequency
-            const auto NewCutoffFrequency = FilterCutoffFrequency->load();
-            LPF.setCutoff(NewCutoffFrequency);
-            LPF.process(buffer);
+            auto LFOOn = Filter_LFO_on->load();
+            if(LFOOn != 0.0f)
+            {
+                const auto NewCutoffFrequency = (300 + (LFO.getNextLFOVal() * 1000.f));
+                
+                LPF.setCutoff(NewCutoffFrequency);
+            }
+            else
+            {
+                const auto NewCutoffFrequency = FilterCutoffFrequency->load();
+                
+                LPF.setCutoff(NewCutoffFrequency);
+            }
             
+            LPF.process(buffer);
             
             //Filter Effect Gain
             const auto NewGain = juce::Decibels::decibelsToGain(*Filter_Parameters.getRawParameterValue("filter_gain") + 0.0);
@@ -88,6 +101,11 @@ private:
     std::atomic<float>* Filt_on = nullptr;
     std::atomic<float>* FilterGain = nullptr;
     float lastGain;
+    
+    std::atomic<float>* Filter_LFO_on = nullptr;
+    
+    LFOProcessor LFO;
+    
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FilterEffectAudioProcessor);

@@ -4,6 +4,23 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
               jucerFormatVersion="1">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
+    <GROUP id="{B379C059-32B4-2CB1-254E-468EB68DEADA}" name="ConvolutionReverbEffect">
+      <GROUP id="{91BE5FB0-1E69-17CA-BD54-5AECAAAEAACF}" name="IRs">
+        <FILE id="x7lxRc" name="ChurchIR1.wav" compile="0" resource="1" file="Source/ChurchIR1.wav"/>
+      </GROUP>
+      <FILE id="V2YgLO" name="ConvolutionReverbEffectAudioProcessor.h" compile="0"
+            resource="0" file="Source/ConvolutionReverbEffectAudioProcessor.h"/>
+      <FILE id="V4WoMY" name="ConvolutionReverbEffectComponent.cpp" compile="1"
+            resource="0" file="Source/ConvolutionReverbEffectComponent.cpp"/>
+      <FILE id="HO1Y9a" name="ConvolutionReverbEffectComponent.h" compile="0"
+            resource="0" file="Source/ConvolutionReverbEffectComponent.h"/>
+    </GROUP>
+    <GROUP id="{E2ACCCC9-E748-8E4C-D99B-94EF70CFF040}" name="LFOs">
+      <FILE id="pExuHg" name="LFOThumbnailComponent.h" compile="0" resource="0"
+            file="Source/LFOThumbnailComponent.h"/>
+      <FILE id="QgEfde" name="LFOProcessor.h" compile="0" resource="0" file="Source/LFOProcessor.h"/>
+      <FILE id="uANRU5" name="Birds_LFO.wav" compile="0" resource="1" file="Source/Birds_LFO.wav"/>
+    </GROUP>
     <GROUP id="{BD9E7109-7FE5-8B17-E687-37A5A353C336}" name="DelayEffect">
       <FILE id="auSWaF" name="DelayEffectAudioProcessor.h" compile="0" resource="0"
             file="Source/DelayEffectAudioProcessor.h"/>

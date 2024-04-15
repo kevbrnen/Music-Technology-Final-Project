@@ -12,6 +12,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "LFOThumbnailComponent.h"
 
 //==============================================================================
 /*
@@ -29,6 +30,11 @@ private:
     
     juce::TextButton LPF_Toggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>Filter_OnOff_Attachment;
+    juce::Label ToggleLabel;
+    
+    juce::TextButton Filter_LFO_Toggle;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>Filter_LFO_Toggle_Attachment;
+    juce::Label LFOLabel;
 
     
     juce::Slider cutoffFrequencySlider;
@@ -40,6 +46,7 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
     juce::Label filterGainLabel;
     
+    LFOThumbnailComponent LFOThumb;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterComponent)
 };

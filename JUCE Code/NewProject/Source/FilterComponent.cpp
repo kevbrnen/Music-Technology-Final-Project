@@ -40,6 +40,40 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     Filter_OnOff_Attachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(vts, "filter_toggle", LPF_Toggle));
     addAndMakeVisible(LPF_Toggle);
     
+    ToggleLabel.setText("Filter Effect", juce::dontSendNotification);
+    addAndMakeVisible(ToggleLabel);
+    
+//LFO Toggle
+    Filter_LFO_Toggle.setClickingTogglesState(true);
+    Filter_LFO_Toggle.setButtonText("OFF");
+    Filter_LFO_Toggle.setEnabled(true);
+    Filter_LFO_Toggle.setVisible(true);
+    Filter_LFO_Toggle.onClick = [this, &vts]()
+    {
+        if(Filter_LFO_Toggle.getToggleState())
+        {
+            Filter_LFO_Toggle.setColour(juce::TextButton::buttonOnColourId, juce::Colours::green);
+            Filter_LFO_Toggle.setButtonText("ON");
+            vts.state.setProperty("filter_LFO_toggle", true, nullptr);
+            
+        }
+        else
+        {
+            Filter_LFO_Toggle.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+            Filter_LFO_Toggle.setButtonText("OFF");
+            vts.state.setProperty("filter_LFO_toggle", false, nullptr);
+        }
+    };
+    Filter_LFO_Toggle_Attachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(vts, "filter_LFO_toggle", Filter_LFO_Toggle));
+    addAndMakeVisible(Filter_LFO_Toggle);
+    
+    LFOLabel.setText("LFO", juce::dontSendNotification);
+    LFOLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(LFOLabel);
+    
+//LFO Display
+    addAndMakeVisible(LFOThumb);
+
     
 //Cutoff Slider
     cutoffFrequencySlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
@@ -73,7 +107,7 @@ FilterComponent::~FilterComponent()
 
 void FilterComponent::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::blue);   // clear the background
+    g.fillAll (juce::Colours::lightblue);   // clear the background
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
@@ -87,11 +121,16 @@ void FilterComponent::paint (juce::Graphics& g)
 void FilterComponent::resized()
 {
     LPF_Toggle.setBounds(getWidth()-60, 20, 50, 25);
+    ToggleLabel.attachToComponent(&LPF_Toggle, true);
+    
+    Filter_LFO_Toggle.setBounds(getWidth()-60, 250, 50, 25);
+    LFOLabel.attachToComponent(&Filter_LFO_Toggle, true);
     
     filterGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
     filterGainLabel.attachToComponent(&filterGainSlider, true);
     
     cutoffFrequencySlider.setBounds(15, 35, 100, getHeight()-50);
     cutoffFrequencyLabel.setBounds(10, 30, 75, 50);
-
+    
+    LFOThumb.setBounds(getWidth()-200, 300, 190, 75);
 }

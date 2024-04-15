@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "FilterEffectAudioProcessor.h"
 #include "DelayEffectAudioProcessor.h"
+#include "ConvolutionReverbEffectAudioProcessor.h"
 
 
 //==============================================================================
@@ -24,7 +25,7 @@ public:
     using AudioGraphIOProcessor = juce::AudioProcessorGraph::AudioGraphIOProcessor;
     using Node = juce::AudioProcessorGraph::Node;
     
-    juce::StringArray processorChoices{"Empty", "Filter"};  //Effects that can be added to the chain
+    juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution"};  //Effects that can be added to the chain
 
     //==============================================================================
     NewProjectAudioProcessor();
@@ -36,6 +37,7 @@ public:
     juce::AudioProcessorValueTreeState::ParameterLayout createGlobalParameterLayout();
     juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout();
     juce::AudioProcessorValueTreeState::ParameterLayout createDelayParameterLayout();
+    juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLayout();
     
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -73,6 +75,7 @@ public:
     juce::AudioProcessorValueTreeState Global_Parameters;
     juce::AudioProcessorValueTreeState Filter_Parameters;
     juce::AudioProcessorValueTreeState Delay_Parameters;
+    juce::AudioProcessorValueTreeState Convolution_Parameters;
 private:
     //For AudioProcessorGraph (Chain of effects)
     void initialiseGraph();
@@ -91,15 +94,12 @@ private:
     Node::Ptr slot2Node;
 
     
+    //TESTING
+    ConvolutionReverbEffectAudioProcessor Conv;
+    
     //Global Parameters
     std::atomic<float>* globalGain = nullptr;
     float lastGain;
-    
-    //Filter
-    FilterEffectAudioProcessor filterAudioProcessor;
-    
-    //Delay
-    DelayEffectAudioProcessor delayAudioProcessor;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)

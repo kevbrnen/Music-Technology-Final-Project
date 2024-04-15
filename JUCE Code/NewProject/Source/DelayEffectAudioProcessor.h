@@ -11,9 +11,11 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include <math.h>
 #include "ProcessorBase.h"
 #include "SmoothingFilter.h"
 #include "CircularBuffer.h"
+#include "LFOProcessor.h"
 
 class DelayEffectAudioProcessor  : public ProcessorBase
 {
@@ -22,7 +24,12 @@ public:
     {
         //Get Delay variables from APVTS for Delay Parameters
         Delay_on = Delay_Parameters.getRawParameterValue("delay_toggle");
+        Delay_Gain = Delay_Parameters.getRawParameterValue("delay_gain");
         Delay_Time = Delay_Parameters.getRawParameterValue("delay_time");
+        Delay_FDBK = Delay_Parameters.getRawParameterValue("delay_fdbk");
+        Delay_WD = Delay_Parameters.getRawParameterValue("delay_wetdry");
+        Delay_LFO_on = Delay_Parameters.getRawParameterValue("delay_LFO_toggle");
+        
         
     };
     
@@ -37,66 +44,70 @@ public:
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
-        //delayLine.prepare(pluginSpec);
-        //delayLine.setMaximumDelayInSamples((int)((48000.0f/1000.0f)*3000.0f));
-        //delayLine.reset();
-        
         circularBuffer.initBuffer(2, (int)((48000.0f/1000.0f)*3000.0f), sampleRate);
         
-        
-        SmoothingLPF.setFc(5);
-        
         lastDelay = Delay_Time->load();
-        delaySmoothed.setTargetValue(lastDelay);
-        delaySmoothed.reset(sampleRate, 0.002);
+        
+        delayTimeSmoothing.reset(sampleRate, 0.005);
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
         {
+            auto WetAmount = 0.0f;
             auto effectOn = Delay_on->load();
+            
             if(effectOn != 0.0f)
             {
-                auto newDelayTime = Delay_Time->load();
+                auto C = 0.6;
                 
-                newDelayTime = SmoothingLPF.process(newDelayTime);
-                    
-                    for(int i = 0; i < buffer.getNumSamples(); ++i)
+                for(int i = 0; i < buffer.getNumSamples(); ++i)
+                {
+                    auto LFOOn = Delay_LFO_on->load();
+                    if(LFOOn != 0.0f)
                     {
-                        for(int channel = 0; channel < 2 ; ++channel)
-                        {
-                            auto* inData = buffer.getReadPointer(channel);
-                            auto* outData = buffer.getWritePointer(channel);
-                            //delayLine.pushSample(channel, inData[i]);
-                            circularBuffer.pushSampleToBuffer(channel, inData[i]);
+                        WetAmount = LFO.getNextLFOVal();
+                    }
+                    else
+                    {
+                        WetAmount = Delay_WD->load();
+                    }
+                    
+                    auto newDelayTime = Delay_Time->load();
+                    auto Fdbk_amt = Delay_FDBK->load();
+                    
+                    delayTimeSmoothing.setTargetValue(newDelayTime);
+                    
+                    for(int channel = 0; channel < 2 ; ++channel)
+                    {
+                        auto* inData = buffer.getReadPointer(channel);
+                        auto* outData = buffer.getWritePointer(channel);
+                        
+                        circularBuffer.pushSampleToBuffer(channel, inData[i] + (feedback[channel] * Fdbk_amt));
                             
-                            auto time = delaySmoothed.getNextValue();
-                            //delayLine.setDelayTime(time);
+                        auto time = delayTimeSmoothing.getNextValue();
+                        
+                        auto delayedSample_oldVal = circularBuffer.getDelayedSample(channel, lastDelay);
+                        auto delayedSample_newVal = circularBuffer.getDelayedSample(channel, time);
                             
-                            //auto delayedSample_oldVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*time), true);
-                            auto delayedSample_oldVal = circularBuffer.getDelayedSample(channel, (time));
+                        outData[i] = (((*delayedSample_newVal * (1-C)) + (*delayedSample_oldVal * C)) * WetAmount) + (inData[i] * (1 - WetAmount));
                             
-                            if(newDelayTime != lastDelay)
-                            {
-                                
-                                lastDelay = newDelayTime;
-                                delaySmoothed.setTargetValue(lastDelay);
-                                delaySmoothed.reset(pluginSpec.sampleRate);
-                                delaySmoothed.setTargetValue(newDelayTime);
-                                delaySmoothed.reset(pluginSpec.sampleRate);
-                                
-                                auto t_n = delaySmoothed.getNextValue();
-                                
-                               // auto delayedSample_newVal = delayLine.popSample(channel, ((48000.0f/1000.0f)*t_n), true);
-                                auto delayedSample_newVal = circularBuffer.getDelayedSample(channel, (t_n));
-                                
-                                outData[i] = ((*delayedSample_oldVal + *delayedSample_newVal)/2 * WetAmount) + (inData[i] * (1 - WetAmount));
-                            }
-                            else
-                            {
-                                outData[i] = ((*delayedSample_oldVal) * WetAmount) + (inData[i] * (1 - WetAmount));
-                            }
+                            
+                        //Feedback for each channel
+                        feedback[channel] = outData[i];
+                        lastDelay = time;
                     }
                 }
+                
+                const auto NewGain = juce::Decibels::decibelsToGain(*Delay_Parameters.getRawParameterValue("delay_gain") + 0.0);
+                
+                if(NewGain != lastGain)
+                {
+                    //Smooth gain to remove artefacts
+                    buffer.applyGainRamp(0, buffer.getNumSamples(), lastGain, NewGain);
+                    lastGain = NewGain;
+                }
+                
+                
             }
         };
     
@@ -105,18 +116,25 @@ public:
 private:
     
     juce::dsp::ProcessSpec pluginSpec;
-    //DelayLine delayLine;
-    //juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Thiran> delayLine;
     CircularBuffer circularBuffer;
     std::atomic<float>* Delay_on = nullptr;
     
+    std::atomic<float>* Delay_Gain = nullptr;
+    float lastGain;
+    
     std::atomic<float>* Delay_Time = nullptr;
     float lastDelay;
-    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> delaySmoothed;
+    juce::LinearSmoothedValue<float> delayTimeSmoothing {500.0f};
     SmoothingFilter SmoothingLPF;
-
     
-    float WetAmount = 0.6;
+    std::atomic<float>* Delay_FDBK = nullptr;
+    float feedback[2];
+    
+    std::atomic<float>* Delay_WD = nullptr;
+    
+    std::atomic<float>* Delay_LFO_on = nullptr;
+    
+    LFOProcessor LFO;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayEffectAudioProcessor);
 };
