@@ -12,6 +12,8 @@
 #include "FilterEffectAudioProcessor.h"
 #include "DelayEffectAudioProcessor.h"
 #include "ConvolutionReverbEffectAudioProcessor.h"
+#include "DelayXpanseEffectAudioProcessor.h"
+#include "DegradeEffectAudioProcessor.h"
 
 
 //==============================================================================
@@ -25,7 +27,9 @@ public:
     using AudioGraphIOProcessor = juce::AudioProcessorGraph::AudioGraphIOProcessor;
     using Node = juce::AudioProcessorGraph::Node;
     
-    juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution"};  //Effects that can be added to the chain
+    juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade"};  //Effects that can be added to the chain
+    
+    juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"};
 
     //==============================================================================
     NewProjectAudioProcessor();
@@ -38,6 +42,8 @@ public:
     juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout();
     juce::AudioProcessorValueTreeState::ParameterLayout createDelayParameterLayout();
     juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLayout();
+    juce::AudioProcessorValueTreeState::ParameterLayout createXpanseParameterLayout();
+    juce::AudioProcessorValueTreeState::ParameterLayout createDegradeParameterLayout();
     
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -76,7 +82,15 @@ public:
     juce::AudioProcessorValueTreeState Filter_Parameters;
     juce::AudioProcessorValueTreeState Delay_Parameters;
     juce::AudioProcessorValueTreeState Convolution_Parameters;
+    juce::AudioProcessorValueTreeState DelayXpanse_Parameters;
+    juce::AudioProcessorValueTreeState Degrade_Parameters;
 private:
+    FilterEffectAudioProcessor filterEffect;
+    DelayEffectAudioProcessor delayEffect;
+    ConvolutionReverbEffectAudioProcessor convolutionEffect;
+    DelayXpanseEffectAudioProcessor xpanseEffect;
+    DegradeEffectAudioProcessor degradeEffect;
+    
     //For AudioProcessorGraph (Chain of effects)
     void initialiseGraph();
     void connectAudioNodes();
@@ -92,10 +106,8 @@ private:
     
     Node::Ptr slot1Node;
     Node::Ptr slot2Node;
-
-    
-    //TESTING
-    ConvolutionReverbEffectAudioProcessor Conv;
+    Node::Ptr slot3Node;
+    //Node::Ptr slot4Node;
     
     //Global Parameters
     std::atomic<float>* globalGain = nullptr;

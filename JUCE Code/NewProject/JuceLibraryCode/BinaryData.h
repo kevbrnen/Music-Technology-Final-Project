@@ -8,6 +8,15 @@
 
 namespace BinaryData
 {
+    extern const char*   DenContainer48k_wav;
+    const int            DenContainer48k_wavSize = 59282;
+
+    extern const char*   DenHall48k_wav;
+    const int            DenHall48k_wavSize = 202571;
+
+    extern const char*   Tent48k_wav;
+    const int            Tent48k_wavSize = 59645;
+
     extern const char*   ChurchIR1_wav;
     const int            ChurchIR1_wavSize = 248447;
 
@@ -15,7 +24,7 @@ namespace BinaryData
     const int            Birds_LFO_wavSize = 1728044;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 2;
+    const int namedResourceListSize = 5;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

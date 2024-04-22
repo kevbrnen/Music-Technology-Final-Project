@@ -25,26 +25,14 @@ public:
         getAudioBufferFromFile();
     }
 
-    ~LFOThumbnailComponent() override
-    {
-    }
+    ~LFOThumbnailComponent() override{}
 
     void paint (juce::Graphics& g) override
     {
-        juce::Rectangle<int> thumbnailBounds (getLocalBounds());
-        
-        g.setColour(juce::Colours::black);
-        g.fillRect(thumbnailBounds);
-        g.setColour(juce::Colours::white);
-        
-        thumbnail.drawChannels(g, thumbnailBounds, 0.0, thumbnail.getTotalLength(), 1.0f);
+         
     }
 
-    void resized() override
-    {
-
-
-    }
+    void resized() override {}
     
     void getAudioBufferFromFile()
     {

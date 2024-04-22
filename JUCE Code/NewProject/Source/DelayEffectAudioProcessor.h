@@ -44,7 +44,7 @@ public:
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
-        circularBuffer.initBuffer(2, (int)((48000.0f/1000.0f)*3000.0f), sampleRate);
+        circularBuffer.initBuffer(2, (int)((sampleRate/1000.0f)*3000.0f), sampleRate);
         
         lastDelay = Delay_Time->load();
         

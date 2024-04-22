@@ -30,7 +30,9 @@ Global_Parameters(*this, nullptr,juce::Identifier("Global_Parameters"), createGl
 Filter_Parameters(*this, nullptr, juce::Identifier("Filter_Parameters"), createFilterParameterLayout()),
 Delay_Parameters(*this, nullptr, juce::Identifier("Delay_Parameters"), createDelayParameterLayout()),
 Convolution_Parameters(*this, nullptr, juce::Identifier("Convolution_Parameters"), createConvolutionParameterLayout()),
-mainProcessor(new juce::AudioProcessorGraph()), Conv(Convolution_Parameters)
+DelayXpanse_Parameters(*this, nullptr, juce::Identifier("DelayXpanse_Parameters"), createXpanseParameterLayout()),
+Degrade_Parameters(*this, nullptr, juce::Identifier("Degrade_Parameters"), createDegradeParameterLayout()),
+filterEffect(Filter_Parameters), delayEffect(Delay_Parameters), convolutionEffect(Convolution_Parameters), xpanseEffect(DelayXpanse_Parameters), degradeEffect(Degrade_Parameters), mainProcessor(new juce::AudioProcessorGraph())
 {
     //Setting up audio processor value tree state objects and parameters above
     
@@ -50,12 +52,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     //Container for all parameters
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
-    auto slot1 = std::make_unique<juce::AudioParameterChoice>("slot1", "Slot1", processorChoices, 1);
-    auto slot2 = std::make_unique<juce::AudioParameterChoice>("slot2", "Slot2", processorChoices, 3);
+    auto slot1 = std::make_unique<juce::AudioParameterChoice>("slot1", "Slot1", processorChoices, 0);
+    auto slot2 = std::make_unique<juce::AudioParameterChoice>("slot2", "Slot2", processorChoices, 0);
+    auto slot3 = std::make_unique<juce::AudioParameterChoice>("slot3", "Slot3", processorChoices, 0);
+    //auto slot4 = std::make_unique<juce::AudioParameterChoice>("slot4", "Slot4", processorChoices, 0);
     
     //Efficiently add parameter to list
     params.push_back(std::move(slot1));
     params.push_back(std::move(slot2));
+    params.push_back(std::move(slot3));
+    //params.push_back(std::move(slot4));
     
     return {params.begin(), params.end()};
     
@@ -70,8 +76,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     //gain parameter itself
     auto gainParameter = std::make_unique<juce::AudioParameterFloat>("global_gain", //Parameter ID
                                                                      "Global_Gain", //Parameter Name
-                                                                     juce::NormalisableRange<float>(-48.0f, 0.0f), //Normalisable Range (Range of values for slider)
-                                                                     -6.0f, //Default Value
+                                                                     juce::NormalisableRange<float>(-48.0f, 10.0f), //Normalisable Range (Range of values for slider)
+                                                                     0.0f, //Default Value
                                                                      juce::String(), //PArameter Label (optional)
                                                                      juce::AudioProcessorParameter::genericParameter, //Parameter Category (optional)
                                                                      [](float value, int){return juce::String(value, 2);});
@@ -92,7 +98,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     auto filterToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_toggle", "Filter_Toggle", false);
     
-    auto filterGainParameter = std::make_unique<juce::AudioParameterFloat>("filter_gain", "Filter_Gain", juce::NormalisableRange<float>(-48.0f, 0.0f), -6.0f, juce::String(),
+    auto filterGainParameter = std::make_unique<juce::AudioParameterFloat>("filter_gain", "Filter_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     auto filterLFOToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_LFO_toggle", "Filter_LFO_Toggle", false);
     
@@ -122,7 +128,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     auto delayWetDryParameter = std::make_unique<juce::AudioParameterFloat>("delay_wetdry", "Delay_WetDry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
     
-    auto delayGainParameter = std::make_unique<juce::AudioParameterFloat>("delay_gain", "Delay_Gain", juce::NormalisableRange<float>(-48.0f, 0.0f), -6.0f, juce::String(),
+    auto delayGainParameter = std::make_unique<juce::AudioParameterFloat>("delay_gain", "Delay_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     
     auto delayLFOToggleParameter = std::make_unique<juce::AudioParameterBool>("delay_LFO_toggle", "Delay_LFO_Toggle", false);
@@ -148,10 +154,78 @@ juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::cr
     
     auto convWetDryParameter = std::make_unique<juce::AudioParameterFloat>("convolution_wetdry", "Convolution_WetDry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
     
+    auto convGainParameter = std::make_unique<juce::AudioParameterFloat>("conv_gain", "Conv_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    
+    auto impulseSelector = std::make_unique<juce::AudioParameterChoice>("selector", "Selector", IR_Choices, 0);
+    
     paramsConv.push_back(std::move(convToggleParameter));
     paramsConv.push_back(std::move(convWetDryParameter));
+    paramsConv.push_back(std::move(convGainParameter));
+    paramsConv.push_back(std::move(impulseSelector));
+    
     
     return {paramsConv.begin(), paramsConv.end()}; //Returning vector
+}
+
+//Delay-Xpanse Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createXpanseParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsXpanse;
+    
+    auto xpanseToggleParameter = std::make_unique<juce::AudioParameterBool>("xpanse_toggle", "Xpanse_Toggle", false);
+    
+    auto xpanseWetDryParameter = std::make_unique<juce::AudioParameterFloat>("xpanse_wetdry", "Xpanse_WetDry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
+    auto xpanseGainParameter = std::make_unique<juce::AudioParameterFloat>("xpanse_gain", "Xpanse_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    
+    auto pongdelayLParameter = std::make_unique<juce::AudioParameterFloat>("pong_delay_L_time", "Pong_Delay_L_Time", juce::NormalisableRange{0.0f, 1999.f, 1.f, 0.4f, false}, 200.f);
+    
+    auto pongfeedbackLParameter = std::make_unique<juce::AudioParameterFloat>("pong_delay_L_fdbk", "Pong_Delay_L_FDBK", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    
+    auto pongdelayRParameter = std::make_unique<juce::AudioParameterFloat>("pong_delay_R_time", "Pong_Delay_R_Time", juce::NormalisableRange{0.0f, 1999.f, 1.f, 0.4f, false}, 200.f);
+    
+    auto pongfeedbackRParameter = std::make_unique<juce::AudioParameterFloat>("pong_delay_R_fdbk", "Pong_Delay_R_FDBK", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    
+    paramsXpanse.push_back(std::move(xpanseToggleParameter));
+    paramsXpanse.push_back(std::move(xpanseWetDryParameter));
+    paramsXpanse.push_back(std::move(xpanseGainParameter));
+    paramsXpanse.push_back(std::move(pongdelayLParameter));
+    paramsXpanse.push_back(std::move(pongfeedbackLParameter));
+    paramsXpanse.push_back(std::move(pongdelayRParameter));
+    paramsXpanse.push_back(std::move(pongfeedbackRParameter));
+    
+    return {paramsXpanse.begin(), paramsXpanse.end()}; //Returning vector
+}
+
+//Degrade Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout NewProjectAudioProcessor::createDegradeParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsDegrade;
+    
+    auto degradeToggleParameter = std::make_unique<juce::AudioParameterBool>("degrade_toggle", "Degrade_Toggle", false);
+    
+    auto degradeWetDryParameter = std::make_unique<juce::AudioParameterFloat>("degrade_wetdry", "Degrade_WetDry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
+    auto degradeGainParameter = std::make_unique<juce::AudioParameterFloat>("degrade_gain", "Degrade_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(), juce::AudioProcessorParameter::genericParameter,[](float value, int){return juce::String(value, 2);});
+
+    auto PRE_cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("pre_cutoff_frequency", "Pre_Cutoff_Frequency", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.5f, false}, 20000.f);
+    
+    auto POST_cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("post_cutoff_frequency", "Post_Cutoff_Frequency", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.5f, false}, 20000.f);
+    
+    auto downsampleFrequency = std::make_unique<juce::AudioParameterFloat>("degrade_frequency", "Degrade_Frequency", juce::NormalisableRange{10.f, 48000.f, 0.1f, 0.6f, false}, 48000.f);
+    
+    paramsDegrade.push_back(std::move(degradeToggleParameter));
+    paramsDegrade.push_back(std::move(degradeWetDryParameter));
+    paramsDegrade.push_back(std::move(degradeGainParameter));
+    paramsDegrade.push_back(std::move(PRE_cutoffFrequencyParameter));
+    paramsDegrade.push_back(std::move(POST_cutoffFrequencyParameter));
+    paramsDegrade.push_back(std::move(downsampleFrequency));
+    
+    return {paramsDegrade.begin(), paramsDegrade.end()}; //Returning vector
 }
 //==============================================================================
 
@@ -220,22 +294,23 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     //Audio Proessor Graph Setup
-    mainProcessor->setPlayConfigDetails(getMainBusNumInputChannels(),
-                                        getMainBusNumOutputChannels(),
-                                        sampleRate, samplesPerBlock);
-    mainProcessor->prepareToPlay(sampleRate, samplesPerBlock);
-    initialiseGraph();
+    //mainProcessor->setPlayConfigDetails(getMainBusNumInputChannels(),
+                                        //getMainBusNumOutputChannels(),
+                                        //sampleRate, samplesPerBlock);
+    //mainProcessor->prepareToPlay(sampleRate, samplesPerBlock);
+    //initialiseGraph();
     
+    filterEffect.prepareToPlay(sampleRate, samplesPerBlock);
+    delayEffect.prepareToPlay(sampleRate, samplesPerBlock);
+    convolutionEffect.prepareToPlay(sampleRate, samplesPerBlock);
+    xpanseEffect.prepareToPlay(sampleRate, samplesPerBlock);
+    degradeEffect.prepareToPlay(sampleRate, samplesPerBlock);
     
     //Create Spec to set up effects
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = 2;
-    
-    
-    //TESTING
-    Conv.prepareToPlay(sampleRate, samplesPerBlock);
     
     
     //Global Effects
@@ -286,12 +361,15 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     
     
 //Audio processor graph setup and processing
-    updateGraph(); //Check for any changes to the graph
-    mainProcessor->processBlock(buffer, midiMessages); //Process this block through the graph
+    //updateGraph(); //Check for any changes to the graph
+    //mainProcessor->processBlock(buffer, midiMessages); //Process this block through the graph
     
+    filterEffect.processBlock(buffer, midiMessages);
+    delayEffect.processBlock(buffer, midiMessages);
+    convolutionEffect.processBlock(buffer, midiMessages);
+    xpanseEffect.processBlock(buffer, midiMessages);
+    degradeEffect.processBlock(buffer, midiMessages);
     
-//TESTING
-    Conv.processBlock(buffer, midiMessages);
     
 //Global parameters
     //get and set new gain and update previous(for ramp)
@@ -313,7 +391,7 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain, Delay_Parameters, Convolution_Parameters);
+    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain, Delay_Parameters, Convolution_Parameters, DelayXpanse_Parameters, Degrade_Parameters);
 }
 
 //==============================================================================
@@ -349,6 +427,16 @@ void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     juce::ValueTree convChild("Convolution_Parameters");
     convChild.copyPropertiesAndChildrenFrom(Convolution_Parameters.state, nullptr);
     combinedValueTree.addChild(convChild, -1, nullptr);
+
+    //Delay-Xpanse Effect Parameters
+    juce::ValueTree xpanseChild("Xpanse_Parameters");
+    xpanseChild.copyPropertiesAndChildrenFrom(DelayXpanse_Parameters.state, nullptr);
+    combinedValueTree.addChild(xpanseChild, -1, nullptr);
+    
+    //Degrade Effect Parameters
+    juce::ValueTree degradeChild("Degrade_Parameters");
+    degradeChild.copyPropertiesAndChildrenFrom(Degrade_Parameters.state, nullptr);
+    combinedValueTree.addChild(degradeChild, -1, nullptr);
     
     //Create XML file from combined tree
     std::unique_ptr<juce::XmlElement> CombinedXml (combinedValueTree.createXml());
@@ -376,6 +464,10 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
         juce::ValueTree delayValueTree = combinedValueTree.getChildWithName("Delay_Parameters");
         
         juce::ValueTree convValueTree = combinedValueTree.getChildWithName("Convolution_Parameters");
+        
+        juce::ValueTree xpanseValueTree = combinedValueTree.getChildWithName("Xpanse_Parameters");
+        
+        juce::ValueTree degradeValueTree = combinedValueTree.getChildWithName("Degrade_Parameters");
 
         // Set the state of Global_Parameters and Filter_Parameters using their respective value trees
         Global_Parameters.replaceState(globalValueTree);
@@ -383,6 +475,8 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
         Filter_Parameters.replaceState(filterValueTree);
         Delay_Parameters.replaceState(delayValueTree);
         Convolution_Parameters.replaceState(convValueTree);
+        DelayXpanse_Parameters.replaceState(xpanseValueTree);
+        Degrade_Parameters.replaceState(degradeValueTree);
     }
 }
 
@@ -392,7 +486,6 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new NewProjectAudioProcessor();
 }
-
 //================================ Audio Processor Graph Functions ==============================================
 //Following Cascading Plugin Effects tutorial
 
@@ -434,16 +527,20 @@ void NewProjectAudioProcessor::updateGraph()
     
     
     juce::Array<juce::AudioParameterChoice*> choices{dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot1")),
-        dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot2"))};
+                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot2")),
+                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot3")),
+                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot4"))};
     
     
     juce::ReferenceCountedArray<Node> slots;
     slots.add(slot1Node);
     slots.add(slot2Node);
+    slots.add(slot3Node);
+    //slots.add(slot4Node);
     
     //Loop through all choice parameters (the dropdown boxes in the chain menu) and check if any have changed, and if so what they have changed to
     //Null for empty, Filter for filter etc.
-    for(int i = 0; i<slots.size(); i++)
+    for(int i = 0; i<slots.size()-1; i++)
     {
         auto& choice = choices.getReference(i);
         auto slot = slots.getUnchecked(i);
@@ -496,6 +593,20 @@ void NewProjectAudioProcessor::updateGraph()
 //            slots.set(i, mainProcessor->addNode(std::make_unique<ConvolutionReverbEffectAudioProcessor>(Convolution_Parameters)));
 //            hasChanged = true;
 //        }
+        else if(choice->getIndex() == 4) //Convolution Reverb
+        {
+            if(slot != nullptr)
+            {
+                if(slot->getProcessor()->getName() == "Delay-Xpanse")
+                    continue;
+
+                mainProcessor->removeNode(slot.get());
+            }
+
+            slots.set(i, mainProcessor->addNode(std::make_unique<DelayXpanseEffectAudioProcessor>(DelayXpanse_Parameters)));
+            hasChanged = true;
+        }
+
     }
     
     
@@ -574,5 +685,7 @@ void NewProjectAudioProcessor::updateGraph()
     
     slot1Node = slots.getUnchecked(0);
     slot2Node = slots.getUnchecked(1);
+    slot3Node = slots.getUnchecked(2);
+    //slot4Node = slots.getUnchecked(3);
 }
 

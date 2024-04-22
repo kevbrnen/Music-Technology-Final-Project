@@ -4,8 +4,29 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
               jucerFormatVersion="1">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
+    <GROUP id="{06F2B293-6ABA-12FE-B248-6832C3010FCC}" name="DegradeEffect">
+      <FILE id="OeyCWk" name="DegradeEffectAudioProcessor.h" compile="0"
+            resource="0" file="Source/DegradeEffectAudioProcessor.h"/>
+      <FILE id="D6XLIO" name="DegradeEffectComponent.cpp" compile="1" resource="0"
+            file="Source/DegradeEffectComponent.cpp"/>
+      <FILE id="XlCAa1" name="DegradeEffectComponent.h" compile="0" resource="0"
+            file="Source/DegradeEffectComponent.h"/>
+    </GROUP>
+    <GROUP id="{D070F886-FA64-A568-3FDF-FC1316B9BF8D}" name="DelayXpanseEffect">
+      <FILE id="rcuPiw" name="DelayXpanseEffectAudioProcessor.h" compile="0"
+            resource="0" file="Source/DelayXpanseEffectAudioProcessor.h"/>
+      <FILE id="iOB1JZ" name="DelayXpanseEffectComponent.cpp" compile="1"
+            resource="0" file="Source/DelayXpanseEffectComponent.cpp"/>
+      <FILE id="PDTN4y" name="DelayXpanseEffectComponent.h" compile="0" resource="0"
+            file="Source/DelayXpanseEffectComponent.h"/>
+      <FILE id="oTu3XO" name="PingPongDelay.h" compile="0" resource="0" file="Source/PingPongDelay.h"/>
+    </GROUP>
     <GROUP id="{B379C059-32B4-2CB1-254E-468EB68DEADA}" name="ConvolutionReverbEffect">
       <GROUP id="{91BE5FB0-1E69-17CA-BD54-5AECAAAEAACF}" name="IRs">
+        <FILE id="fej5r8" name="DenContainer48k.wav" compile="0" resource="1"
+              file="Source/DenContainer48k.wav"/>
+        <FILE id="tbIybS" name="DenHall48k.wav" compile="0" resource="1" file="Source/DenHall48k.wav"/>
+        <FILE id="arCHtc" name="Tent48k.wav" compile="0" resource="1" file="Source/Tent48k.wav"/>
         <FILE id="x7lxRc" name="ChurchIR1.wav" compile="0" resource="1" file="Source/ChurchIR1.wav"/>
       </GROUP>
       <FILE id="V2YgLO" name="ConvolutionReverbEffectAudioProcessor.h" compile="0"
@@ -14,6 +35,8 @@
             resource="0" file="Source/ConvolutionReverbEffectComponent.cpp"/>
       <FILE id="HO1Y9a" name="ConvolutionReverbEffectComponent.h" compile="0"
             resource="0" file="Source/ConvolutionReverbEffectComponent.h"/>
+      <FILE id="b9yWGd" name="WaveformThumbnailComponent.h" compile="0" resource="0"
+            file="Source/WaveformThumbnailComponent.h"/>
     </GROUP>
     <GROUP id="{E2ACCCC9-E748-8E4C-D99B-94EF70CFF040}" name="LFOs">
       <FILE id="pExuHg" name="LFOThumbnailComponent.h" compile="0" resource="0"

@@ -53,6 +53,35 @@ ConvolutionReverbEffectComponent::ConvolutionReverbEffectComponent(juce::AudioPr
     ConvolutionWDLabel.setText("Wet/Dry Amount", juce::dontSendNotification);
     ConvolutionWDLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(ConvolutionWDLabel);
+    
+//Gain Slider
+    ConvolutionGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    gainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "conv_gain", ConvolutionGainSlider));
+    ConvolutionGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    ConvolutionGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    ConvolutionGainSlider.setTextValueSuffix("dB");
+    ConvolutionGainSlider.setRange(-48.0, 10.0);
+    addAndMakeVisible(ConvolutionGainSlider);
+    
+    ConvolutionGainLabel.setText("Convolution Effect Gain", juce::dontSendNotification);
+    ConvolutionGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(ConvolutionGainLabel);
+    
+//Waveform Display
+    addAndMakeVisible(waveformComponent);
+    
+//Combobox
+    IRSelector.addItemList(Impulses, 1);
+    IRSelector.setSelectedId(1);
+    IR_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(vts, "selector", IRSelector));
+    IRSelector.onChange = [this, &vts]()
+    {
+        updateThumbnail();
+        waveformComponent.setVisible(false);
+        waveformComponent.setVisible(true);
+    };
+    addAndMakeVisible(IRSelector);
+    
 
 }
 
@@ -71,6 +100,7 @@ void ConvolutionReverbEffectComponent::paint (juce::Graphics& g)
     g.setFont (14.0f);
     g.drawText ("ConvolutionReverbEffectComponent", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
+    
 }
 
 void ConvolutionReverbEffectComponent::resized()
@@ -78,6 +108,47 @@ void ConvolutionReverbEffectComponent::resized()
     Convolution_Toggle.setBounds(getWidth()-60, 20, 50, 25);
     ToggleLabel.attachToComponent(&Convolution_Toggle, true);
     
-    ConvolutionWDSlider.setBounds(100, getHeight()/4, 250, 250);
+    ConvolutionWDSlider.setBounds(getWidth()-275, getHeight()*2/4, 250, 250);
     ConvolutionWDLabel.attachToComponent(&ConvolutionWDSlider, true);
+    
+    ConvolutionGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
+    ConvolutionGainLabel.attachToComponent(&ConvolutionGainSlider, true);
+    
+    waveformComponent.setBounds(20, 20, getWidth()*7/10, 225);
+    
+    IRSelector.setBounds(20, 260, 200, 30);
+}
+
+void ConvolutionReverbEffectComponent::updateThumbnail()
+{
+    auto IR = IRSelector.getSelectedId();
+    
+    if(IR != lastIR)
+    {
+        switch(IR)
+        {
+            case 1: //Church
+                this->data = BinaryData::ChurchIR1_wav;
+                this->Size = BinaryData::ChurchIR1_wavSize;
+                break;
+            case 2:
+                this->data = BinaryData::DenContainer48k_wav;
+                this->Size = BinaryData::DenContainer48k_wavSize;
+                break;
+            case 3:
+                this->data = BinaryData::DenHall48k_wav;
+                this->Size = BinaryData::DenHall48k_wavSize;
+                break;
+            case 4:
+                this->data = BinaryData::Tent48k_wav;
+                this->Size = BinaryData::Tent48k_wavSize;
+                break;
+            default:
+                break;
+        }
+        
+        waveformComponent.setFile(data, Size);
+        
+        lastIR = IR;
+    }
 }

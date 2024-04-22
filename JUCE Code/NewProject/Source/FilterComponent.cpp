@@ -90,7 +90,7 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     filterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
     filterGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
     filterGainSlider.setTextValueSuffix("dB");
-    filterGainSlider.setRange(-48.0, 0.0);
+    filterGainSlider.setRange(-48.0, 10.0);
     addAndMakeVisible(filterGainSlider);
     
     filterGainLabel.setText("Filter Gain", juce::dontSendNotification);

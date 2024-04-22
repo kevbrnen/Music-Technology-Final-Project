@@ -123,7 +123,7 @@ DelayEffectComponent::DelayEffectComponent(juce::AudioProcessorValueTreeState& v
     delayGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
     delayGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
     delayGainSlider.setTextValueSuffix("dB");
-    delayGainSlider.setRange(-48.0, 0.0);
+    delayGainSlider.setRange(-48.0, 10.0);
     addAndMakeVisible(delayGainSlider);
     
     delayGainLabel.setText("Delay Effect Gain", juce::dontSendNotification);

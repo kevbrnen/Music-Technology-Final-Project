@@ -10,16 +10,16 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts): AudioProcessorEditor (&p), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), homeScreenComponent(Fvts, Dvts, Cvts), procChainComponent(ProcChain)
+NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts): AudioProcessorEditor (&p), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), homeScreenComponent(Fvts, Dvts, Cvts, Xvts, DGvts), procChainComponent(ProcChain)
 {
     addAndMakeVisible(globalComponent);
     
     addAndMakeVisible(homeScreenComponent);
     
-    addAndMakeVisible(procChainComponent);
-    procChainComponent.toFront(true);
-    procChainComponent.setEnabled(false);
-    procChainComponent.setVisible(false);
+    //addAndMakeVisible(procChainComponent);
+    //procChainComponent.toFront(true);
+    //procChainComponent.setEnabled(false);
+    //procChainComponent.setVisible(false);
 
     
     
@@ -45,7 +45,7 @@ void NewProjectAudioProcessorEditor::resized()
     
     homeScreenComponent.setBounds(0, globalComponentHeight, getWidth(), effectHeight);
     
-    procChainComponent.setBounds(0,  globalComponentHeight, getWidth()/2, effectHeight/2);
+    //procChainComponent.setBounds(0,  globalComponentHeight, getWidth()/2, effectHeight/2);
 }
 
 void NewProjectAudioProcessorEditor::toggleChainMenu()
