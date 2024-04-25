@@ -50,16 +50,16 @@ public:
         addAndMakeVisible(homeButton);
         
 //Chain Menu Button
-//        chainMenuButton.setButtonText("Chain");
-//        chainMenuButton.setClickingTogglesState(true);
-//        chainMenuButton.onClick = [this, &pc](){
-//            pc.setEnabled(chainMenuButton.getToggleState());
-//            pc.setVisible(chainMenuButton.getToggleState());
-//
-//        };
-//        chainMenuButton.setEnabled(true);
-//        chainMenuButton.setVisible(true);
-//        addAndMakeVisible(chainMenuButton);
+        chainMenuButton.setButtonText("Chain");
+        chainMenuButton.setClickingTogglesState(true);
+        chainMenuButton.onClick = [this, &pc](){
+            pc.setEnabled(chainMenuButton.getToggleState());
+            pc.setVisible(chainMenuButton.getToggleState());
+
+        };
+        chainMenuButton.setEnabled(true);
+        chainMenuButton.setVisible(true);
+        addAndMakeVisible(chainMenuButton);
     }
 
     ~GlobalControlsComponent() override
@@ -90,7 +90,7 @@ public:
         auto buttonWidth = 100;
         auto buttonHeight = 50;
         homeButton.setBounds(10, getLocalBounds().getHeight()/6, buttonWidth, buttonHeight);
-        //chainMenuButton.setBounds(10 + buttonWidth + 10, getLocalBounds().getHeight()/6, buttonWidth, buttonHeight);
+        chainMenuButton.setBounds(10 + buttonWidth + 10, getLocalBounds().getHeight()/6, buttonWidth, buttonHeight);
         
     }
 
@@ -103,7 +103,7 @@ private:
     juce::Label gainLabel;
     
     juce::TextButton homeButton;
-    //juce::TextButton chainMenuButton;
+    juce::TextButton chainMenuButton;
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GlobalControlsComponent)

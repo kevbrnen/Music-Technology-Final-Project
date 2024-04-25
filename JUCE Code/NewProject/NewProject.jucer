@@ -70,6 +70,8 @@
             file="Source/LowpassFilter.cpp"/>
     </GROUP>
     <GROUP id="{CBDF06D9-8064-D029-CBA1-E68CC7318A83}" name="Source">
+      <FILE id="AJoriT" name="PluginParameterLayout.h" compile="0" resource="0"
+            file="Source/PluginParameterLayout.h"/>
       <FILE id="goCPiO" name="ProcessingChainSelectionComponent.h" compile="0"
             resource="0" file="Source/ProcessingChainSelectionComponent.h"/>
       <FILE id="QUj4fW" name="HomeScreenComponent.h" compile="0" resource="0"

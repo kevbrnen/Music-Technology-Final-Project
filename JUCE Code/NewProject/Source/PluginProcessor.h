@@ -23,27 +23,10 @@ class NewProjectAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    //Audio Processor Graph Public
-    using AudioGraphIOProcessor = juce::AudioProcessorGraph::AudioGraphIOProcessor;
-    using Node = juce::AudioProcessorGraph::Node;
-    
-    juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade"};  //Effects that can be added to the chain
-    
-    juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"};
-
-    //==============================================================================
     NewProjectAudioProcessor();
     ~NewProjectAudioProcessor() override;
 
     //==============================================================================
-    //Parameter layouts for different tree types
-    juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLayout();
-    juce::AudioProcessorValueTreeState::ParameterLayout createGlobalParameterLayout();
-    juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout();
-    juce::AudioProcessorValueTreeState::ParameterLayout createDelayParameterLayout();
-    juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLayout();
-    juce::AudioProcessorValueTreeState::ParameterLayout createXpanseParameterLayout();
-    juce::AudioProcessorValueTreeState::ParameterLayout createDegradeParameterLayout();
     
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -91,23 +74,11 @@ private:
     DelayXpanseEffectAudioProcessor xpanseEffect;
     DegradeEffectAudioProcessor degradeEffect;
     
-    //For AudioProcessorGraph (Chain of effects)
-    void initialiseGraph();
-    void connectAudioNodes();
-    void connectMidiNodes();
-    void updateGraph();
+    //For Processing chain
+    void updateChain();
+    int effects[5] = {0, 0, 0, 0, 0};
+    int numSlots;
     
-    std::unique_ptr<juce::AudioProcessorGraph> mainProcessor;
-    
-    Node::Ptr audioInputNode;
-    Node::Ptr audioOutputNode;
-    Node::Ptr midiInputNode;
-    Node::Ptr midiOutputNode;
-    
-    Node::Ptr slot1Node;
-    Node::Ptr slot2Node;
-    Node::Ptr slot3Node;
-    //Node::Ptr slot4Node;
     
     //Global Parameters
     std::atomic<float>* globalGain = nullptr;

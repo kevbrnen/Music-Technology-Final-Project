@@ -16,10 +16,10 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioPr
     
     addAndMakeVisible(homeScreenComponent);
     
-    //addAndMakeVisible(procChainComponent);
-    //procChainComponent.toFront(true);
-    //procChainComponent.setEnabled(false);
-    //procChainComponent.setVisible(false);
+    addAndMakeVisible(procChainComponent);
+    procChainComponent.toFront(true);
+    procChainComponent.setEnabled(false);
+    procChainComponent.setVisible(false);
 
     
     
@@ -45,7 +45,7 @@ void NewProjectAudioProcessorEditor::resized()
     
     homeScreenComponent.setBounds(0, globalComponentHeight, getWidth(), effectHeight);
     
-    //procChainComponent.setBounds(0,  globalComponentHeight, getWidth()/2, effectHeight/2);
+    procChainComponent.setBounds(0,  globalComponentHeight, getWidth()/2, effectHeight/2);
 }
 
 void NewProjectAudioProcessorEditor::toggleChainMenu()
