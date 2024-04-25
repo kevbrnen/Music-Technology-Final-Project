@@ -41,6 +41,10 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoffFrequencyAttachment;
     juce::Label cutoffFrequencyLabel;
     
+    juce::Slider resonanceSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>resonanceAttachment;
+    juce::Label resonanceLabel;
+    
     
     juce::Slider filterGainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;

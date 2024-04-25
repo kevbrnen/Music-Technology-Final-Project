@@ -83,6 +83,14 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     cutoffFrequencyLabel.setText("Cutoff Frequency", juce::dontSendNotification);
     addAndMakeVisible(cutoffFrequencyLabel);
     
+//Resonance Slider
+    resonanceSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    resonanceAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "resonance", resonanceSlider));
+    addAndMakeVisible(resonanceSlider);
+    
+    resonanceLabel.setText("Resonance", juce::dontSendNotification);
+    addAndMakeVisible(resonanceLabel);
+    
     
 //Gain Slider
     filterGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -131,6 +139,9 @@ void FilterComponent::resized()
     
     cutoffFrequencySlider.setBounds(15, 35, 100, getHeight()-50);
     cutoffFrequencyLabel.setBounds(10, 30, 75, 50);
+    
+    resonanceSlider.setBounds(200, getHeight()/4, 200, 200);
+    resonanceLabel.attachToComponent(&resonanceSlider, true);
     
     LFOThumb.setBounds(getWidth()-200, 300, 190, 75);
 }

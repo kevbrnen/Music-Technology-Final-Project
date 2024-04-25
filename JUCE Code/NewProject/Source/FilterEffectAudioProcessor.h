@@ -22,6 +22,7 @@ public:
     {
         //Variables from APVTS for Filter parameters
         FilterCutoffFrequency = Filter_Parameters.getRawParameterValue("cutoff_frequency");
+        FilterResonance = Filter_Parameters.getRawParameterValue("resonance");
         Filt_on = Filter_Parameters.getRawParameterValue("filter_toggle");
         FilterGain = Filter_Parameters.getRawParameterValue("filter_gain");
         Filter_LFO_on = Filter_Parameters.getRawParameterValue("filter_LFO_toggle");
@@ -44,6 +45,7 @@ public:
         //Setup LPF
         LPF.setSpec(pluginSpec);
         LPF.setCutoff(750);
+        LPF.setResonance(0);
         
         //Gain
         lastGain = juce::Decibels::decibelsToGain(*Filter_Parameters.getRawParameterValue("filter_gain") + 0.0);
@@ -55,6 +57,10 @@ public:
         auto effectOn = Filt_on->load(); //Process if effect on
         if(effectOn != 0.0f)
         {
+            //Get and set resonance
+            auto res = FilterResonance->load();
+            LPF.setResonance(res);
+            
             //Get and set new cutoff frequency
             auto LFOOn = Filter_LFO_on->load();
             if(LFOOn != 0.0f)
@@ -98,6 +104,7 @@ private:
     juce::dsp::ProcessSpec pluginSpec;
     LowpassFilter LPF;
     std::atomic<float>* FilterCutoffFrequency = nullptr;
+    std::atomic<float>* FilterResonance = nullptr;
     std::atomic<float>* Filt_on = nullptr;
     std::atomic<float>* FilterGain = nullptr;
     float lastGain;

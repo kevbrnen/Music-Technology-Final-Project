@@ -22,11 +22,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLay
     //Container for all parameters
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
-    auto slot1 = std::make_unique<juce::AudioParameterChoice>("slot1", "Slot1", processorChoices, 0);
-    auto slot2 = std::make_unique<juce::AudioParameterChoice>("slot2", "Slot2", processorChoices, 0);
-    auto slot3 = std::make_unique<juce::AudioParameterChoice>("slot3", "Slot3", processorChoices, 0);
-    auto slot4 = std::make_unique<juce::AudioParameterChoice>("slot4", "Slot4", processorChoices, 0);
-    auto slot5 = std::make_unique<juce::AudioParameterChoice>("slot5", "Slot5", processorChoices, 0);
+    auto slot1 = std::make_unique<juce::AudioParameterChoice>("slot1", "Slot1", processorChoices, 1);
+    auto slot2 = std::make_unique<juce::AudioParameterChoice>("slot2", "Slot2", processorChoices, 2);
+    auto slot3 = std::make_unique<juce::AudioParameterChoice>("slot3", "Slot3", processorChoices, 3);
+    auto slot4 = std::make_unique<juce::AudioParameterChoice>("slot4", "Slot4", processorChoices, 4);
+    auto slot5 = std::make_unique<juce::AudioParameterChoice>("slot5", "Slot5", processorChoices, 5);
     
     //Efficiently add parameter to list
     params.push_back(std::move(slot1));
@@ -68,6 +68,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout(
     
     auto cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("cutoff_frequency", "Cutoff_Frequency", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f);
     
+    auto resonanceParameter = std::make_unique<juce::AudioParameterFloat>("resonance", "Resonance", juce::NormalisableRange{0.f, 10.f, 0.01f, 1.f, false}, 0.1f);
+    
     auto filterToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_toggle", "Filter_Toggle", false);
     
     auto filterGainParameter = std::make_unique<juce::AudioParameterFloat>("filter_gain", "Filter_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
@@ -76,6 +78,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout(
     
     //Efficiently add parameter to list
     paramsFilt.push_back(std::move(cutoffFrequencyParameter));
+    paramsFilt.push_back(std::move(resonanceParameter));
     paramsFilt.push_back(std::move(filterToggleParameter));
     paramsFilt.push_back(std::move(filterGainParameter));
     paramsFilt.push_back(std::move(filterLFOToggleParameter));
