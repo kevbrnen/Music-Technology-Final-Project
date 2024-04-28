@@ -23,6 +23,10 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    
+    void setPingPongComponents(bool show);
+    
+    void setSpectralComponents(bool show);
 
 private:
     juce::TextButton Xpanse_Toggle;

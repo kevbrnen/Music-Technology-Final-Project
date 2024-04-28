@@ -36,6 +36,10 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>ConvolutionWDAttachment;
     juce::Label ConvolutionWDLabel;
     
+    juce::Slider ConvolutionPreGainSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>preGainAttachment;
+    juce::Label ConvolutionPreGainLabel;
+    
     juce::Slider ConvolutionGainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
     juce::Label ConvolutionGainLabel;

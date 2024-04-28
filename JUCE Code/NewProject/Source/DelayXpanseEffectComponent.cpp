@@ -165,7 +165,23 @@ void DelayXpanseEffectComponent::resized()
     pingPongFDBKSlider_R.setBounds(350, 3*getHeight()/4, 100, 100);
     FDBKLabel_L.attachToComponent(&pingPongFDBKSlider_L, true);
     FDBKLabel_R.attachToComponent(&pingPongFDBKSlider_R, true);
+    setPingPongComponents(false);
     
-    
+}
 
+void DelayXpanseEffectComponent::setPingPongComponents(bool show)
+{
+    pingPongDelaySlider_L.setVisible(show);
+    pingPongDelaySlider_L.setEnabled(show);
+    pingPongDelaySlider_R.setVisible(show);
+    pingPongDelaySlider_R.setEnabled(show);
+    DelayLabel_L.setVisible(show);
+    DelayLabel_R.setVisible(show);
+    
+    pingPongFDBKSlider_L.setVisible(show);
+    pingPongFDBKSlider_L.setEnabled(show);
+    pingPongFDBKSlider_R.setVisible(show);
+    pingPongFDBKSlider_R.setEnabled(show);
+    FDBKLabel_L.setVisible(show);
+    FDBKLabel_R.setVisible(show);
 }

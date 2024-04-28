@@ -54,6 +54,20 @@ ConvolutionReverbEffectComponent::ConvolutionReverbEffectComponent(juce::AudioPr
     ConvolutionWDLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(ConvolutionWDLabel);
     
+//PreGain Slider
+    ConvolutionPreGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    preGainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "conv_pre_gain", ConvolutionPreGainSlider));
+    ConvolutionPreGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    ConvolutionPreGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    ConvolutionPreGainSlider.setTextValueSuffix("dB");
+    ConvolutionPreGainSlider.setRange(-48.0, 10.0);
+    addAndMakeVisible(ConvolutionPreGainSlider);
+    
+    ConvolutionPreGainLabel.setText("Pre Gain", juce::dontSendNotification);
+    ConvolutionPreGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(ConvolutionPreGainLabel);
+    
+    
 //Gain Slider
     ConvolutionGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     gainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "conv_gain", ConvolutionGainSlider));
@@ -109,7 +123,11 @@ void ConvolutionReverbEffectComponent::resized()
     ToggleLabel.attachToComponent(&Convolution_Toggle, true);
     
     ConvolutionWDSlider.setBounds(getWidth()-275, getHeight()*2/4, 250, 250);
-    ConvolutionWDLabel.attachToComponent(&ConvolutionWDSlider, true);
+    ConvolutionWDLabel.attachToComponent(&ConvolutionWDSlider, false);
+    ConvolutionWDLabel.setJustificationType(juce::Justification::centred);
+    
+    ConvolutionPreGainSlider.setBounds(getWidth() - 500, (getHeight()*2/4)+50, 200, 200);
+    ConvolutionPreGainLabel.attachToComponent(&ConvolutionPreGainSlider, true);
     
     ConvolutionGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
     ConvolutionGainLabel.attachToComponent(&ConvolutionGainSlider, true);

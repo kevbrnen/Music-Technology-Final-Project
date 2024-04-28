@@ -129,6 +129,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLa
     
     auto convWetDryParameter = std::make_unique<juce::AudioParameterFloat>("convolution_wetdry", "Convolution_WetDry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
     
+    auto convPreGainParameter = std::make_unique<juce::AudioParameterFloat>("conv_pre_gain", "Conv_Pre_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    
     auto convGainParameter = std::make_unique<juce::AudioParameterFloat>("conv_gain", "Conv_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     
@@ -136,6 +139,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLa
     
     paramsConv.push_back(std::move(convToggleParameter));
     paramsConv.push_back(std::move(convWetDryParameter));
+    paramsConv.push_back(std::move(convPreGainParameter));
     paramsConv.push_back(std::move(convGainParameter));
     paramsConv.push_back(std::move(impulseSelector));
     
@@ -164,13 +168,54 @@ juce::AudioProcessorValueTreeState::ParameterLayout createXpanseParameterLayout(
     
     auto pongfeedbackRParameter = std::make_unique<juce::AudioParameterFloat>("pong_delay_R_fdbk", "Pong_Delay_R_FDBK", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
     
+    
+    auto band1Gain = std::make_unique<juce::AudioParameterFloat>("spec_band1_gain", "Spec_Band1_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    auto band2Gain = std::make_unique<juce::AudioParameterFloat>("spec_band2_gain", "Spec_Band2_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    auto band3Gain = std::make_unique<juce::AudioParameterFloat>("spec_band3_gain", "Spec_Band3_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    auto band4Gain = std::make_unique<juce::AudioParameterFloat>("spec_band4_gain", "Spec_Band4_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    
+    auto band1time = std::make_unique<juce::AudioParameterFloat>("spec_band1_time", "Spec_Band1_Time", juce::NormalisableRange{0.0f, 1499.f, 1.f, 0.4f, false}, 200.f);
+    auto band2time = std::make_unique<juce::AudioParameterFloat>("spec_band2_time", "Spec_Band1_Time", juce::NormalisableRange{0.0f, 1499.f, 1.f, 0.4f, false}, 200.f);
+    auto band3time = std::make_unique<juce::AudioParameterFloat>("spec_band3_time", "Spec_Band1_Time", juce::NormalisableRange{0.0f, 1499.f, 1.f, 0.4f, false}, 200.f);
+    auto band4time = std::make_unique<juce::AudioParameterFloat>("spec_band4_time", "Spec_Band1_Time", juce::NormalisableRange{0.0f, 1499.f, 1.f, 0.4f, false}, 200.f);
+    
+    auto band1fdbk = std::make_unique<juce::AudioParameterFloat>("spec_band1_fdbk", "Spec_Band1_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    auto band2fdbk = std::make_unique<juce::AudioParameterFloat>("spec_band2_fdbk", "Spec_Band2_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    auto band3fdbk = std::make_unique<juce::AudioParameterFloat>("spec_band3_fdbk", "Spec_Band3_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    auto band4fdbk = std::make_unique<juce::AudioParameterFloat>("spec_band4_fdbk", "Spec_Band4_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    
+    auto cutoff1 = std::make_unique<juce::AudioParameterFloat>("spec_cutoff1", "Spec_Cutoff1", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f);
+    auto cutoff2 = std::make_unique<juce::AudioParameterFloat>("spec_cutoff2", "Spec_Cutoff2", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 2000.f);
+    auto cutoff3 = std::make_unique<juce::AudioParameterFloat>("spec_cutoff3", "Spec_Cutoff3", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 6000.f);
+    
     paramsXpanse.push_back(std::move(xpanseToggleParameter));
     paramsXpanse.push_back(std::move(xpanseWetDryParameter));
     paramsXpanse.push_back(std::move(xpanseGainParameter));
+    
     paramsXpanse.push_back(std::move(pongdelayLParameter));
     paramsXpanse.push_back(std::move(pongfeedbackLParameter));
     paramsXpanse.push_back(std::move(pongdelayRParameter));
     paramsXpanse.push_back(std::move(pongfeedbackRParameter));
+    
+    paramsXpanse.push_back(std::move(band1Gain));
+    paramsXpanse.push_back(std::move(band2Gain));
+    paramsXpanse.push_back(std::move(band3Gain));
+    paramsXpanse.push_back(std::move(band4Gain));
+    paramsXpanse.push_back(std::move(band1time));
+    paramsXpanse.push_back(std::move(band2time));
+    paramsXpanse.push_back(std::move(band3time));
+    paramsXpanse.push_back(std::move(band4time));
+    paramsXpanse.push_back(std::move(band1fdbk));
+    paramsXpanse.push_back(std::move(band2fdbk));
+    paramsXpanse.push_back(std::move(band3fdbk));
+    paramsXpanse.push_back(std::move(band4fdbk));
+    paramsXpanse.push_back(std::move(cutoff1));
+    paramsXpanse.push_back(std::move(cutoff2));
+    paramsXpanse.push_back(std::move(cutoff3));
     
     return {paramsXpanse.begin(), paramsXpanse.end()}; //Returning vector
 }

@@ -60,6 +60,8 @@ public:
             dry.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
             dry.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
             
+            auto preGain = juce::Decibels::decibelsToGain(*ConvolutionReverb_Parameters.getRawParameterValue("conv_pre_gain") + 0.0);
+            buffer.applyGain(preGain);
             
             
             juce::dsp::AudioBlock<float> block (buffer);
