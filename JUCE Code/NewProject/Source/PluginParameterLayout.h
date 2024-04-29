@@ -247,12 +247,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout createDegradeParameterLayout
     
     auto downsampleFrequency = std::make_unique<juce::AudioParameterFloat>("degrade_frequency", "Degrade_Frequency", juce::NormalisableRange{10.f, 48000.f, 0.1f, 0.6f, false}, 48000.f);
     
+    auto bitcrushToggleParameter = std::make_unique<juce::AudioParameterBool>("bitcrush_toggle", "Bitcrush_Toggle", false);
+    
+    auto bitRate = std::make_unique<juce::AudioParameterFloat>("bitcrush_rate", "Bitcrush_Rate", juce::NormalisableRange{1.f, 24.f, 1.f, 1.f, false}, 24.f);
+    
     paramsDegrade.push_back(std::move(degradeToggleParameter));
     paramsDegrade.push_back(std::move(degradeWetDryParameter));
     paramsDegrade.push_back(std::move(degradeGainParameter));
     paramsDegrade.push_back(std::move(PRE_cutoffFrequencyParameter));
     paramsDegrade.push_back(std::move(POST_cutoffFrequencyParameter));
     paramsDegrade.push_back(std::move(downsampleFrequency));
+    paramsDegrade.push_back(std::move(bitcrushToggleParameter));
+    paramsDegrade.push_back(std::move(bitRate));
     
     return {paramsDegrade.begin(), paramsDegrade.end()}; //Returning vector
 }

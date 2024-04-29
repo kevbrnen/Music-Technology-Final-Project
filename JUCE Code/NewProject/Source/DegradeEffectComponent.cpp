@@ -105,6 +105,47 @@ DegradeEffectComponent::DegradeEffectComponent(juce::AudioProcessorValueTreeStat
     DegradeFrequencyLabel.setText("Degrade Frequency", juce::dontSendNotification);
     DegradeFrequencyLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(DegradeFrequencyLabel);
+    
+//Bitcrush Toggle
+    Bitcrush_Toggle.setClickingTogglesState(true);
+    Bitcrush_Toggle.setButtonText("OFF");
+    Bitcrush_Toggle.setEnabled(true);
+    Bitcrush_Toggle.setVisible(true);
+    Bitcrush_Toggle.onClick = [this, &vts]()
+    {
+        if(Bitcrush_Toggle.getToggleState())
+        {
+            Bitcrush_Toggle.setColour(juce::TextButton::buttonOnColourId, juce::Colours::green);
+            Bitcrush_Toggle.setButtonText("ON");
+            vts.state.setProperty("bitcrush_toggle", true, nullptr);
+            
+        }
+        else
+        {
+            Bitcrush_Toggle.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+            Bitcrush_Toggle.setButtonText("OFF");
+            vts.state.setProperty("bitcrush_toggle", false, nullptr);
+        }
+    };
+    Bitcrush_OnOff_Attachment.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(vts, "bitcrush_toggle", Bitcrush_Toggle));
+    addAndMakeVisible(Bitcrush_Toggle);
+    
+    BitcrushToggleLabel.setText("Bitcrusher ", juce::dontSendNotification);
+    BitcrushToggleLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(BitcrushToggleLabel);
+    
+//Bitcrush rate slider
+    BitcrushRateSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    BitcrushRateAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "bitcrush_rate", BitcrushRateSlider));
+    BitcrushRateSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    BitcrushRateSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    BitcrushRateSlider.setTextValueSuffix("Bit");
+    BitcrushRateSlider.setRange(1, 24);
+    addAndMakeVisible(BitcrushRateSlider);
+    
+    BitcrushRateLabel.setText("Bit Rate", juce::dontSendNotification);
+    BitcrushRateLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(BitcrushRateLabel);
 
 }
 
@@ -140,10 +181,16 @@ void DegradeEffectComponent::resized()
     DegradePRECutoff.setBounds(getWidth()/2, getHeight()/6, 150, 150);
     DegradePRECutoffLabel.attachToComponent(&DegradePRECutoff, true);
     
-    DegradePOSTCutoff.setBounds(getWidth()/2, 4*(getHeight()/6), 150, 150);
+    DegradePOSTCutoff.setBounds(getWidth()/2, 3*(getHeight()/6)+50, 150, 150);
     DegradePOSTCutoffLabel.attachToComponent(&DegradePOSTCutoff, true);
     
-    DegradeFrequencySlider.setBounds(100, getHeight()/4, 250, 250);
+    DegradeFrequencySlider.setBounds(100, 20, 200, 200);
     DegradeFrequencyLabel.attachToComponent(&DegradeFrequencySlider, true);
+    
+    BitcrushRateSlider.setBounds(100, getHeight()/2 + 20, 200, 200);
+    BitcrushRateLabel.attachToComponent(&BitcrushRateSlider, true);
+    
+    Bitcrush_Toggle.setBounds(320, getHeight()/2 + 20, 50, 25);
+    BitcrushToggleLabel.attachToComponent(&Bitcrush_Toggle, true);
 
 }

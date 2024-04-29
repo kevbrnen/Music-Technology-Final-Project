@@ -48,5 +48,13 @@ private:
     juce::Slider DegradeFrequencySlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>FrequencyAttachment;
     juce::Label DegradeFrequencyLabel;
+    
+    juce::TextButton Bitcrush_Toggle;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>Bitcrush_OnOff_Attachment;
+    juce::Label BitcrushToggleLabel;
+    
+    juce::Slider BitcrushRateSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>BitcrushRateAttachment;
+    juce::Label BitcrushRateLabel;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DegradeEffectComponent)
 };

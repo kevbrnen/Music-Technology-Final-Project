@@ -26,6 +26,8 @@ public:
         Degrade_PRE_cutoff = Degrade_Parameters.getRawParameterValue("pre_cutoff_frequency");
         Degrade_POST_cutoff = Degrade_Parameters.getRawParameterValue("post_cutoff_frequency");
         Degrade_Frequency = Degrade_Parameters.getRawParameterValue("degrade_frequency");
+        Bitcrush_on = Degrade_Parameters.getRawParameterValue("bitcrush_toggle");
+        Bitcrush_rate = Degrade_Parameters.getRawParameterValue("bitcrush_rate");
     };
     
     ~DegradeEffectAudioProcessor(){};
@@ -72,6 +74,9 @@ public:
             auto fs_new = Degrade_Frequency->load();
             N = (int)(sampleRate/fs_new);
             
+            auto bitOn = Bitcrush_on->load();
+            this->BitRate = (int)Bitcrush_rate->load();
+            
             
             LPF_Pre.setCutoffFrequency(NewCutoffFrequency_Pre);
             LPF_Pre.processBlock(buffer);
@@ -85,13 +90,20 @@ public:
                     
                     if(sample % N == 0)
                     {
-                        outData[sample] = inData[sample];
+                        //Quantize to current bit rate
+                        if(bitOn != 0.0f)
+                        {
+                            outData[sample] = truncateSample(inData[sample], BitRate);
+                        }
+                        else
+                        {
+                            outData[sample] = inData[sample];
+                        }
                     }
                     else
                     {
                         outData[sample] = 0.0f;
                     }
-                    
                 }
              }
             
@@ -128,6 +140,15 @@ public:
         }
     };
     
+    float truncateSample(float sample, int bitRate)
+    {
+        float scaledSample = sample * (1 << bitRate);
+        
+        float crushedSample = floor(scaledSample) / (1 << bitRate);
+        
+        return crushedSample;
+    };
+    
     juce::AudioProcessorValueTreeState& Degrade_Parameters;
     
 private:
@@ -144,6 +165,10 @@ private:
     std::atomic<float>* Degrade_Frequency = nullptr;
     int N = 0;
     float sampleRate;
+    
+    std::atomic<float>* Bitcrush_on = nullptr;
+    std::atomic<float>* Bitcrush_rate = nullptr;
+    int BitRate;
     
     juce::dsp::ProcessSpec pluginSpec;
     VariableFilter LPF_Pre, LPF_Post;
