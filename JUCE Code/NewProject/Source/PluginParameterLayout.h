@@ -16,6 +16,8 @@ juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "D
 juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"};
 
 juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
+
+juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"};
 //==============================================================================
 
 //Processing Chain
@@ -164,6 +166,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createXpanseParameterLayout(
     
     auto xpanseGainParameter = std::make_unique<juce::AudioParameterFloat>("xpanse_gain", "Xpanse_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
+    auto typeSelector = std::make_unique<juce::AudioParameterChoice>("xpanse_type", "Xpanse_Type", Xpanse_Choices, 0);
     
     auto pongdelayLParameter = std::make_unique<juce::AudioParameterFloat>("pong_delay_L_time", "Pong_Delay_L_Time", juce::NormalisableRange{0.0f, 1999.f, 1.f, 0.4f, false}, 200.f);
     
@@ -200,6 +203,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createXpanseParameterLayout(
     paramsXpanse.push_back(std::move(xpanseToggleParameter));
     paramsXpanse.push_back(std::move(xpanseWetDryParameter));
     paramsXpanse.push_back(std::move(xpanseGainParameter));
+    paramsXpanse.push_back(std::move(typeSelector));
     
     paramsXpanse.push_back(std::move(pongdelayLParameter));
     paramsXpanse.push_back(std::move(pongfeedbackLParameter));

@@ -11,7 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "ProcessorBase.h"
-#include "LowpassFilter.h"
+#include "VariableFilter.h"
 
 
 class DegradeEffectAudioProcessor  : public ProcessorBase
@@ -43,10 +43,12 @@ public:
         pluginSpec.numChannels = 2;
         
         //Setup LPF
-        LPF_Pre.setSpec(pluginSpec);
-        LPF_Pre.setCutoff(0.5 * fs_new);
-        LPF_Post.setSpec(pluginSpec);
-        LPF_Post.setCutoff(0.5 * fs_new);
+        LPF_Pre.prepareToPlay(sampleRate, samplesPerBlock);
+        LPF_Pre.setCutoffFrequency(0.5 * fs_new);
+        LPF_Pre.setType(1);
+        LPF_Post.prepareToPlay(sampleRate, samplesPerBlock);
+        LPF_Post.setCutoffFrequency(0.5 * fs_new);
+        LPF_Post.setType(1);
         
         N = (int)(sampleRate/fs_new);
         
@@ -71,8 +73,8 @@ public:
             N = (int)(sampleRate/fs_new);
             
             
-            LPF_Pre.setCutoff(NewCutoffFrequency_Pre);
-            LPF_Pre.process(buffer);
+            LPF_Pre.setCutoffFrequency(NewCutoffFrequency_Pre);
+            LPF_Pre.processBlock(buffer);
             
             for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
             {
@@ -93,8 +95,8 @@ public:
                 }
              }
             
-            LPF_Post.setCutoff(NewCutoffFrequency_Post);
-            LPF_Post.process(buffer);
+            LPF_Post.setCutoffFrequency(NewCutoffFrequency_Post);
+            LPF_Post.processBlock(buffer);
             
             
             auto wetDry = Degrade_WD->load();
@@ -144,7 +146,7 @@ private:
     float sampleRate;
     
     juce::dsp::ProcessSpec pluginSpec;
-    LowpassFilter LPF_Pre, LPF_Post;
+    VariableFilter LPF_Pre, LPF_Post;
     
     
     

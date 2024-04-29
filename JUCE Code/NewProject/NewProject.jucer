@@ -64,13 +64,11 @@
             file="Source/FilterEffectAudioProcessor.h"/>
     </GROUP>
     <GROUP id="{29531D21-44FE-7A3E-3579-2A0BEC7FFF4A}" name="Filters">
-      <FILE id="Vvc0kb" name="BiquadFilter.h" compile="0" resource="0" file="Source/BiquadFilter.h"/>
       <FILE id="IbOXhR" name="AllpassFilter.h" compile="0" resource="0" file="Source/AllpassFilter.h"/>
       <FILE id="Zlgasp" name="VariableFilter.h" compile="0" resource="0"
             file="Source/VariableFilter.h"/>
       <FILE id="Sh4kY5" name="SmoothingFilter.h" compile="0" resource="0"
             file="Source/SmoothingFilter.h"/>
-      <FILE id="V1tr2X" name="LowpassFilter.h" compile="0" resource="0" file="Source/LowpassFilter.h"/>
     </GROUP>
     <GROUP id="{CBDF06D9-8064-D029-CBA1-E68CC7318A83}" name="Source">
       <FILE id="AJoriT" name="PluginParameterLayout.h" compile="0" resource="0"

@@ -23,6 +23,7 @@ public:
         Xpanse_on = Xpanse_Parameters.getRawParameterValue("xpanse_toggle");
         Xpanse_WD = Xpanse_Parameters.getRawParameterValue("xpanse_wetdry");
         Xpanse_Gain = Xpanse_Parameters.getRawParameterValue("xpanse_gain");
+        Type = Xpanse_Parameters.getRawParameterValue("xpanse_type");
     };
     
     ~DelayXpanseEffectAudioProcessor(){};
@@ -42,9 +43,37 @@ public:
         
         if(effectOn != 0.0f)
         {
+            juce::AudioBuffer<float> dry(buffer.getNumChannels(), buffer.getNumSamples());
+            dry.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
+            dry.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
             
-            //pingPongDelay.processBlock(buffer);
-            spectralDelay.processBlock(buffer);
+            
+            if(Type->load() == 0)
+            {
+                pingPongDelay.processBlock(buffer);
+            }
+            else if(Type->load() == 1)
+            {
+                spectralDelay.processBlock(buffer);
+            }
+            
+            auto wetDry = Xpanse_WD->load();
+
+            buffer.applyGain(wetDry);
+            dry.applyGain(1-wetDry);
+            
+            // Combine wet and dry signals
+            for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+            {
+                auto* channelData = buffer.getWritePointer(channel);
+                auto* dryData = dry.getReadPointer(channel);
+                
+                for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+                {
+                    // Mix wet and dry signals
+                    channelData[sample] += dryData[sample];
+                }
+            }
             
             const auto NewGain = juce::Decibels::decibelsToGain(*Xpanse_Parameters.getRawParameterValue("xpanse_gain") + 0.0);
             
@@ -68,8 +97,8 @@ private:
     std::atomic<float>* Xpanse_WD = nullptr;
     
     std::atomic<float>* Xpanse_Gain = nullptr;
+    std::atomic<float>* Type = nullptr;
     float lastGain;
-    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayXpanseEffectAudioProcessor);
 };
