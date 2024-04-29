@@ -105,6 +105,12 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     filterGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(filterGainLabel);
     
+//Combobox
+    TypeSelector.addItemList(Filter_Choices, 1);
+    TypeSelector.setSelectedId(1);
+    Type_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(vts, "filter_types", TypeSelector));
+    addAndMakeVisible(TypeSelector);
+    
     
     setSize(150, 300);
 }
@@ -144,4 +150,6 @@ void FilterComponent::resized()
     resonanceLabel.attachToComponent(&resonanceSlider, true);
     
     LFOThumb.setBounds(getWidth()-200, 300, 190, 75);
+    
+    TypeSelector.setBounds(200, getHeight()/8, 200, 30);
 }

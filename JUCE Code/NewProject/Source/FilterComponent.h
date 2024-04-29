@@ -35,7 +35,10 @@ private:
     juce::TextButton Filter_LFO_Toggle;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>Filter_LFO_Toggle_Attachment;
     juce::Label LFOLabel;
-
+    
+    juce::ComboBox TypeSelector;
+    juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Type_attachment;
     
     juce::Slider cutoffFrequencySlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoffFrequencyAttachment;

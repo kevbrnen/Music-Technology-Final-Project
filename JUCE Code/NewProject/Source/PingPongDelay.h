@@ -9,6 +9,7 @@
 */
 
 #pragma once
+#include <JuceHeader.h>
 #include "CircularBuffer.h"
 
 class PingPongDelay{
@@ -18,7 +19,7 @@ public:
         Ltime = Xpanse_Parameters.getRawParameterValue("pong_delay_L_time");
         Rtime = Xpanse_Parameters.getRawParameterValue("pong_delay_R_time");
         fdbk_amtL = Xpanse_Parameters.getRawParameterValue("pong_delay_L_fdbk");
-        fdbk_amtR =Xpanse_Parameters.getRawParameterValue("pong_delay_R_fdbk");
+        fdbk_amtR = Xpanse_Parameters.getRawParameterValue("pong_delay_R_fdbk");
     };
     
     ~PingPongDelay(){};
@@ -50,9 +51,6 @@ public:
             
             delayedL = *LBuffer.getDelayedSample(0, (Ltime->load()));
             delayedR = *RBuffer.getDelayedSample(0, (Rtime->load()));
-
-            //auto tempL = (((1 - wet_amt) * inDataL[sample]) + (wet_amt * delayedL));
-            //auto tempR = (((1 - wet_amt) * inDataR[sample]) + (wet_amt * delayedR));
             
             auto tempL = delayedL;
             auto tempR = delayedR;
@@ -75,6 +73,6 @@ private:
     float Maxsamps, Lsamps, Rsamps;
     //float wet_amt = 0.5;
     std::atomic<float>* fdbk_amtL = nullptr; //float fdbk_amtL = 0.2;
-    std::atomic<float>* fdbk_amtR = nullptr; //float fdbk_amtR = 0.2;
+    std::atomic<float>* fdbk_amtR = nullptr;//float fdbk_amtR = 0.2;
     
 };

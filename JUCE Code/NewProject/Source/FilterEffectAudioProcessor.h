@@ -12,7 +12,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "ProcessorBase.h"
-#include "LowpassFilter.h"
+#include "VariableFilter.h"
 #include "LFOProcessor.h"
 
 class FilterEffectAudioProcessor  : public ProcessorBase
@@ -43,9 +43,9 @@ public:
         pluginSpec.numChannels = 2;
         
         //Setup LPF
-        LPF.setSpec(pluginSpec);
-        LPF.setCutoff(750);
-        LPF.setResonance(0);
+        varFilt.prepareToPlay(sampleRate, samplesPerBlock);
+        
+        varFilt.setType(filterType);
         
         //Gain
         lastGain = juce::Decibels::decibelsToGain(*Filter_Parameters.getRawParameterValue("filter_gain") + 0.0);
@@ -57,26 +57,23 @@ public:
         auto effectOn = Filt_on->load(); //Process if effect on
         if(effectOn != 0.0f)
         {
+            auto type_index = Filter_Parameters.getRawParameterValue("filter_types");
+            
+            if((int)*type_index != filterType)
+            {
+                this->filterType = *type_index;
+                varFilt.setType(this->filterType);
+            }
+            
             //Get and set resonance
             auto res = FilterResonance->load();
-            LPF.setResonance(res);
-            
-            //Get and set new cutoff frequency
-            auto LFOOn = Filter_LFO_on->load();
-            if(LFOOn != 0.0f)
-            {
-                const auto NewCutoffFrequency = (300 + (LFO.getNextLFOVal() * 1000.f));
+            varFilt.setResonance(res);
+
+            const auto NewCutoffFrequency = FilterCutoffFrequency->load();
                 
-                LPF.setCutoff(NewCutoffFrequency);
-            }
-            else
-            {
-                const auto NewCutoffFrequency = FilterCutoffFrequency->load();
-                
-                LPF.setCutoff(NewCutoffFrequency);
-            }
+            varFilt.setCutoffFrequency(NewCutoffFrequency);
             
-            LPF.process(buffer);
+            varFilt.processBlock(buffer);
             
             //Filter Effect Gain
             const auto NewGain = juce::Decibels::decibelsToGain(*Filter_Parameters.getRawParameterValue("filter_gain") + 0.0);
@@ -91,18 +88,15 @@ public:
         }
     };
 
-    
-    void initSpec(juce::dsp::ProcessSpec spec)
-    {
-        pluginSpec = spec;
-    };
+
     
     juce::AudioProcessorValueTreeState& Filter_Parameters;
     
 private:
     //Filter variables
     juce::dsp::ProcessSpec pluginSpec;
-    LowpassFilter LPF;
+    VariableFilter varFilt;
+    
     std::atomic<float>* FilterCutoffFrequency = nullptr;
     std::atomic<float>* FilterResonance = nullptr;
     std::atomic<float>* Filt_on = nullptr;
@@ -110,6 +104,8 @@ private:
     float lastGain;
     
     std::atomic<float>* Filter_LFO_on = nullptr;
+    
+    int filterType = 0;
     
     LFOProcessor LFO;
     

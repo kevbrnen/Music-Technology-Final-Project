@@ -14,6 +14,8 @@
 juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade"};  //Effects that can be added to the chain
 
 juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"};
+
+juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
 //==============================================================================
 
 //Processing Chain
@@ -76,12 +78,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout(
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     auto filterLFOToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_LFO_toggle", "Filter_LFO_Toggle", false);
     
+    auto typeSelector = std::make_unique<juce::AudioParameterChoice>("filter_types", "Filter_Types", Filter_Choices, 0);
+    
     //Efficiently add parameter to list
     paramsFilt.push_back(std::move(cutoffFrequencyParameter));
     paramsFilt.push_back(std::move(resonanceParameter));
     paramsFilt.push_back(std::move(filterToggleParameter));
     paramsFilt.push_back(std::move(filterGainParameter));
     paramsFilt.push_back(std::move(filterLFOToggleParameter));
+    paramsFilt.push_back(std::move(typeSelector));
 
     
     return {paramsFilt.begin(), paramsFilt.end()}; //Returning vector
