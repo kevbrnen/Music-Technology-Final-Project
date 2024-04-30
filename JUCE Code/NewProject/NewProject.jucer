@@ -4,6 +4,15 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
               jucerFormatVersion="1">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
+    <GROUP id="{3925C9CB-177B-7052-8BC4-1374CBD8373E}" name="PhaserEffect">
+      <FILE id="t0PaKB" name="MXR100_Phaser.h" compile="0" resource="0" file="Source/MXR100_Phaser.h"/>
+      <FILE id="JPAjX2" name="PhaserEffectAudioProcessor.h" compile="0" resource="0"
+            file="Source/PhaserEffectAudioProcessor.h"/>
+      <FILE id="bJUKAC" name="PhaserEffectComponent.cpp" compile="1" resource="0"
+            file="Source/PhaserEffectComponent.cpp"/>
+      <FILE id="EKzbjg" name="PhaserEffectComponent.h" compile="0" resource="0"
+            file="Source/PhaserEffectComponent.h"/>
+    </GROUP>
     <GROUP id="{06F2B293-6ABA-12FE-B248-6832C3010FCC}" name="DegradeEffect">
       <FILE id="OeyCWk" name="DegradeEffectAudioProcessor.h" compile="0"
             resource="0" file="Source/DegradeEffectAudioProcessor.h"/>

@@ -17,6 +17,7 @@
 #include "ConvolutionReverbEffectComponent.h"
 #include "DelayXpanseEffectComponent.h"
 #include "DegradeEffectComponent.h"
+#include "PhaserEffectComponent.h"
 
 //==============================================================================
 /*
@@ -24,7 +25,7 @@
 class HomeScreenComponent  : public juce::Component
 {
 public:
-    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts): filtComponent(Fvts), delayComponent(Dvts), convolutionComponent(Cvts), delayXpanseComponent(Xvts), degradeComponent(DGvts)
+    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts): filtComponent(Fvts), delayComponent(Dvts), convolutionComponent(Cvts), delayXpanseComponent(Xvts), degradeComponent(DGvts), phaserComponent(Pvts)
     {
 //Filter
         //Filter Component
@@ -101,6 +102,7 @@ public:
         };
         
         addAndMakeVisible(DelayXpanse_show_button);
+        
 //Degrade
         //Degrade Component
         addAndMakeVisible(degradeComponent);
@@ -119,6 +121,25 @@ public:
         };
         
         addAndMakeVisible(Degrade_show_button);
+
+//Phaser
+        //Phaser Component
+        addAndMakeVisible(phaserComponent);
+        phaserComponent.setEnabled(false);
+        phaserComponent.setVisible(false);
+        
+        //Phaser Button
+        Phaser_show_button.setButtonText("Phaser");
+        Phaser_show_button.onClick = [this]()
+        {
+            hideHomeScreenComponents();
+            phaserComponent.setEnabled(true);
+            phaserComponent.setVisible(true);
+            
+            currentlyShowingComponent = 'P';
+        };
+        
+        addAndMakeVisible(Phaser_show_button);
 
     }
 
@@ -147,6 +168,7 @@ public:
         convolutionComponent.setBounds(getLocalBounds());
         delayXpanseComponent.setBounds(getLocalBounds());
         degradeComponent.setBounds(getLocalBounds());
+        phaserComponent.setBounds(getLocalBounds());
         
         
         auto sideMargin = getWidth()/10;
@@ -159,6 +181,7 @@ public:
         DelayXpanse_show_button.setBounds(sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin, topMargin, buttonWidth, buttonWidth);
         //Row 2
         Degrade_show_button.setBounds(sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
+        Phaser_show_button.setBounds(sideMargin + buttonWidth + sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
         
 
     }
@@ -180,7 +203,9 @@ public:
         
         Degrade_show_button.setEnabled(false);
         Degrade_show_button.setVisible(false);
-    
+        
+        Phaser_show_button.setEnabled(false);
+        Phaser_show_button.setVisible(false);
     }
     
     //Shows all home screen native components and hides whatever effect component was showing
@@ -203,14 +228,19 @@ public:
                 convolutionComponent.setVisible(false);
                 currentlyShowingComponent = 0;
                 break;
-            case 'X': //Convolution Reverb
+            case 'X': //Delay Xpanse
                 delayXpanseComponent.setEnabled(false);
                 delayXpanseComponent.setVisible(false);
                 currentlyShowingComponent = 0;
                 break;
-            case 'G': //Degrade Reverb
+            case 'G': //Degrade
                 degradeComponent.setEnabled(false);
                 degradeComponent.setVisible(false);
+                currentlyShowingComponent = 0;
+                break;
+            case 'P': //Phaser
+                phaserComponent.setEnabled(false);
+                phaserComponent.setVisible(false);
                 currentlyShowingComponent = 0;
                 break;
             default:
@@ -232,6 +262,9 @@ public:
         Degrade_show_button.setEnabled(true);
         Degrade_show_button.setVisible(true);
         
+        Phaser_show_button.setEnabled(true);
+        Phaser_show_button.setVisible(true);
+        
     }
 
 private:
@@ -242,6 +275,7 @@ private:
     ConvolutionReverbEffectComponent convolutionComponent;
     DelayXpanseEffectComponent delayXpanseComponent;
     DegradeEffectComponent degradeComponent;
+    PhaserEffectComponent phaserComponent;
     
     //Buttons to select Effects
     juce::TextButton Filter_show_button;
@@ -249,6 +283,7 @@ private:
     juce::TextButton Convolution_show_button;
     juce::TextButton DelayXpanse_show_button;
     juce::TextButton Degrade_show_button;
+    juce::TextButton Phaser_show_button;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HomeScreenComponent)
 };

@@ -11,7 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 //==============================================================================
-juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade"};  //Effects that can be added to the chain
+juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser"};  //Effects that can be added to the chain
 
 juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"};
 
@@ -31,6 +31,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLay
     auto slot3 = std::make_unique<juce::AudioParameterChoice>("slot3", "Slot3", processorChoices, 3);
     auto slot4 = std::make_unique<juce::AudioParameterChoice>("slot4", "Slot4", processorChoices, 4);
     auto slot5 = std::make_unique<juce::AudioParameterChoice>("slot5", "Slot5", processorChoices, 5);
+    auto slot6 = std::make_unique<juce::AudioParameterChoice>("slot6", "Slot6", processorChoices, 6);
     
     //Efficiently add parameter to list
     params.push_back(std::move(slot1));
@@ -38,6 +39,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLay
     params.push_back(std::move(slot3));
     params.push_back(std::move(slot4));
     params.push_back(std::move(slot5));
+    params.push_back(std::move(slot6));
     
     return {params.begin(), params.end()};
     
@@ -261,4 +263,20 @@ juce::AudioProcessorValueTreeState::ParameterLayout createDegradeParameterLayout
     paramsDegrade.push_back(std::move(bitRate));
     
     return {paramsDegrade.begin(), paramsDegrade.end()}; //Returning vector
+}
+
+//Phaser Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout createPhaserParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsPhaser;
+    
+    auto phaserToggleParameter = std::make_unique<juce::AudioParameterBool>("phaser_toggle", "Phaser_Toggle", false);
+    
+    auto phaserGainParameter = std::make_unique<juce::AudioParameterFloat>("phaser_gain", "Phaser_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(), juce::AudioProcessorParameter::genericParameter,[](float value, int){return juce::String(value, 2);});
+    
+    paramsPhaser.push_back(std::move(phaserToggleParameter));
+    paramsPhaser.push_back(std::move(phaserGainParameter));
+    
+    return {paramsPhaser.begin(), paramsPhaser.end()}; //Returning vector
 }

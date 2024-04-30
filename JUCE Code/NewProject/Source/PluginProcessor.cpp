@@ -33,7 +33,8 @@ Delay_Parameters(*this, nullptr, juce::Identifier("Delay_Parameters"), createDel
 Convolution_Parameters(*this, nullptr, juce::Identifier("Convolution_Parameters"), createConvolutionParameterLayout()),
 DelayXpanse_Parameters(*this, nullptr, juce::Identifier("DelayXpanse_Parameters"), createXpanseParameterLayout()),
 Degrade_Parameters(*this, nullptr, juce::Identifier("Degrade_Parameters"), createDegradeParameterLayout()),
-filterEffect(Filter_Parameters), delayEffect(Delay_Parameters), convolutionEffect(Convolution_Parameters), xpanseEffect(DelayXpanse_Parameters), degradeEffect(Degrade_Parameters)
+Phaser_Parameters(*this, nullptr, juce::Identifier("Phaser_Parameters"), createPhaserParameterLayout()),
+filterEffect(Filter_Parameters), delayEffect(Delay_Parameters), convolutionEffect(Convolution_Parameters), xpanseEffect(DelayXpanse_Parameters), degradeEffect(Degrade_Parameters), phaserEffect(Phaser_Parameters)
 {
     //Setting up audio processor value tree state objects and parameters above
     
@@ -120,6 +121,7 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     convolutionEffect.prepareToPlay(sampleRate, samplesPerBlock);
     xpanseEffect.prepareToPlay(sampleRate, samplesPerBlock);
     degradeEffect.prepareToPlay(sampleRate, samplesPerBlock);
+    phaserEffect.prepareToPlay(sampleRate, samplesPerBlock);
     
     //Create Spec to set up effects
     juce::dsp::ProcessSpec spec;
@@ -181,6 +183,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     //Convolution Reverb = 3
     //Delay-Xpanse = 4
     //Degrade = 5
+    //Phaser = 6
     
     for(int i = 0; i<numSlots; ++i)
     {
@@ -200,6 +203,9 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                 break;
             case 5:
                 degradeEffect.processBlock(buffer, midiMessages);
+                break;
+            case 6:
+                phaserEffect.processBlock(buffer, midiMessages);
                 break;
             default:
                 break;
@@ -226,7 +232,7 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain, Delay_Parameters, Convolution_Parameters, DelayXpanse_Parameters, Degrade_Parameters);
+    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain, Delay_Parameters, Convolution_Parameters, DelayXpanse_Parameters, Degrade_Parameters, Phaser_Parameters);
 }
 
 //==============================================================================
@@ -273,6 +279,11 @@ void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     degradeChild.copyPropertiesAndChildrenFrom(Degrade_Parameters.state, nullptr);
     combinedValueTree.addChild(degradeChild, -1, nullptr);
     
+    //Phaser Effect Parameters
+    juce::ValueTree phaserChild("Phaser_Parameters");
+    phaserChild.copyPropertiesAndChildrenFrom(Phaser_Parameters.state, nullptr);
+    combinedValueTree.addChild(phaserChild, -1, nullptr);
+    
     //Create XML file from combined tree
     std::unique_ptr<juce::XmlElement> CombinedXml (combinedValueTree.createXml());
     copyXmlToBinary(*CombinedXml, destData);
@@ -303,6 +314,8 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
         juce::ValueTree xpanseValueTree = combinedValueTree.getChildWithName("Xpanse_Parameters");
         
         juce::ValueTree degradeValueTree = combinedValueTree.getChildWithName("Degrade_Parameters");
+        
+        juce::ValueTree phaserValueTree = combinedValueTree.getChildWithName("Phaser_Parameters");
 
         // Set the state of Global_Parameters and Filter_Parameters using their respective value trees
         Global_Parameters.replaceState(globalValueTree);
@@ -312,6 +325,7 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
         Convolution_Parameters.replaceState(convValueTree);
         DelayXpanse_Parameters.replaceState(xpanseValueTree);
         Degrade_Parameters.replaceState(degradeValueTree);
+        Phaser_Parameters.replaceState(degradeValueTree);
     }
 }
 
@@ -333,7 +347,8 @@ void NewProjectAudioProcessor::updateChain()
                                                      dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot2")),
                                                      dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot3")),
                                                      dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot4")),
-                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot5"))};
+                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot5")),
+                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot6"))};
     
     //Loop through all choice parameters (the dropdown boxes in the chain menu) and check if any have changed, and if so what they have changed to
     //Null for empty, Filter for filter etc.
@@ -360,6 +375,9 @@ void NewProjectAudioProcessor::updateChain()
                 break;
             case 5:
                 effects[i] = 5;
+                break;
+            case 6:
+                effects[i] = 6;
                 break;
             default:
                 break;
