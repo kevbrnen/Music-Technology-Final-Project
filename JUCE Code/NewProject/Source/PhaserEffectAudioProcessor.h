@@ -10,7 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include <math.h>
+#include <cmath>
 #include "ProcessorBase.h"
 #include "MXR100_Phaser.h"
 
@@ -18,7 +18,7 @@
 class PhaserEffectAudioProcessor  : public ProcessorBase
 {
 public:
-    PhaserEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts) : Phaser_Parameters(vts)
+    PhaserEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts) : Phaser_Parameters(vts), phaser(vts)
     {
         Phaser_on = Phaser_Parameters.getRawParameterValue("phaser_toggle");
     };
@@ -33,6 +33,8 @@ public:
         pluginSpec.sampleRate = sampleRate;
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
+        
+        phaser.prepareToPlay(sampleRate, samplesPerBlock);
 
     };
     
@@ -42,8 +44,7 @@ public:
             
             if(effectOn != 0.0f)
             {
-                
-                
+                phaser.processBlock(buffer);
                 
                 const auto NewGain = juce::Decibels::decibelsToGain(*Phaser_Parameters.getRawParameterValue("phaser_gain") + 0.0);
                 
@@ -61,6 +62,8 @@ public:
 private:
     
     juce::dsp::ProcessSpec pluginSpec;
+    
+    MXR100_Phaser phaser;
    
     std::atomic<float>* Phaser_on = nullptr;
     
