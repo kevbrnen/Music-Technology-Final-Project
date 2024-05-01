@@ -33,6 +33,18 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
     juce::Label phaserGainLabel;
     
+    juce::Slider PhaserWDSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserWDAttachment;
+    juce::Label PhaserWDLabel;
+    
+    juce::Slider PhaserSpeedSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserSpeedAttachment;
+    juce::Label PhaserSpeedLabel;
+    
+    juce::Slider PhaserIntensitySlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserIntensityAttachment;
+    juce::Label PhaserIntensityLabel;
+    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PhaserEffectComponent)
 };

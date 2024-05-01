@@ -11,13 +11,15 @@
 #pragma once
 #include <JuceHeader.h>
 //==============================================================================
-juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser"};  //Effects that can be added to the chain
+juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser", "Reverb"};  //Effects that can be added to the chain
 
 juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"};
 
 juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
 
 juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"};
+
+juce::StringArray Reverb_Choices{"Schroeder Reverb", "Comb Filter Reverb"};
 //==============================================================================
 
 //Processing Chain
@@ -32,6 +34,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLay
     auto slot4 = std::make_unique<juce::AudioParameterChoice>("slot4", "Slot4", processorChoices, 4);
     auto slot5 = std::make_unique<juce::AudioParameterChoice>("slot5", "Slot5", processorChoices, 5);
     auto slot6 = std::make_unique<juce::AudioParameterChoice>("slot6", "Slot6", processorChoices, 6);
+    auto slot7 = std::make_unique<juce::AudioParameterChoice>("slot7", "Slot7", processorChoices, 7);
     
     //Efficiently add parameter to list
     params.push_back(std::move(slot1));
@@ -40,6 +43,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLay
     params.push_back(std::move(slot4));
     params.push_back(std::move(slot5));
     params.push_back(std::move(slot6));
+    params.push_back(std::move(slot7));
     
     return {params.begin(), params.end()};
     
@@ -275,8 +279,45 @@ juce::AudioProcessorValueTreeState::ParameterLayout createPhaserParameterLayout(
     
     auto phaserGainParameter = std::make_unique<juce::AudioParameterFloat>("phaser_gain", "Phaser_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(), juce::AudioProcessorParameter::genericParameter,[](float value, int){return juce::String(value, 2);});
     
+    auto phaserIntensity = std::make_unique<juce::AudioParameterFloat>("phaser_intensity", "Phaser_Intensity", juce::NormalisableRange{1.f, 4.f, 1.f, 1.f, false}, 1.f);
+    
+    auto phaserSpeed = std::make_unique<juce::AudioParameterFloat>("phaser_lfo_speed", "Phaser_LFO_Speed", juce::NormalisableRange{0.f, 10.f, 0.001f, 0.6f, false}, 0.5f);
+    
+    auto phaserWetDryParameter = std::make_unique<juce::AudioParameterFloat>("phaser_wet_dry", "Phaser_Wet_Dry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
+    
+    
     paramsPhaser.push_back(std::move(phaserToggleParameter));
     paramsPhaser.push_back(std::move(phaserGainParameter));
+    paramsPhaser.push_back(std::move(phaserIntensity));
+    paramsPhaser.push_back(std::move(phaserSpeed));
+    paramsPhaser.push_back(std::move(phaserWetDryParameter));
+
     
     return {paramsPhaser.begin(), paramsPhaser.end()}; //Returning vector
+}
+
+//Reverb Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsReverb;
+    
+    auto reverbToggleParameter = std::make_unique<juce::AudioParameterBool>("reverb_toggle", "Reverb_Toggle", false);
+    
+    auto reverbGainParameter = std::make_unique<juce::AudioParameterFloat>("reverb_gain", "Reverb_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(), juce::AudioProcessorParameter::genericParameter,[](float value, int){return juce::String(value, 2);});
+    
+    auto reverbWetDryParameter = std::make_unique<juce::AudioParameterFloat>("reverb_wetdry", "Reverb_Wetdry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
+    auto reverbSelector = std::make_unique<juce::AudioParameterChoice>("reverb_type", "Reverb_Type", Reverb_Choices, 0);
+    
+    
+    
+    paramsReverb.push_back(std::move(reverbToggleParameter));
+    paramsReverb.push_back(std::move(reverbGainParameter));
+    paramsReverb.push_back(std::move(reverbWetDryParameter));
+    paramsReverb.push_back(std::move(reverbSelector));
+
+    
+    return {paramsReverb.begin(), paramsReverb.end()}; //Returning vector
 }

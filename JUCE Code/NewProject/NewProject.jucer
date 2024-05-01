@@ -4,6 +4,14 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
               jucerFormatVersion="1">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
+    <GROUP id="{41BD0CAB-48C1-DFAC-7DC9-EBCB814B5EAC}" name="ReverbEffect">
+      <FILE id="c4f8QM" name="ReverbEffectAudioProcessor.h" compile="0" resource="0"
+            file="Source/ReverbEffectAudioProcessor.h"/>
+      <FILE id="v1BeNN" name="ReverbEffectComponent.cpp" compile="1" resource="0"
+            file="Source/ReverbEffectComponent.cpp"/>
+      <FILE id="TiEbrO" name="ReverbEffectComponent.h" compile="0" resource="0"
+            file="Source/ReverbEffectComponent.h"/>
+    </GROUP>
     <GROUP id="{3925C9CB-177B-7052-8BC4-1374CBD8373E}" name="PhaserEffect">
       <FILE id="t0PaKB" name="MXR100_Phaser.h" compile="0" resource="0" file="Source/MXR100_Phaser.h"/>
       <FILE id="JPAjX2" name="PhaserEffectAudioProcessor.h" compile="0" resource="0"

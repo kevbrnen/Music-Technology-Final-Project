@@ -14,11 +14,15 @@
 #pragma once
 #include <JuceHeader.h>
 #include <cmath>
+#include "SmoothingFilter.h"
 
 class MXR100_Phaser{
 public:
-    MXR100_Phaser(juce::AudioProcessorValueTreeState& vts): Phaser_Parameters(vts)
+    MXR100_Phaser(juce::AudioProcessorValueTreeState& vts): Phaser_Parameters(vts), smoother(10)
     {
+        speed = Phaser_Parameters.getRawParameterValue("phaser_lfo_speed");
+        intensity = Phaser_Parameters.getRawParameterValue("phaser_intensity");
+        wet_dry = Phaser_Parameters.getRawParameterValue("phaser_wet_dry");
         
     };
     
@@ -27,15 +31,7 @@ public:
     void prepareToPlay(double sampleRate, int samplesPerBlock)
     {
         this->fs = sampleRate;
-        calculateVariance(intensity);
-        tempX[0] = 0;
-        tempX[1] = 0;
-        
-        for(int i = 0; i < numAllpasses; ++i)
-        {
-            tempY[0][i] = 0;
-            tempY[1][i] = 0;
-        }
+        calculateVariance(intensity->load());
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer)
@@ -49,8 +45,16 @@ public:
         
         for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            auto newSpeed = speed->load();
+            
+            if(newSpeed != lastSpeed)
+            {
+                newSpeed = smoother.process(newSpeed);
+                
+                this->currentSpeed = newSpeed;
+            }
+            
             auto currentLFOval = calculateLFOVal();
-            //auto currentLFOval = 0.2;
             
             auto sampL = leftChannel[sample];
             auto sampR = rightChannel[sample];
@@ -58,161 +62,28 @@ public:
             auto wetL = sampL;
             auto wetR = sampR;
             
+            float tempL = 0.f;
+            float tempR = 0.f;
             
-//            for(int i = 0; i < numAllpasses; ++i)
-//            {
-//                auto a1 = calculateCoefficient(currentLFOval, i);
-//
-//                auto L = (a1 * wetL) + tempX[0] - (a1 * tempY[0][i]);
-//                auto R = (a1 * wetR) + tempX[1] - (a1 * tempY[1][i]);
-//
-//                //L = std::max(-1.0f, std::min(1.0f, L));
-//                //R = std::max(-1.0f, std::min(1.0f, R));
-//
-//                tempX[0] = L;
-//                tempX[1] = R;
-//                tempY[0][i] = L;
-//                tempY[1][i] = R;
-//                wetL = L;
-//                wetR = R;
-//            }
-
+            auto wd_amt = wet_dry->load();
             
-//            auto a1 = calculateCoefficient(currentLFOval, 0);
-//
-//            auto L = (a1 * wetL) + tempX[0] - (a1 * tempY[0][0]);
-//            auto R = (a1 * wetR) + tempX[1] - (a1 * tempY[1][0]);
-//
-//            //L = std::max(-1.0f, std::min(1.0f, L));
-//            //R = std::max(-1.0f, std::min(1.0f, R));
-//
-//            tempX[0] = tempY[0][0];
-//            tempX[1] = tempY[1][0];
-//            tempY[0][0] = L;
-//            tempY[1][0] = R;
-//            wetL = L;
-//            wetR = R;
+            for (int i = 0; i < 10; ++i) {
+                auto a1 = calculateCoefficient(currentLFOval, i);
+                
+                y_L = wd_amt * ((a1 * wetL) + tempL - (a1 * y_1L[i]));
+                tempL = y_1L[i];
+                y_1L[i] = y_L;
+                
+                y_R = wd_amt * ((a1 * wetR) + tempR - (a1 * y_1R[i]));
+                tempR = y_1R[i];
+                y_1R[i] = y_R;
+                
+                wetL = y_L;
+                wetR = y_R;
+            }
             
-//            a1 = calculateCoefficient(currentLFOval, 1);
-//
-//            L = (a1 * wetL) + tempX[0] - (a1 * tempY[0][1]);
-//            R = (a1 * wetR) + tempX[1] - (a1 * tempY[1][1]);
-//
-//            //L = std::max(-1.0f, std::min(1.0f, L));
-//            //R = std::max(-1.0f, std::min(1.0f, R));
-//
-//            tempX[0] = L;
-//            tempX[1] = R;
-//            tempY[0][1] = L;
-//            tempY[1][1] = R;
-//            wetL = L;
-//            wetR = R;
-//
-//            a1 = calculateCoefficient(currentLFOval, 2);
-//
-//            L = (a1 * wetL) + tempX[0] - (a1 * tempY[0][2]);
-//            R = (a1 * wetR) + tempX[1] - (a1 * tempY[1][2]);
-//
-//            //L = std::max(-1.0f, std::min(1.0f, L));
-//            //R = std::max(-1.0f, std::min(1.0f, R));
-//
-//            tempX[0] = L;
-//            tempX[1] = R;
-//            tempY[0][2] = L;
-//            tempY[1][2] = R;
-//            wetL = L;
-//            wetR = R;
-//
-//            a1 = calculateCoefficient(currentLFOval, 3);
-//
-//            L = (a1 * wetL) + tempX[0] - (a1 * tempY[0][3]);
-//            R = (a1 * wetR) + tempX[1] - (a1 * tempY[1][3]);
-//
-//            //L = std::max(-1.0f, std::min(1.0f, L));
-//            //R = std::max(-1.0f, std::min(1.0f, R));
-//
-//            tempX[0] = L;
-//            tempX[1] = R;
-//            tempY[0][3] = L;
-//            tempY[1][3] = R;
-//            wetL = L;
-//            wetR = R;
-            
-            
-
-
-            //APF 1
-            auto a1 = calculateCoefficient(currentLFOval, 0);
-            y_1_1L= y_1L;
-            y_1L = (a1 * wetL) + tempL - (a1 * y_1_1L);
-            
-            y_1_1R= y_1R;
-            y_1R = (a1 * wetR) + tempR - (a1 * y_1_1R);
-
-            //APF 2
-            a1 = calculateCoefficient(currentLFOval, 1);
-            y_2_1L = y_2L;
-            y_2L = (a1 * y_1L) + y_1_1L - (a1 * y_2_1L);
-            
-            y_2_1R = y_2R;
-            y_2R = (a1 * y_1R) + y_1_1R - (a1 * y_2_1R);
-
-            //APF 3
-            a1 = calculateCoefficient(currentLFOval, 2);
-            y_3_1L = y_3L;
-            y_3L = (a1 * y_2L) + y_2_1L - (a1 * y_3_1L);
-            
-            y_3_1R = y_3R;
-            y_3R = (a1 * y_2R) + y_2_1R - (a1 * y_3_1R);
-
-            //APF 4
-            a1 = calculateCoefficient(currentLFOval, 3);
-            y_4_1L = y_4L;
-            y_4L = (a1 * y_3L) + y_3_1L - (a1 * y_4_1L);
-            
-            y_4_1R = y_4R;
-            y_4R = (a1 * y_3R) + y_3_1R - (a1 * y_4_1R);
-
-            //APF 5
-            a1 = calculateCoefficient(currentLFOval, 4);
-            y_5_1L = y_5L;
-            y_5L = (a1 * y_4L) + y_4_1L - (a1 * y_5_1L);
-            
-            y_5_1R = y_5R;
-            y_5R = (a1 * y_4R) + y_4_1R - (a1 * y_5_1R);
-
-            //APF 6
-            a1 = calculateCoefficient(currentLFOval, 5);
-            y_6_1L = y_6L;
-            y_6L = (a1 * y_5L) + y_5_1L - (a1 * y_6_1L);
-            
-            y_6_1R = y_6R;
-            y_6R = (a1 * y_5R) + y_5_1R - (a1 * y_6_1R);
-
-            //APF 7
-            a1 = calculateCoefficient(currentLFOval, 6);
-            y_7_1L = y_7L;
-            y_7L = (a1 * y_6L) + y_6_1L - (a1 * y_7_1L);
-            
-            y_7_1R = y_7R;
-            y_7R = (a1 * y_6R) + y_6_1R - (a1 * y_7_1R);
-
-            //APF 8
-            a1 = calculateCoefficient(currentLFOval, 7);
-            y_8_1L = y_8L;
-            y_8L = (a1 * y_7L) + y_7_1L - (a1 * y_7_1L);
-            
-            y_8_1R = y_8R;
-            y_8R = (a1 * y_7R) + y_7_1R - (a1 * y_7_1R);
-
-            wetL = y_8L;
-            wetR = y_8R;
-            
-
             leftChannelOut[sample] = wetL + sampL;
             rightChannelOut[sample] = wetR + sampR;
-            tempL = sampL;
-            tempR = sampR;
         }
     };
 
@@ -220,7 +91,7 @@ public:
     {
         auto t = k/fs;
         k++;
-        float val = (amplitude * sin(2 * M_PI * speed * t));
+        float val = (amplitude * sin(2 * M_PI * currentSpeed * t));
         val = std::max(-1.0f, std::min(1.0f, val));
         return val;
         
@@ -262,51 +133,62 @@ private:
     
     float fs;
     float centerFrequency = 750;
-    float speed = 0.5;
+    
+    std::atomic<float>* speed = nullptr;
+    float currentSpeed = 0.5;
+    float lastSpeed;
+    
     float amplitude = 3;
     float variance;
-    int intensity = 3;
+    std::atomic<float>* intensity = nullptr;
+    int lastIntensity;
     int k = 0;
+    
+    std::atomic<float>* wet_dry = nullptr;
     
     const static int numAllpasses = 8;
     float tempX[2];
     float tempY[2][numAllpasses];
     
-    float tempL = 0;
-    float tempR = 0;
+    float y_L = 0.f;
+    float y_R = 0.f;
+    float y_1L[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float y_1R[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    
+    SmoothingFilter smoother;
     
     //Temporary variables
-    float y_1_1L = 0;
-    float y_1L = 0;
-    float y_2_1L = 0;
-    float y_2L = 0;
-    float y_3_1L = 0;
-    float y_3L = 0;
-    float y_4_1L = 0;
-    float y_4L = 0;
-    float y_5_1L = 0;
-    float y_5L = 0;
-    float y_6_1L = 0;
-    float y_6L = 0;
-    float y_7_1L = 0;
-    float y_7L = 0;
-    float y_8_1L = 0;
-    float y_8L = 0;
-    
-    float y_1_1R = 0;
-    float y_1R = 0;
-    float y_2_1R = 0;
-    float y_2R = 0;
-    float y_3_1R = 0;
-    float y_3R = 0;
-    float y_4_1R = 0;
-    float y_4R = 0;
-    float y_5_1R = 0;
-    float y_5R = 0;
-    float y_6_1R = 0;
-    float y_6R = 0;
-    float y_7_1R = 0;
-    float y_7R = 0;
-    float y_8_1R = 0;
-    float y_8R = 0;
+//    float y_1_1L = 0;
+//    float y_1L = 0;
+//    float y_2_1L = 0;
+//    float y_2L = 0;
+//    float y_3_1L = 0;
+//    float y_3L = 0;
+//    float y_4_1L = 0;
+//    float y_4L = 0;
+//    float y_5_1L = 0;
+//    float y_5L = 0;
+//    float y_6_1L = 0;
+//    float y_6L = 0;
+//    float y_7_1L = 0;
+//    float y_7L = 0;
+//    float y_8_1L = 0;
+//    float y_8L = 0;
+//
+//    float y_1_1R = 0;
+//    float y_1R = 0;
+//    float y_2_1R = 0;
+//    float y_2R = 0;
+//    float y_3_1R = 0;
+//    float y_3R = 0;
+//    float y_4_1R = 0;
+//    float y_4R = 0;
+//    float y_5_1R = 0;
+//    float y_5R = 0;
+//    float y_6_1R = 0;
+//    float y_6R = 0;
+//    float y_7_1R = 0;
+//    float y_7R = 0;
+//    float y_8_1R = 0;
+//    float y_8R = 0;
 };

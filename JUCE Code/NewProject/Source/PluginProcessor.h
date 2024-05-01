@@ -15,6 +15,7 @@
 #include "DelayXpanseEffectAudioProcessor.h"
 #include "DegradeEffectAudioProcessor.h"
 #include "PhaserEffectAudioProcessor.h"
+#include "ReverbEffectAudioProcessor.h"
 
 
 //==============================================================================
@@ -69,6 +70,7 @@ public:
     juce::AudioProcessorValueTreeState DelayXpanse_Parameters;
     juce::AudioProcessorValueTreeState Degrade_Parameters;
     juce::AudioProcessorValueTreeState Phaser_Parameters;
+    juce::AudioProcessorValueTreeState Reverb_Parameters;
 private:
     FilterEffectAudioProcessor filterEffect;
     DelayEffectAudioProcessor delayEffect;
@@ -76,10 +78,11 @@ private:
     DelayXpanseEffectAudioProcessor xpanseEffect;
     DegradeEffectAudioProcessor degradeEffect;
     PhaserEffectAudioProcessor phaserEffect;
+    ReverbEffectAudioProcessor reverbEffect;
     
     //For Processing chain
     void updateChain();
-    int effects[6] = {0, 0, 0, 0, 0, 0};
+    int effects[7] = {0, 0, 0, 0, 0, 0, 0};
     int numSlots;
     
     

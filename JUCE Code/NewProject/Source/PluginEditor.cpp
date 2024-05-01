@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts): AudioProcessorEditor (&p), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), homeScreenComponent(Fvts, Dvts, Cvts, Xvts, DGvts, Pvts), procChainComponent(ProcChain)
+NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts, juce::AudioProcessorValueTreeState& Rvts): AudioProcessorEditor (&p), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), homeScreenComponent(Fvts, Dvts, Cvts, Xvts, DGvts, Pvts, Rvts), procChainComponent(ProcChain)
 {
     addAndMakeVisible(globalComponent);
     

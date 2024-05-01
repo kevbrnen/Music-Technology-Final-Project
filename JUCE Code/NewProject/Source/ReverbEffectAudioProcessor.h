@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    DelayXpanseEffectAudioProcessor.h
-    Created: 18 Apr 2024 11:38:08pm
+    ReverbEffectAudioProcessor.h
+    Created: 1 May 2024 2:23:37pm
     Author:  Kevin Brennan
 
   ==============================================================================
@@ -10,36 +10,33 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "PingPongDelay.h"
-#include "SpectralDelay.h"
 
 
-class DelayXpanseEffectAudioProcessor  : public ProcessorBase
+class ReverbEffectAudioProcessor  : public ProcessorBase
 {
 public:
-    DelayXpanseEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts): Xpanse_Parameters(vts), pingPongDelay(vts), spectralDelay(vts)
+    ReverbEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts): Reverb_Parameters(vts)
     {
         //Get variables from APVTS for Parameters
-        Xpanse_on = Xpanse_Parameters.getRawParameterValue("xpanse_toggle");
-        Xpanse_WD = Xpanse_Parameters.getRawParameterValue("xpanse_wetdry");
-        Xpanse_Gain = Xpanse_Parameters.getRawParameterValue("xpanse_gain");
-        Type = Xpanse_Parameters.getRawParameterValue("xpanse_type");
+        Reverb_on = Reverb_Parameters.getRawParameterValue("reverb_toggle");
+        Reverb_WD = Reverb_Parameters.getRawParameterValue("reverb_wetdry");
+        Reverb_Gain = Reverb_Parameters.getRawParameterValue("reverb_gain");
+        Type = Reverb_Parameters.getRawParameterValue("reverb_type");
     };
     
-    ~DelayXpanseEffectAudioProcessor(){};
+    ~ReverbEffectAudioProcessor(){};
     
-    const juce::String getName() const override{return "DelayXpanse";};
+    const juce::String getName() const override{return "Reverb";};
     
     //==============================================================================
     void prepareToPlay(double sampleRate, int samplesPerBlock) override
     {
-        pingPongDelay.prepareToPlay(sampleRate, samplesPerBlock);
-        spectralDelay.prepareToPlay(sampleRate, samplesPerBlock);
+
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
     {
-        auto effectOn = Xpanse_on->load();
+        auto effectOn = Reverb_on->load();
         
         if(effectOn != 0.0f)
         {
@@ -50,14 +47,14 @@ public:
             
             if(Type->load() == 0)
             {
-                pingPongDelay.processBlock(buffer);
+             
             }
             else if(Type->load() == 1)
             {
-                spectralDelay.processBlock(buffer);
+           
             }
             
-            auto wetDry = Xpanse_WD->load();
+            auto wetDry = Reverb_WD->load();
 
             buffer.applyGain(wetDry);
             dry.applyGain(1-wetDry);
@@ -75,7 +72,7 @@ public:
                 }
             }
             
-            const auto NewGain = juce::Decibels::decibelsToGain(*Xpanse_Parameters.getRawParameterValue("xpanse_gain") + 0.0);
+            const auto NewGain = juce::Decibels::decibelsToGain(*Reverb_Parameters.getRawParameterValue("reverb_gain") + 0.0);
             
             if(NewGain != lastGain)
             {
@@ -86,19 +83,16 @@ public:
         }
     };
     
-    juce::AudioProcessorValueTreeState& Xpanse_Parameters;
+    juce::AudioProcessorValueTreeState& Reverb_Parameters;
     
 private:
     
-    PingPongDelay pingPongDelay;
-    SpectralDelay spectralDelay;
+    std::atomic<float>* Reverb_on = nullptr;
+    std::atomic<float>* Reverb_WD = nullptr;
     
-    std::atomic<float>* Xpanse_on = nullptr;
-    std::atomic<float>* Xpanse_WD = nullptr;
-    
-    std::atomic<float>* Xpanse_Gain = nullptr;
+    std::atomic<float>* Reverb_Gain = nullptr;
     std::atomic<float>* Type = nullptr;
     float lastGain;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayXpanseEffectAudioProcessor);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ReverbEffectAudioProcessor);
 };

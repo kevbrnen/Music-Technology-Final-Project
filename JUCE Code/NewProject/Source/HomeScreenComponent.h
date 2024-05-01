@@ -18,6 +18,7 @@
 #include "DelayXpanseEffectComponent.h"
 #include "DegradeEffectComponent.h"
 #include "PhaserEffectComponent.h"
+#include "ReverbEffectComponent.h"
 
 //==============================================================================
 /*
@@ -25,7 +26,7 @@
 class HomeScreenComponent  : public juce::Component
 {
 public:
-    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts): filtComponent(Fvts), delayComponent(Dvts), convolutionComponent(Cvts), delayXpanseComponent(Xvts), degradeComponent(DGvts), phaserComponent(Pvts)
+    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts, juce::AudioProcessorValueTreeState& Rvts): filtComponent(Fvts), delayComponent(Dvts), convolutionComponent(Cvts), delayXpanseComponent(Xvts), degradeComponent(DGvts), phaserComponent(Pvts), reverbComponent(Rvts)
     {
 //Filter
         //Filter Component
@@ -141,6 +142,25 @@ public:
         
         addAndMakeVisible(Phaser_show_button);
 
+//Phaser
+        //Phaser Component
+        addAndMakeVisible(reverbComponent);
+        reverbComponent.setEnabled(false);
+        reverbComponent.setVisible(false);
+        
+        //Phaser Button
+        Reverb_show_button.setButtonText("Reverb");
+        Reverb_show_button.onClick = [this]()
+        {
+            hideHomeScreenComponents();
+            reverbComponent.setEnabled(true);
+            reverbComponent.setVisible(true);
+            
+            currentlyShowingComponent = 'R';
+        };
+        
+        addAndMakeVisible(Reverb_show_button);
+
     }
 
     ~HomeScreenComponent() override
@@ -169,6 +189,7 @@ public:
         delayXpanseComponent.setBounds(getLocalBounds());
         degradeComponent.setBounds(getLocalBounds());
         phaserComponent.setBounds(getLocalBounds());
+        reverbComponent.setBounds(getLocalBounds());
         
         
         auto sideMargin = getWidth()/10;
@@ -181,7 +202,8 @@ public:
         DelayXpanse_show_button.setBounds(sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin, topMargin, buttonWidth, buttonWidth);
         //Row 2
         Degrade_show_button.setBounds(sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
-        Phaser_show_button.setBounds(sideMargin + buttonWidth + sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
+        Phaser_show_button.setBounds(sideMargin + buttonWidth + sideMargin , topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
+        Reverb_show_button.setBounds(sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
         
 
     }
@@ -206,6 +228,9 @@ public:
         
         Phaser_show_button.setEnabled(false);
         Phaser_show_button.setVisible(false);
+        
+        Reverb_show_button.setEnabled(false);
+        Reverb_show_button.setVisible(false);
     }
     
     //Shows all home screen native components and hides whatever effect component was showing
@@ -243,6 +268,11 @@ public:
                 phaserComponent.setVisible(false);
                 currentlyShowingComponent = 0;
                 break;
+            case 'R': //Reverb
+                reverbComponent.setEnabled(false);
+                reverbComponent.setVisible(false);
+                currentlyShowingComponent = 0;
+                break;
             default:
                 break;
         }
@@ -265,6 +295,9 @@ public:
         Phaser_show_button.setEnabled(true);
         Phaser_show_button.setVisible(true);
         
+        Reverb_show_button.setEnabled(true);
+        Reverb_show_button.setVisible(true);
+        
     }
 
 private:
@@ -276,6 +309,7 @@ private:
     DelayXpanseEffectComponent delayXpanseComponent;
     DegradeEffectComponent degradeComponent;
     PhaserEffectComponent phaserComponent;
+    ReverbEffectComponent reverbComponent;
     
     //Buttons to select Effects
     juce::TextButton Filter_show_button;
@@ -284,6 +318,7 @@ private:
     juce::TextButton DelayXpanse_show_button;
     juce::TextButton Degrade_show_button;
     juce::TextButton Phaser_show_button;
+    juce::TextButton Reverb_show_button;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HomeScreenComponent)
 };

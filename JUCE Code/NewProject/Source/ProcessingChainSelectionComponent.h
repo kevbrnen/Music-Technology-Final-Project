@@ -50,6 +50,11 @@ public:
         Slot6.addItemList(processorChoices, 1);
         Slot6.setSelectedId(6);
         Slot6_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(ProcChain, "slot6", Slot6));
+        
+        addAndMakeVisible(Slot7);
+        Slot7.addItemList(processorChoices, 1);
+        Slot7.setSelectedId(7);
+        Slot7_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(ProcChain, "slot7", Slot7));
 
     }
     
@@ -83,15 +88,17 @@ public:
         Slot5.setBounds(10, 10 + 20 + 10 + 20 + 10 + 20 + 10 + 20 + 10, getLocalBounds().getWidth() - 30, 20);
         
         Slot6.setBounds(10, 10 + 20 + 10 + 20 + 10 + 20 + 10 + 20 + 10 + 20 + 10, getLocalBounds().getWidth() - 30, 20);
+        
+        Slot7.setBounds(10, 10 + 20 + 10 + 20 + 10 + 20 + 10 + 20 + 10 + 20 + 10 + 20 + 10, getLocalBounds().getWidth() - 30, 20);
 
     }
 
 private:
-    juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser"}; //Available Processor choices, should match  choices in plugin editor
+    juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser", "Reverb"}; //Available Processor choices, should match  choices in plugin editor
     
-    juce::ComboBox Slot1, Slot2, Slot3, Slot4, Slot5, Slot6; //combo boxes
+    juce::ComboBox Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7; //combo boxes
     
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Slot1_attachment, Slot2_attachment, Slot3_attachment, Slot4_attachment, Slot5_attachment, Slot6_attachment; //Attachment to APVTS for processing chain choices
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Slot1_attachment, Slot2_attachment, Slot3_attachment, Slot4_attachment, Slot5_attachment, Slot6_attachment, Slot7_attachment; //Attachment to APVTS for processing chain choices
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProcessingChainSelectionComponent)
 };

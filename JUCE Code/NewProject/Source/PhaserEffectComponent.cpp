@@ -54,6 +54,43 @@ PhaserEffectComponent::PhaserEffectComponent(juce::AudioProcessorValueTreeState&
     phaserGainLabel.setText("Phaser Effect Gain", juce::dontSendNotification);
     phaserGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(phaserGainLabel);
+    
+//Phaser Wet Dry Amount Slider
+    PhaserWDSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PhaserWDAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_wet_dry", PhaserWDSlider));
+    PhaserWDSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
+    PhaserWDSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserWDSlider.setRange(0.0, 1.0);
+    addAndMakeVisible(PhaserWDSlider);
+    
+    PhaserWDLabel.setText("Wet/Dry Amount", juce::dontSendNotification);
+    PhaserWDLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PhaserWDLabel);
+    
+//Phaser LFO speed
+    PhaserSpeedSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PhaserSpeedAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_lfo_speed", PhaserSpeedSlider));
+    PhaserSpeedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    PhaserSpeedSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserSpeedSlider.setTextValueSuffix("Hz");
+    PhaserSpeedSlider.setRange(0.0, 10.0);
+    addAndMakeVisible(PhaserSpeedSlider);
+    
+    PhaserSpeedLabel.setText("Speed", juce::dontSendNotification);
+    PhaserSpeedLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PhaserSpeedLabel);
+    
+//Phaser Intensity
+    PhaserIntensitySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PhaserIntensityAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_intensity", PhaserIntensitySlider));
+    PhaserIntensitySlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    PhaserIntensitySlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserIntensitySlider.setRange(1.0, 4.0, 1);
+    addAndMakeVisible(PhaserIntensitySlider);
+    
+    PhaserIntensityLabel.setText("Intensity", juce::dontSendNotification);
+    PhaserIntensityLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PhaserIntensityLabel);
 
 
 }
@@ -89,4 +126,13 @@ void PhaserEffectComponent::resized()
 
     phaserGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
     phaserGainLabel.attachToComponent(&phaserGainSlider, true);
+    
+    PhaserWDSlider.setBounds(getWidth() - 110, 200, 100, 100);
+    PhaserWDLabel.attachToComponent(&PhaserWDSlider, true);
+    
+    PhaserSpeedSlider.setBounds(50, getHeight()/4, 150, 150);
+    PhaserSpeedLabel.attachToComponent(&PhaserSpeedSlider, true);
+    
+    PhaserIntensitySlider.setBounds(300, getHeight()/4, 150, 150);
+    PhaserIntensityLabel.attachToComponent(&PhaserIntensitySlider, true);
 }

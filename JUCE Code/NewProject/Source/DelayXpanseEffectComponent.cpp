@@ -304,7 +304,7 @@ void DelayXpanseEffectComponent::paint (juce::Graphics& g)
     g.fillAll (juce::Colour::fromHSV (0.0f, 0.5f, 0.7f, 1.0f));   // clear the background
 
     g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
     g.setColour (juce::Colours::white);
     g.setFont (14.0f);
