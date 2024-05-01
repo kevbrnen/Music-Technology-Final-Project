@@ -4,7 +4,8 @@
     DegradeEffectComponent.cpp
     Created: 20 Apr 2024 5:10:22pm
     Author:  Kevin Brennan
-
+ 
+    Component showing any UI for the Degrade Effect
   ==============================================================================
 */
 
@@ -42,7 +43,7 @@ DegradeEffectComponent::DegradeEffectComponent(juce::AudioProcessorValueTreeStat
     ToggleLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(ToggleLabel);
     
-//Convolution Reverb Wet Dry Amount Slider
+//Wet Dry Amount Slider
     DegradeWDSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DegradeWDAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "degrade_wetdry", DegradeWDSlider));
     DegradeWDSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);

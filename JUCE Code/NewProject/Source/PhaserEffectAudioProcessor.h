@@ -4,7 +4,8 @@
     PhaserEffectAudioProcessor.h
     Created: 30 Apr 2024 11:45:50am
     Author:  Kevin Brennan
-
+ 
+    A class for processing audio for the Phaser effect
   ==============================================================================
 */
 

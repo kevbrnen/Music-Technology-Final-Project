@@ -5,6 +5,7 @@
     Created: 6 Apr 2024 7:42:40pm
     Author:  Kevin Brennan
 
+    A Circular buffer implementation with fractional delay using cubic interpolation
   ==============================================================================
 */
 
@@ -37,7 +38,7 @@ public:
         lastBufferIndex = currentBufferIndex;
         
         this->currentBufferIndex++;
-        this->currentBufferIndex %= maxBufferSize;
+        this->currentBufferIndex %= maxBufferSize; //used to wraparound, back to start of buffer
     };
     
     //method to get sample from buffer at given delay time with fractional interpolation (by channel)
@@ -51,7 +52,7 @@ public:
         //Getting delayed sample index
         int delayedSampleIndex = ((lastBufferIndex - delay_int) + maxBufferSize) % maxBufferSize;
         
-        //Integer sample and sample to interpolate to
+        //Cubic interpolation, using previous and next values from the buffer
         float p0 = circularBuffer.getSample(channel, (((delayedSampleIndex + 1) + maxBufferSize) % maxBufferSize));
         float p1 = circularBuffer.getSample(channel, delayedSampleIndex);
         float x = delay_frac;
@@ -62,13 +63,10 @@ public:
                                 ((p0 - 2.5*p1 + 2*p2 - 0.5*p3) * pow(x, 2.0)) +
                                     ((-0.5*p0 + 0.5*p2) * x) + p1;
         
-        
-        
         return &delayedSample;
-        //return &sample_int;
     };
     
-    //Method to get buffer of N samples from the circular buffer
+    //Method to get buffer of N samples from the circular buffer, with an option for a gain ramp fade-in/fade-out
     void getDelayedBufferWithRamp(int channel, float delayTimeMs, int size, bool fade_in_out, int old_new)
     {
         delayedBuff.setSize(2, size, false, false, false);
@@ -87,17 +85,6 @@ public:
         {
             delayedBuff.applyGainRamp(0, size, 1, 0);
         }
-    };
-    
-    void combineAndAddBuffers(int channel)
-    {
-        auto size = delayedBuff.getNumSamples();
-        
-        for(int i = 0; i < size; ++i)
-        {
-            circularBuffer.setSample(channel, (circBuffIndex + i) % maxBufferSize, (delayedBuff.getSample(0, i) + delayedBuff.getSample(1, i)));
-        }
-        
     };
     
 private:

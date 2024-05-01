@@ -5,6 +5,11 @@
     Created: 28 Apr 2024 11:38:12pm
     Author:  Kevin Brennan
 
+    A class to implement a Spectral Delay effect
+ 
+    Linkwitz Riley filters are used to split the input signal into 4 bands.
+    These 4 bands can be delayed by differing amounts with individual gain and feedback
+    controls for each band.
   ==============================================================================
 */
 
@@ -16,6 +21,7 @@ class SpectralDelay{
 public:
     SpectralDelay(juce::AudioProcessorValueTreeState& vts): Xpanse_Parameters(vts)
     {
+        //Get parameters from value tree
         band1Time = Xpanse_Parameters.getRawParameterValue("spec_band1_time");
         band2Time = Xpanse_Parameters.getRawParameterValue("spec_band2_time");
         band3Time = Xpanse_Parameters.getRawParameterValue("spec_band3_time");
@@ -34,13 +40,14 @@ public:
     
     ~SpectralDelay(){};
     
+    //Pre-playback initialisation
     void prepareToPlay(double sampleRate, int samplesPerBlock)
     {
         Spec.sampleRate = sampleRate;
         Spec.maximumBlockSize = samplesPerBlock;
         Spec.numChannels = 2;
         
-        //Filter 0
+        //Filter 0 (Lowpass and highpass)
         LRF_LP0.setType(juce::dsp::LinkwitzRileyFilterType::lowpass);
         LRF_LP0.setCutoffFrequency(cutoff1->load());
         LRF_LP0.prepare(Spec);
@@ -48,7 +55,7 @@ public:
         LRF_HP0.setCutoffFrequency(cutoff1->load());
         LRF_HP0.prepare(Spec);
         
-        //Filter 1
+        //Filter 1 (Lowpass and highpass)
         LRF_LP1.setType(juce::dsp::LinkwitzRileyFilterType::lowpass);
         LRF_LP1.setCutoffFrequency(cutoff2->load());
         LRF_LP1.prepare(Spec);
@@ -56,7 +63,7 @@ public:
         LRF_HP1.setCutoffFrequency(cutoff2->load());
         LRF_HP1.prepare(Spec);
         
-        //Filter 2
+        //Filter 2 (Lowpass and highpass)
         LRF_LP2.setType(juce::dsp::LinkwitzRileyFilterType::lowpass);
         LRF_LP2.setCutoffFrequency(cutoff3->load());
         LRF_LP2.prepare(Spec);
@@ -64,6 +71,7 @@ public:
         LRF_HP2.setCutoffFrequency(cutoff3->load());
         LRF_HP2.prepare(Spec);
         
+        //Delay lines for each band
         loDelay1.initBuffer(2, (int)((sampleRate/1000.0f)*maxDel), sampleRate);
         hiDelay1.initBuffer(2, (int)((sampleRate/1000.0f)*maxDel), sampleRate);
         loDelay2.initBuffer(2, (int)((sampleRate/1000.0f)*maxDel), sampleRate);
@@ -72,6 +80,7 @@ public:
     
     void processBlock(juce::AudioBuffer<float>& buffer)
     {
+        //Get cutoff frequencies
         LRF_LP0.setCutoffFrequency(cutoff1->load());
         LRF_HP0.setCutoffFrequency(cutoff1->load());
         LRF_LP1.setCutoffFrequency(cutoff2->load());
@@ -88,18 +97,20 @@ public:
                 
                 auto* outData = buffer.getWritePointer(channel);
         
-                    
+                //Use lowpass and highpass filters with cutoff1 to separate band 1 from the rest
                 auto band1Samp = LRF_LP0.processSample(channel, inData[sample]);
                 auto tempBand2 = LRF_HP0.processSample(channel, inData[sample]);
                 
+                //Use lowpass and highpass filters with cutoff2 to separate band 2 from the rest
                 auto band2Samp = LRF_LP1.processSample(channel, tempBand2);
                 auto tempBand3 = LRF_HP1.processSample(channel, tempBand2);
                 
+                //Use lowpass and highpass filters with cutoff3 to separate band 3 and band 4
                 auto band3Samp = LRF_LP2.processSample(channel, tempBand3);
                 auto band4Samp = LRF_HP2.processSample(channel, tempBand3);
                     
 
-
+                //Apply gains to the individual bands
                 auto band1 = (band1Samp * juce::Decibels::decibelsToGain(*Xpanse_Parameters.getRawParameterValue("spec_band1_gain") + 0.0));
                 auto band2 = (band2Samp * juce::Decibels::decibelsToGain(*Xpanse_Parameters.getRawParameterValue("spec_band2_gain") + 0.0));
                 auto band3 = (band3Samp * juce::Decibels::decibelsToGain(*Xpanse_Parameters.getRawParameterValue("spec_band3_gain") + 0.0));
@@ -112,6 +123,7 @@ public:
                 loDelay2.pushSampleToBuffer(channel, (band3 + (fdbk_amt3->load() * feedback[channel][2])));
                 hiDelay2.pushSampleToBuffer(channel, (band4 + (fdbk_amt4->load() * feedback[channel][3])));
 
+                //Get delayed samples and add them to output
                 auto delayed_b1 = loDelay1.getDelayedSample(channel, band1Time->load());
                 outData[sample] = *delayed_b1;
                 
@@ -124,6 +136,7 @@ public:
                 auto delayed_b4 = hiDelay2.getDelayedSample(channel, band4Time->load());
                 outData[sample] += *delayed_b4;
 
+                //Store feedbacks for next iteration
                 feedback[channel][0] = *delayed_b1;
                 feedback[channel][1] = *delayed_b2;
                 feedback[channel][2] = *delayed_b3;

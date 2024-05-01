@@ -37,12 +37,12 @@ public:
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override
     {
-        //Setup Spec for LPF implementation
+        //Setup Spec for variable filter implementation
         pluginSpec.sampleRate = sampleRate;
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
-        //Setup LPF
+        //Setup variable filter
         varFilt.prepareToPlay(sampleRate, samplesPerBlock);
         
         varFilt.setType(filterType);
@@ -57,8 +57,9 @@ public:
         auto effectOn = Filt_on->load(); //Process if effect on
         if(effectOn != 0.0f)
         {
-            auto type_index = Filter_Parameters.getRawParameterValue("filter_types");
             
+            //Check if the type of filter has changed, if so update the type
+            auto type_index = Filter_Parameters.getRawParameterValue("filter_types");
             if((int)*type_index != filterType)
             {
                 this->filterType = *type_index;
@@ -69,11 +70,14 @@ public:
             auto res = FilterResonance->load();
             varFilt.setResonance(res);
 
+            //Get and set cutoff frequency
             const auto NewCutoffFrequency = FilterCutoffFrequency->load();
-                
             varFilt.setCutoffFrequency(NewCutoffFrequency);
             
+            
+            //Process the block
             varFilt.processBlock(buffer);
+            
             
             //Filter Effect Gain
             const auto NewGain = juce::Decibels::decibelsToGain(*Filter_Parameters.getRawParameterValue("filter_gain") + 0.0);

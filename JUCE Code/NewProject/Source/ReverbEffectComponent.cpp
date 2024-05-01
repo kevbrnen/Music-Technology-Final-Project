@@ -5,6 +5,7 @@
     Created: 1 May 2024 2:23:18pm
     Author:  Kevin Brennan
 
+    Component showing any UI for the Reverb Effect
   ==============================================================================
 */
 

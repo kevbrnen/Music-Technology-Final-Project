@@ -3,6 +3,7 @@
 
     This file contains the basic framework code for a JUCE plugin processor.
 
+    This class controls all audio processing in the plugin
   ==============================================================================
 */
 
@@ -62,6 +63,9 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
+    //All Audio processor value tree state objects for the plugin.
+    //These are used to control parameters, and act as a link between the UI
+    //and the audio processor.
     juce::AudioProcessorValueTreeState Processing_Chain;
     juce::AudioProcessorValueTreeState Global_Parameters;
     juce::AudioProcessorValueTreeState Filter_Parameters;
@@ -72,6 +76,7 @@ public:
     juce::AudioProcessorValueTreeState Phaser_Parameters;
     juce::AudioProcessorValueTreeState Reverb_Parameters;
 private:
+    //Individual effect Audio Processor objects
     FilterEffectAudioProcessor filterEffect;
     DelayEffectAudioProcessor delayEffect;
     ConvolutionReverbEffectAudioProcessor convolutionEffect;

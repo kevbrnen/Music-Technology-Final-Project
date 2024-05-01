@@ -3,6 +3,7 @@
 
     This file contains the basic framework code for a JUCE plugin editor.
 
+    This class controls all UI in the Plugin
   ==============================================================================
 */
 
@@ -39,9 +40,10 @@ private:
     //Other components to show in main
     GlobalControlsComponent globalComponent; //Always Shown
     
-    HomeScreenComponent homeScreenComponent;
+    HomeScreenComponent homeScreenComponent; //Shows effect selection buttons
+                                             //Gets drawn over by an effect component when the effect is selected
     
-    ProcessingChainSelectionComponent procChainComponent;
+    ProcessingChainSelectionComponent procChainComponent; //Processing chain, shown from global controls component
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)

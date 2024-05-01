@@ -5,6 +5,9 @@
     Created: 25 Apr 2024 10:31:45am
     Author:  Kevin Brennan
 
+    Class to set up Audio Processor Value Tree States
+    Adds parameters to each tree which we can access and manipulate using the UI
+    Also allows us to set the range of each parameter and the type of parameter it is
   ==============================================================================
 */
 
@@ -13,13 +16,13 @@
 //==============================================================================
 juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser", "Reverb"};  //Effects that can be added to the chain
 
-juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"};
+juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"}; //Filter types
 
-juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
+juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"}; //Impulse response choices
 
-juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"};
+juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"}; //Delay Xpanse types
 
-juce::StringArray Reverb_Choices{"Schroeder Reverb", "Comb Filter Reverb"};
+juce::StringArray Reverb_Choices{"Schroeder Reverb", "Comb Filter Reverb"}; //Reverb types
 //==============================================================================
 
 //Processing Chain
@@ -55,7 +58,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createGlobalParameterLayout(
     //Container for all parameters
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
-    //gain parameter itself
+    //gain parameter
     auto gainParameter = std::make_unique<juce::AudioParameterFloat>("global_gain", //Parameter ID
                                                                      "Global_Gain", //Parameter Name
                                                                      juce::NormalisableRange<float>(-48.0f, 10.0f), //Normalisable Range (Range of values for slider)

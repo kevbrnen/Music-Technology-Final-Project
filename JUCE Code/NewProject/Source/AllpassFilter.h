@@ -5,6 +5,7 @@
     Created: 28 Apr 2024 11:38:47pm
     Author:  Kevin Brennan
 
+    A class to implement a Linkwitz Riley allpass filter using juce::dsp
   ==============================================================================
 */
 
@@ -18,6 +19,7 @@ public:
     
     ~AllpassFilter(){};
     
+    //Pre playback initialisation
     void prepareToPlay(double sampleRate, int samplesPerBlock)
     {
         Spec.sampleRate = sampleRate;
@@ -29,6 +31,7 @@ public:
         LRF_APF.prepare(Spec);
     }
     
+    //Process the buffer through the filter
     void processBlock(juce::AudioBuffer<float>& buffer)
     {
         juce::dsp::AudioBlock<float> block(buffer);
@@ -37,6 +40,7 @@ public:
         LRF_APF.process(context);
     };
     
+    //Set the cutoff frequency of the filter
     void setCutoffFrequency(float newFreq)
     {
         this->cutoffFrequency = newFreq;

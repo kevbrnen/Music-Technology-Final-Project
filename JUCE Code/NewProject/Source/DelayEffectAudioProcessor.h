@@ -44,10 +44,11 @@ public:
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
+        //Set up buffer with num channels, max possible delay in samples and the sample rate
         circularBuffer.initBuffer(2, (int)((sampleRate/1000.0f)*3000.0f), sampleRate);
         
+        //Used for smoothing changes in delay time
         lastDelay = Delay_Time->load();
-        
         delayTimeSmoothing.reset(sampleRate, 0.005);
     };
     
@@ -56,39 +57,37 @@ public:
             auto WetAmount = 0.0f;
             auto effectOn = Delay_on->load();
             
-            if(effectOn != 0.0f)
+            if(effectOn != 0.0f) //Process if the effect is on
             {
-                auto C = 0.6;
+                auto C = 0.6; //interpolation factor
                 
                 for(int i = 0; i < buffer.getNumSamples(); ++i)
                 {
+                    //load parameter for this sample
                     auto LFOOn = Delay_LFO_on->load();
-                    if(LFOOn != 0.0f)
-                    {
-                        WetAmount = LFO.getNextLFOVal();
-                    }
-                    else
-                    {
-                        WetAmount = Delay_WD->load();
-                    }
-                    
                     auto newDelayTime = Delay_Time->load();
                     auto Fdbk_amt = Delay_FDBK->load();
                     
+                    //Set the next target to smooth to as the new delay time
                     delayTimeSmoothing.setTargetValue(newDelayTime);
                     
+                    //loop through channels and process
                     for(int channel = 0; channel < 2 ; ++channel)
                     {
                         auto* inData = buffer.getReadPointer(channel);
                         auto* outData = buffer.getWritePointer(channel);
                         
+                        //Push sample to buffer with feedback, determined by feedback amount
                         circularBuffer.pushSampleToBuffer(channel, inData[i] + (feedback[channel] * Fdbk_amt));
                             
+                        //Get the smoothed delay time value
                         auto time = delayTimeSmoothing.getNextValue();
                         
+                        //Get the delayed sample at the last delay time and the delayed sample at the new delay time
                         auto delayedSample_oldVal = circularBuffer.getDelayedSample(channel, lastDelay);
                         auto delayedSample_newVal = circularBuffer.getDelayedSample(channel, time);
                             
+                        //Interpolate between old and new delayed samples, compute wet/dry combination and add to output
                         outData[i] = (((*delayedSample_newVal * (1-C)) + (*delayedSample_oldVal * C)) * WetAmount) + (inData[i] * (1 - WetAmount));
                             
                             

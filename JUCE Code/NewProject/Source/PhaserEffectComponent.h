@@ -4,7 +4,8 @@
     PhaserEffectComponent.h
     Created: 30 Apr 2024 11:45:29am
     Author:  Kevin Brennan
-
+ 
+    Component showing any UI for the Phaser Effect
   ==============================================================================
 */
 

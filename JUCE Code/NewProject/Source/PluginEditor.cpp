@@ -12,16 +12,15 @@
 //==============================================================================
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor(NewProjectAudioProcessor& p, juce::AudioProcessorValueTreeState& Gvts, juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& ProcChain, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts, juce::AudioProcessorValueTreeState& Rvts): AudioProcessorEditor (&p), audioProcessor (p), globalComponent(Gvts, homeScreenComponent, procChainComponent), homeScreenComponent(Fvts, Dvts, Cvts, Xvts, DGvts, Pvts, Rvts), procChainComponent(ProcChain)
 {
+    //Add all components to editor and show them
     addAndMakeVisible(globalComponent);
     
     addAndMakeVisible(homeScreenComponent);
     
     addAndMakeVisible(procChainComponent);
-    procChainComponent.toFront(true);
+    procChainComponent.toFront(true); //So the 'popup' appears on top of all other components
     procChainComponent.setEnabled(false);
     procChainComponent.setVisible(false);
-
-    
     
     setSize (1000, 600);
 }
@@ -38,6 +37,7 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 
 void NewProjectAudioProcessorEditor::resized()
 {
+    //Set bounds of all components
     float globalComponentHeight = getHeight()/8;
     float effectHeight = getHeight() - globalComponentHeight;
     

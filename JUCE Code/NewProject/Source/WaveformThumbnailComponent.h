@@ -5,6 +5,7 @@
     Created: 20 Apr 2024 10:41:57pm
     Author:  Kevin Brennan
 
+    Component class to display the currently selected impulse responses waveform
   ==============================================================================
 */
 
@@ -40,7 +41,7 @@ public:
 
     void resized() override {}
     
-    
+    //Set the selected impulse file
     void setFile(const char* data, int Size)
     {
         getAudioBufferFromFile(data, Size);

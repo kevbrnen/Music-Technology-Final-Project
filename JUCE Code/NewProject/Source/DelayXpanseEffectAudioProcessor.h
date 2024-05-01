@@ -5,6 +5,7 @@
     Created: 18 Apr 2024 11:38:08pm
     Author:  Kevin Brennan
 
+    A class for processing audio for the delay xpanse effect
   ==============================================================================
 */
 
@@ -19,7 +20,7 @@ class DelayXpanseEffectAudioProcessor  : public ProcessorBase
 public:
     DelayXpanseEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts): Xpanse_Parameters(vts), pingPongDelay(vts), spectralDelay(vts)
     {
-        //Get variables from APVTS for Parameters
+        //Get parameters from VTS
         Xpanse_on = Xpanse_Parameters.getRawParameterValue("xpanse_toggle");
         Xpanse_WD = Xpanse_Parameters.getRawParameterValue("xpanse_wetdry");
         Xpanse_Gain = Xpanse_Parameters.getRawParameterValue("xpanse_gain");
@@ -43,11 +44,13 @@ public:
         
         if(effectOn != 0.0f)
         {
+            //Dry copy of buffer
             juce::AudioBuffer<float> dry(buffer.getNumChannels(), buffer.getNumSamples());
             dry.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
             dry.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
             
             
+            //Process depending on selected type
             if(Type->load() == 0)
             {
                 pingPongDelay.processBlock(buffer);
@@ -57,8 +60,9 @@ public:
                 spectralDelay.processBlock(buffer);
             }
             
+            
+            //Wet Dry
             auto wetDry = Xpanse_WD->load();
-
             buffer.applyGain(wetDry);
             dry.applyGain(1-wetDry);
             

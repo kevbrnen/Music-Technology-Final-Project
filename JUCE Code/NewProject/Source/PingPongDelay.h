@@ -5,6 +5,7 @@
     Created: 18 Apr 2024 11:39:46pm
     Author:  Kevin Brennan
 
+    A class to implement a Ping Pong delay effect
   ==============================================================================
 */
 
@@ -16,6 +17,7 @@ class PingPongDelay{
 public:
     PingPongDelay(juce::AudioProcessorValueTreeState& vts): Xpanse_Parameters(vts)
     {
+        //Get parameters from value tree
         Ltime = Xpanse_Parameters.getRawParameterValue("pong_delay_L_time");
         Rtime = Xpanse_Parameters.getRawParameterValue("pong_delay_R_time");
         fdbk_amtL = Xpanse_Parameters.getRawParameterValue("pong_delay_L_fdbk");
@@ -24,6 +26,7 @@ public:
     
     ~PingPongDelay(){};
     
+    //Pre playback initialisation
     void prepareToPlay(double sampleRate, int samplesPerBlock)
     {
         Maxsamps = (int)((sampleRate/1000.f) * maxDel);
@@ -43,12 +46,14 @@ public:
 
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            //Push sample to buffer with feedback
+            //Feedback from the opposite channel gives the ping pong effect
             auto bufinputL = (inDataL[sample] + ((fdbk_amtL->load()) * delayedR));
             auto bufinputR = (inDataR[sample] + ((fdbk_amtR->load()) * delayedL));
-            
             LBuffer.pushSampleToBuffer(0, bufinputL);
             RBuffer.pushSampleToBuffer(0, bufinputR);
             
+            //Get the delayed sample
             delayedL = *LBuffer.getDelayedSample(0, (Ltime->load()));
             delayedR = *RBuffer.getDelayedSample(0, (Rtime->load()));
             

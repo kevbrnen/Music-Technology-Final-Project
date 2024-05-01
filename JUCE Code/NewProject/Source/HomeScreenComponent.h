@@ -36,7 +36,6 @@ public:
         
         //Filter Button
         Filter_show_button.setButtonText("Filter"); //Create a button to toggle the filter component on a*nd off
-        //Filter_show_button.setClickingTogglesState(true);
         Filter_show_button.onClick = [this](){ //Enables/disables depending on button state
                 hideHomeScreenComponents();
                 filtComponent.setEnabled(true);
@@ -183,6 +182,7 @@ public:
 
     void resized() override
     {
+        //Set bounds of each effect component
         filtComponent.setBounds(getLocalBounds());
         delayComponent.setBounds(getLocalBounds());
         convolutionComponent.setBounds(getLocalBounds());
@@ -192,6 +192,7 @@ public:
         reverbComponent.setBounds(getLocalBounds());
         
         
+        //Buttons to select effects
         auto sideMargin = getWidth()/10;
         auto topMargin = getHeight()/8;
         auto buttonWidth = getWidth()/8;
@@ -303,6 +304,7 @@ public:
 private:
     char currentlyShowingComponent = 0; //Keeps track of what Effect is currently on screen
     
+    //Components for each effect
     FilterComponent filtComponent;
     DelayEffectComponent delayComponent;
     ConvolutionReverbEffectComponent convolutionComponent;

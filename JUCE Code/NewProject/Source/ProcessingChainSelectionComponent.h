@@ -21,6 +21,7 @@ class ProcessingChainSelectionComponent  : public juce::Component
 public:
     ProcessingChainSelectionComponent(juce::AudioProcessorValueTreeState& ProcChain)
     {
+        //Create each slot/combobox for processing chain component and link it to the processing chain value tree
         addAndMakeVisible(Slot1);
         Slot1.addItemList(processorChoices, 1);
         Slot1.setSelectedId(1);

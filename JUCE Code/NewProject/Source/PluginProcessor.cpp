@@ -43,6 +43,7 @@ filterEffect(Filter_Parameters), delayEffect(Delay_Parameters), convolutionEffec
     //Global Parameters
     globalGain = Global_Parameters.getRawParameterValue("global_gain");
     
+    //How many slots are in the processing chain (Fixed value)
     numSlots = sizeof(effects) / sizeof(effects[0]);
 }
 
@@ -114,9 +115,10 @@ void NewProjectAudioProcessor::changeProgramName (int index, const juce::String&
 }
 
 //==============================================================================
+//The prepare to play function below is used to set up any pre-playback variables etc
 void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    
+    //Calling prepare to play for each effect
     filterEffect.prepareToPlay(sampleRate, samplesPerBlock);
     delayEffect.prepareToPlay(sampleRate, samplesPerBlock);
     convolutionEffect.prepareToPlay(sampleRate, samplesPerBlock);
@@ -126,14 +128,7 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     reverbEffect.prepareToPlay(sampleRate, samplesPerBlock);
     
     
-    //Create Spec to set up effects
-    juce::dsp::ProcessSpec spec;
-    spec.sampleRate = sampleRate;
-    spec.maximumBlockSize = samplesPerBlock;
-    spec.numChannels = 2;
-    
-    
-    //Global Effects
+    //Global Gain
     lastGain = juce::Decibels::decibelsToGain(*Global_Parameters.getRawParameterValue("global_gain") + 0.0);
     
 }
@@ -187,7 +182,10 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     //Delay-Xpanse = 4
     //Degrade = 5
     //Phaser = 6
+    //Reverb = 7
     
+    //Loops through the 'effects' array, whose values are determined by each slot in the processing chain
+    //For each effect it calls the processBlock function in the effect, which adds the effect to the current block
     for(int i = 0; i<numSlots; ++i)
     {
         switch(effects[i])

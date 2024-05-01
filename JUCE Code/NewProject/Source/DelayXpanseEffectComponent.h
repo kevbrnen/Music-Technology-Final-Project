@@ -5,6 +5,9 @@
     Created: 18 Apr 2024 11:38:33pm
     Author:  Kevin Brennan
 
+    Component showing any UI for the Delay-Xpanse Effect
+    Contains separate UI for ping pong delay and spectral delay, but these components
+    are hidden and disabled when not needed
   ==============================================================================
 */
 
@@ -24,6 +27,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
     
+    //Used to show/hide pingpong/spectral components
     void setPingPongComponents(bool show);
     
     void setSpectralComponents(bool show);

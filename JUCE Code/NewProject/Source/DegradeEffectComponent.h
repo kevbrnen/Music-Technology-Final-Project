@@ -5,6 +5,7 @@
     Created: 20 Apr 2024 5:10:22pm
     Author:  Kevin Brennan
 
+    Component showing any UI for the Degrade Effect
   ==============================================================================
 */
 

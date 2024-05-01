@@ -5,6 +5,15 @@
     Created: 20 Apr 2024 5:10:39pm
     Author:  Kevin Brennan
 
+    A class for processing audio for the Degrade effect
+    Allows a user to choose the frequency to downsample to, the cutoff frequencies of
+    the pre and post lowpass filters (if they choose to use them, they help to combat aliasing),
+    and the bitrate to bitcrush to (not always on, but can be turned on with the toggle)
+ 
+    The downsampling works by calculating the downsampling factor N. Every Nth sample
+    is kept in the output, but all other samples are set to 0.
+ 
+    The bitcrushing works by truncating a sample to be within the range of a given bit rate
   ==============================================================================
 */
 
@@ -19,7 +28,7 @@ class DegradeEffectAudioProcessor  : public ProcessorBase
 public:
     DegradeEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts): Degrade_Parameters(vts)
     {
-        //Get Convolution variables from APVTS for Conv Parameters
+        //Get Parameters from VTS
         Degrade_on = Degrade_Parameters.getRawParameterValue("degrade_toggle");
         Degrade_WD = Degrade_Parameters.getRawParameterValue("degrade_wetdry");
         Degrade_Gain = Degrade_Parameters.getRawParameterValue("degrade_gain");
@@ -44,14 +53,16 @@ public:
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
-        //Setup LPF
+        //Setup LPFs
         LPF_Pre.prepareToPlay(sampleRate, samplesPerBlock);
         LPF_Pre.setCutoffFrequency(0.5 * fs_new);
         LPF_Pre.setType(1);
+        
         LPF_Post.prepareToPlay(sampleRate, samplesPerBlock);
         LPF_Post.setCutoffFrequency(0.5 * fs_new);
         LPF_Post.setType(1);
         
+        //Downsampling factor
         N = (int)(sampleRate/fs_new);
         
         this->sampleRate = sampleRate;
@@ -64,20 +75,26 @@ public:
         
         if(effectOn != 0.0f)
         {
+            //Dry copy of buffer
             juce::AudioBuffer<float> dry(buffer.getNumChannels(), buffer.getNumSamples());
             dry.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
             dry.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
             
+            //Cutoff frequencies for pre and post filters
             auto NewCutoffFrequency_Pre = Degrade_PRE_cutoff->load();
             auto NewCutoffFrequency_Post = Degrade_POST_cutoff->load();
             
+            //Frequency to downsample to
             auto fs_new = Degrade_Frequency->load();
+            
+            //Downsample factor
             N = (int)(sampleRate/fs_new);
             
+            //Check if bitcrushing on and what the selected rate is
             auto bitOn = Bitcrush_on->load();
             this->BitRate = (int)Bitcrush_rate->load();
             
-            
+            //Process buffer through pre filter
             LPF_Pre.setCutoffFrequency(NewCutoffFrequency_Pre);
             LPF_Pre.processBlock(buffer);
             
@@ -88,6 +105,7 @@ public:
                     auto* inData = buffer.getReadPointer(channel);
                     auto* outData = buffer.getWritePointer(channel);
                     
+                    //if the Nth sample add to output otherwise set to 0
                     if(sample % N == 0)
                     {
                         //Quantize to current bit rate
@@ -107,10 +125,12 @@ public:
                 }
              }
             
+            //Process buffer through post filter
             LPF_Post.setCutoffFrequency(NewCutoffFrequency_Post);
             LPF_Post.processBlock(buffer);
             
             
+            //Wet Dry
             auto wetDry = Degrade_WD->load();
 
             buffer.applyGain(wetDry);
@@ -128,7 +148,7 @@ public:
                 }
             }
             
-            
+            //Gain
             const auto NewGain = juce::Decibels::decibelsToGain(*Degrade_Parameters.getRawParameterValue("degrade_gain") + 0.0);
             
             if(NewGain != lastGain)
@@ -140,6 +160,7 @@ public:
         }
     };
     
+    //Used for bitcrushing a sample to a given bitrate
     float truncateSample(float sample, int bitRate)
     {
         float scaledSample = sample * (1 << bitRate);

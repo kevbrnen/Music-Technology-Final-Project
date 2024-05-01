@@ -5,6 +5,7 @@
     Created: 1 May 2024 2:23:37pm
     Author:  Kevin Brennan
 
+    A Class for processing audio for the Reverb effect
   ==============================================================================
 */
 

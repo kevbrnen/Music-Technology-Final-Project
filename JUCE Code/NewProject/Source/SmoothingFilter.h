@@ -20,6 +20,7 @@ public:
     SmoothingFilter(double Fc) {z1 = 0.0; setFc(Fc);};
     ~SmoothingFilter(){};
     
+    //Sets the cutoff frequency and recalculates the coefficients
     void setFc(float newFc)
     {
         b1 = exp(-2.0 * M_PI * newFc);
@@ -28,6 +29,7 @@ public:
         cutoff = newFc;
     };
     
+    //Processes the input sample
     float process(float sample)
     {
         return z1 = sample * a0 + z1 * b1;

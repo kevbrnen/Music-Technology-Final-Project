@@ -5,6 +5,9 @@
     Created: 18 Apr 2024 11:38:33pm
     Author:  Kevin Brennan
 
+    Component showing any UI for the Delay-Xpanse Effect
+    Contains separate UI for ping-pong delay and spectral delay, but these components
+    are hidden and disabled when not needed
   ==============================================================================
 */
 
@@ -71,6 +74,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     addAndMakeVisible(TypeSelector);
     TypeSelector.onChange = [this, &vts]()
     {
+        //Show/hide spectral/ping-pong components depending on which is selected
             if(TypeSelector.getSelectedId() == 1)
             {
                 setSpectralComponents(false);

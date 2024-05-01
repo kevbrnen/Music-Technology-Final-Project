@@ -5,6 +5,7 @@
     Created: 15 Apr 2024 10:31:41am
     Author:  Kevin Brennan
 
+    Component showing any UI for the Convolution Reverb Effect
   ==============================================================================
 */
 

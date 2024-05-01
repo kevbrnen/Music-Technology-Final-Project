@@ -5,6 +5,8 @@
     Created: 30 Apr 2024 11:46:09am
     Author:  Kevin Brennan
  
+    A grey box model of the MXR100 Phaser pedal
+ 
     R. Kiiski, F. Esqueda, and V. Välimäki, “Time-variant gray-box mod-
     eling of a phaser pedal,” in Proc. Int. Conf. Digital Audio Effects
     (DAFx-16), Brno, Czech Republic, Sep. 2016.
@@ -157,38 +159,4 @@ private:
     
     SmoothingFilter smoother;
     
-    //Temporary variables
-//    float y_1_1L = 0;
-//    float y_1L = 0;
-//    float y_2_1L = 0;
-//    float y_2L = 0;
-//    float y_3_1L = 0;
-//    float y_3L = 0;
-//    float y_4_1L = 0;
-//    float y_4L = 0;
-//    float y_5_1L = 0;
-//    float y_5L = 0;
-//    float y_6_1L = 0;
-//    float y_6L = 0;
-//    float y_7_1L = 0;
-//    float y_7L = 0;
-//    float y_8_1L = 0;
-//    float y_8L = 0;
-//
-//    float y_1_1R = 0;
-//    float y_1R = 0;
-//    float y_2_1R = 0;
-//    float y_2R = 0;
-//    float y_3_1R = 0;
-//    float y_3R = 0;
-//    float y_4_1R = 0;
-//    float y_4R = 0;
-//    float y_5_1R = 0;
-//    float y_5R = 0;
-//    float y_6_1R = 0;
-//    float y_6R = 0;
-//    float y_7_1R = 0;
-//    float y_7R = 0;
-//    float y_8_1R = 0;
-//    float y_8R = 0;
 };

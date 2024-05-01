@@ -5,6 +5,7 @@
     Created: 15 Apr 2024 10:32:15am
     Author:  Kevin Brennan
 
+    Class for processing audio for the Convolution Reverb Effect
   ==============================================================================
 */
 
@@ -37,7 +38,6 @@ public:
         ConvEngine.prepare(pluginSpec);
         
         updateFile(0);
-        
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
@@ -47,31 +47,30 @@ public:
         if(effectOn != 0.0f)
         {
             
+            //Check if impulse response has been updated
             auto IR_index = ConvolutionReverb_Parameters.getRawParameterValue("selector");
-            
             if((int)*IR_index != lastIR)
             {
                 lastIR = *IR_index;
                 updateFile(lastIR);
             }
             
-            
+            //Copy dry buffer so it can be mixed with the wet signal after
             juce::AudioBuffer<float> dry(buffer.getNumChannels(), buffer.getNumSamples());
             dry.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
             dry.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
             
+            //Apply pre-gain to the buffer, before the convolution processing
             auto preGain = juce::Decibels::decibelsToGain(*ConvolutionReverb_Parameters.getRawParameterValue("conv_pre_gain") + 0.0);
             buffer.applyGain(preGain);
             
-            
+            //Process the block through the convolution engine
             juce::dsp::AudioBlock<float> block (buffer);
             juce::dsp::ProcessContextReplacing<float> context (block);
-            
             ConvEngine.process(context);
             
+            //Wet Dry
             auto wetDry = Conv_WD->load();
-            
-            
             
             buffer.applyGain(wetDry);
             dry.applyGain(1-wetDry);
@@ -103,6 +102,7 @@ public:
         }
     };
     
+    //Change selected impulse response in the convolution engine
     void updateFile(int IR)
     {
             switch(IR)

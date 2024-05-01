@@ -5,8 +5,7 @@
     Created: 10 Mar 2024 9:08:45pm
     Author:  Kevin Brennan
     
-    The global controls component
-    Bar at the top of the plugin
+    The global controls component bar at the top of the plugin
   ==============================================================================
 */
 
