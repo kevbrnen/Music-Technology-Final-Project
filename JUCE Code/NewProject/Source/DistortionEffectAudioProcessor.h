@@ -1,45 +1,43 @@
 /*
   ==============================================================================
 
-    ReverbEffectAudioProcessor.h
-    Created: 1 May 2024 2:23:37pm
+    DistortionEffectAudioProcessor.h
+    Created: 2 May 2024 3:16:10pm
     Author:  Kevin Brennan
 
-    A Class for processing audio for the Reverb effect
   ==============================================================================
 */
 
 #pragma once
 #include <JuceHeader.h>
-#include "SchroederReverberator.h"
+#include "VariableDistortion.h"
 
 
-class ReverbEffectAudioProcessor  : public ProcessorBase
+class DistortionEffectAudioProcessor  : public ProcessorBase
 {
 public:
-    ReverbEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts): Reverb_Parameters(vts), schroederProcessor(vts)
+    DistortionEffectAudioProcessor(juce::AudioProcessorValueTreeState& vts): Distortion_Parameters(vts), distort(vts)
     {
         //Get variables from APVTS for Parameters
-        Reverb_on = Reverb_Parameters.getRawParameterValue("reverb_toggle");
-        Reverb_WD = Reverb_Parameters.getRawParameterValue("reverb_wetdry");
-        Reverb_Gain = Reverb_Parameters.getRawParameterValue("reverb_gain");
-        Type = Reverb_Parameters.getRawParameterValue("reverb_type");
+        Dist_on = Distortion_Parameters.getRawParameterValue("distortion_toggle");
+        Dist_WD = Distortion_Parameters.getRawParameterValue("distortion_wetdry");
+        Dist_Gain = Distortion_Parameters.getRawParameterValue("distortion_gain");
     };
     
-    ~ReverbEffectAudioProcessor(){};
+    ~DistortionEffectAudioProcessor(){};
     
-    const juce::String getName() const override{return "Reverb";};
+    const juce::String getName() const override{return "Distortion";};
     
     //==============================================================================
     void prepareToPlay(double sampleRate, int samplesPerBlock) override
     {
-        schroederProcessor.prepareToPlay(sampleRate, samplesPerBlock);
+        distort.prepareToPlay(sampleRate, samplesPerBlock);
 
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
     {
-        auto effectOn = Reverb_on->load();
+        auto effectOn = Dist_on->load();
         
         if(effectOn != 0.0f)
         {
@@ -48,18 +46,16 @@ public:
             dry.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
             
             
-            if(Type->load() == 0)
-            {
-             
-            }
-            else if(Type->load() == 1)
-            {
-           
-            }
+//            if(Type->load() == 0)
+//            {
+//
+//            }
             
-            schroederProcessor.processBlock(buffer);
+            distort.processBlock(buffer);
             
-            auto wetDry = Reverb_WD->load();
+
+            
+            auto wetDry = Dist_WD->load();
 
             buffer.applyGain(wetDry);
             dry.applyGain(1-wetDry);
@@ -77,7 +73,7 @@ public:
                 }
             }
             
-            const auto NewGain = juce::Decibels::decibelsToGain(*Reverb_Parameters.getRawParameterValue("reverb_gain") + 0.0);
+            const auto NewGain = juce::Decibels::decibelsToGain(*Distortion_Parameters.getRawParameterValue("distortion_gain") + 0.0);
             
             if(NewGain != lastGain)
             {
@@ -88,18 +84,18 @@ public:
         }
     };
     
-    juce::AudioProcessorValueTreeState& Reverb_Parameters;
+    juce::AudioProcessorValueTreeState& Distortion_Parameters;
     
 private:
     
-    std::atomic<float>* Reverb_on = nullptr;
-    std::atomic<float>* Reverb_WD = nullptr;
+    std::atomic<float>* Dist_on = nullptr;
+    std::atomic<float>* Dist_WD = nullptr;
     
-    std::atomic<float>* Reverb_Gain = nullptr;
-    std::atomic<float>* Type = nullptr;
+    std::atomic<float>* Dist_Gain = nullptr;
     float lastGain;
     
-    SchroederReverberator schroederProcessor;
+    VariableDistortion distort;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ReverbEffectAudioProcessor);
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DistortionEffectAudioProcessor);
 };

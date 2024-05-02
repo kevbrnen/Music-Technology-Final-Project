@@ -35,7 +35,8 @@ DelayXpanse_Parameters(*this, nullptr, juce::Identifier("DelayXpanse_Parameters"
 Degrade_Parameters(*this, nullptr, juce::Identifier("Degrade_Parameters"), createDegradeParameterLayout()),
 Phaser_Parameters(*this, nullptr, juce::Identifier("Phaser_Parameters"), createPhaserParameterLayout()),
 Reverb_Parameters(*this, nullptr, juce::Identifier("Reverb_Parameters"), createReverbParameterLayout()),
-filterEffect(Filter_Parameters), delayEffect(Delay_Parameters), convolutionEffect(Convolution_Parameters), xpanseEffect(DelayXpanse_Parameters), degradeEffect(Degrade_Parameters), phaserEffect(Phaser_Parameters), reverbEffect(Reverb_Parameters)
+Distortion_Parameters(*this, nullptr, juce::Identifier("Distortion_Parameters"), createDistortionParameterLayout()),
+filterEffect(Filter_Parameters), delayEffect(Delay_Parameters), convolutionEffect(Convolution_Parameters), xpanseEffect(DelayXpanse_Parameters), degradeEffect(Degrade_Parameters), phaserEffect(Phaser_Parameters), reverbEffect(Reverb_Parameters), distortionEffect(Distortion_Parameters)
 {
     //Setting up audio processor value tree state objects and parameters above
     
@@ -126,6 +127,7 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     degradeEffect.prepareToPlay(sampleRate, samplesPerBlock);
     phaserEffect.prepareToPlay(sampleRate, samplesPerBlock);
     reverbEffect.prepareToPlay(sampleRate, samplesPerBlock);
+    distortionEffect.prepareToPlay(sampleRate, samplesPerBlock);
     
     
     //Global Gain
@@ -183,6 +185,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     //Degrade = 5
     //Phaser = 6
     //Reverb = 7
+    //Distortion = 8
     
     //Loops through the 'effects' array, whose values are determined by each slot in the processing chain
     //For each effect it calls the processBlock function in the effect, which adds the effect to the current block
@@ -211,6 +214,9 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             case 7:
                 reverbEffect.processBlock(buffer, midiMessages);
                 break;
+            case 8:
+                distortionEffect.processBlock(buffer, midiMessages);
+                break;
             default:
                 break;
         }
@@ -236,7 +242,7 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain, Delay_Parameters, Convolution_Parameters, DelayXpanse_Parameters, Degrade_Parameters, Phaser_Parameters, Reverb_Parameters);
+    return new NewProjectAudioProcessorEditor(*this, Global_Parameters, Filter_Parameters, Processing_Chain, Delay_Parameters, Convolution_Parameters, DelayXpanse_Parameters, Degrade_Parameters, Phaser_Parameters, Reverb_Parameters, Distortion_Parameters);
 }
 
 //==============================================================================
@@ -293,6 +299,11 @@ void NewProjectAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     reverbChild.copyPropertiesAndChildrenFrom(Reverb_Parameters.state, nullptr);
     combinedValueTree.addChild(reverbChild, -1, nullptr);
     
+    //Distortion Effect Parameters
+    juce::ValueTree distortionChild("Distortion_Parameters");
+    distortionChild.copyPropertiesAndChildrenFrom(Distortion_Parameters.state, nullptr);
+    combinedValueTree.addChild(distortionChild, -1, nullptr);
+    
     //Create XML file from combined tree
     std::unique_ptr<juce::XmlElement> CombinedXml (combinedValueTree.createXml());
     copyXmlToBinary(*CombinedXml, destData);
@@ -327,6 +338,8 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
         juce::ValueTree phaserValueTree = combinedValueTree.getChildWithName("Phaser_Parameters");
         
         juce::ValueTree reverbValueTree = combinedValueTree.getChildWithName("Reverb_Parameters");
+        
+        juce::ValueTree distortionValueTree = combinedValueTree.getChildWithName("Distortion_Parameters");
 
         // Set the state of Global_Parameters and Filter_Parameters using their respective value trees
         Global_Parameters.replaceState(globalValueTree);
@@ -338,6 +351,7 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
         Degrade_Parameters.replaceState(degradeValueTree);
         Phaser_Parameters.replaceState(phaserValueTree);
         Reverb_Parameters.replaceState(reverbValueTree);
+        Distortion_Parameters.replaceState(distortionValueTree);
     }
 }
 
@@ -361,7 +375,8 @@ void NewProjectAudioProcessor::updateChain()
                                                      dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot4")),
                                                      dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot5")),
                                                      dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot6")),
-                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot7"))};
+                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot7")),
+                                                     dynamic_cast<juce::AudioParameterChoice*>(Processing_Chain.getParameter("slot8"))};
     
     //Loop through all choice parameters (the dropdown boxes in the chain menu) and check if any have changed, and if so what they have changed to
     //Null for empty, Filter for filter etc.
@@ -394,6 +409,9 @@ void NewProjectAudioProcessor::updateChain()
                 break;
             case 7:
                 effects[i] = 7;
+                break;
+            case 8:
+                effects[i] = 8;
                 break;
             default:
                 break;

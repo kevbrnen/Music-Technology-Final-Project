@@ -17,6 +17,7 @@
 #include "DegradeEffectAudioProcessor.h"
 #include "PhaserEffectAudioProcessor.h"
 #include "ReverbEffectAudioProcessor.h"
+#include "DistortionEffectAudioProcessor.h"
 
 
 //==============================================================================
@@ -75,6 +76,8 @@ public:
     juce::AudioProcessorValueTreeState Degrade_Parameters;
     juce::AudioProcessorValueTreeState Phaser_Parameters;
     juce::AudioProcessorValueTreeState Reverb_Parameters;
+    juce::AudioProcessorValueTreeState Distortion_Parameters;
+    
 private:
     //Individual effect Audio Processor objects
     FilterEffectAudioProcessor filterEffect;
@@ -84,10 +87,11 @@ private:
     DegradeEffectAudioProcessor degradeEffect;
     PhaserEffectAudioProcessor phaserEffect;
     ReverbEffectAudioProcessor reverbEffect;
+    DistortionEffectAudioProcessor distortionEffect;
     
     //For Processing chain
     void updateChain();
-    int effects[7] = {0, 0, 0, 0, 0, 0, 0};
+    int effects[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     int numSlots;
     
     

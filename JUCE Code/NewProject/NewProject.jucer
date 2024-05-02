@@ -4,6 +4,16 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
               jucerFormatVersion="1">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
+    <GROUP id="{2832EB3B-573C-7FEB-D65E-4F72BF01F573}" name="DistortionEffect">
+      <FILE id="mfzElk" name="DistortionEffectAudioProcessor.h" compile="0"
+            resource="0" file="Source/DistortionEffectAudioProcessor.h"/>
+      <FILE id="lcfWLm" name="DistortionEffectComponent.cpp" compile="1"
+            resource="0" file="Source/DistortionEffectComponent.cpp"/>
+      <FILE id="wJfk5C" name="DistortionEffectComponent.h" compile="0" resource="0"
+            file="Source/DistortionEffectComponent.h"/>
+      <FILE id="Xki8r8" name="VariableDistortion.h" compile="0" resource="0"
+            file="Source/VariableDistortion.h"/>
+    </GROUP>
     <GROUP id="{41BD0CAB-48C1-DFAC-7DC9-EBCB814B5EAC}" name="ReverbEffect">
       <FILE id="c4f8QM" name="ReverbEffectAudioProcessor.h" compile="0" resource="0"
             file="Source/ReverbEffectAudioProcessor.h"/>
@@ -11,6 +21,8 @@
             file="Source/ReverbEffectComponent.cpp"/>
       <FILE id="TiEbrO" name="ReverbEffectComponent.h" compile="0" resource="0"
             file="Source/ReverbEffectComponent.h"/>
+      <FILE id="Uli7VW" name="SchroederReverberator.h" compile="0" resource="0"
+            file="Source/SchroederReverberator.h"/>
     </GROUP>
     <GROUP id="{3925C9CB-177B-7052-8BC4-1374CBD8373E}" name="PhaserEffect">
       <FILE id="t0PaKB" name="MXR100_Phaser.h" compile="0" resource="0" file="Source/MXR100_Phaser.h"/>

@@ -19,6 +19,7 @@
 #include "DegradeEffectComponent.h"
 #include "PhaserEffectComponent.h"
 #include "ReverbEffectComponent.h"
+#include "DistortionEffectComponent.h"
 
 //==============================================================================
 /*
@@ -26,7 +27,7 @@
 class HomeScreenComponent  : public juce::Component
 {
 public:
-    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts, juce::AudioProcessorValueTreeState& Rvts): filtComponent(Fvts), delayComponent(Dvts), convolutionComponent(Cvts), delayXpanseComponent(Xvts), degradeComponent(DGvts), phaserComponent(Pvts), reverbComponent(Rvts)
+    HomeScreenComponent(juce::AudioProcessorValueTreeState& Fvts, juce::AudioProcessorValueTreeState& Dvts, juce::AudioProcessorValueTreeState& Cvts, juce::AudioProcessorValueTreeState& Xvts, juce::AudioProcessorValueTreeState& DGvts, juce::AudioProcessorValueTreeState& Pvts, juce::AudioProcessorValueTreeState& Rvts, juce::AudioProcessorValueTreeState& Dist_vts): filtComponent(Fvts), delayComponent(Dvts), convolutionComponent(Cvts), delayXpanseComponent(Xvts), degradeComponent(DGvts), phaserComponent(Pvts), reverbComponent(Rvts), distortionComponent(Dist_vts)
     {
 //Filter
         //Filter Component
@@ -141,13 +142,13 @@ public:
         
         addAndMakeVisible(Phaser_show_button);
 
-//Phaser
-        //Phaser Component
+//Reverb
+        //Reverb Component
         addAndMakeVisible(reverbComponent);
         reverbComponent.setEnabled(false);
         reverbComponent.setVisible(false);
         
-        //Phaser Button
+        //Reverb Button
         Reverb_show_button.setButtonText("Reverb");
         Reverb_show_button.onClick = [this]()
         {
@@ -159,6 +160,25 @@ public:
         };
         
         addAndMakeVisible(Reverb_show_button);
+        
+//Distortion
+        //Distortion Component
+        addAndMakeVisible(distortionComponent);
+        distortionComponent.setEnabled(false);
+        distortionComponent.setVisible(false);
+        
+        //Distortion Button
+        Distortion_show_button.setButtonText("Distortion");
+        Distortion_show_button.onClick = [this]()
+        {
+            hideHomeScreenComponents();
+            distortionComponent.setEnabled(true);
+            distortionComponent.setVisible(true);
+            
+            currentlyShowingComponent = 'Z';
+        };
+        
+        addAndMakeVisible(Distortion_show_button);
 
     }
 
@@ -190,6 +210,7 @@ public:
         degradeComponent.setBounds(getLocalBounds());
         phaserComponent.setBounds(getLocalBounds());
         reverbComponent.setBounds(getLocalBounds());
+        distortionComponent.setBounds(getLocalBounds());
         
         
         //Buttons to select effects
@@ -205,8 +226,8 @@ public:
         Degrade_show_button.setBounds(sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
         Phaser_show_button.setBounds(sideMargin + buttonWidth + sideMargin , topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
         Reverb_show_button.setBounds(sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
+        Distortion_show_button.setBounds(sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin + buttonWidth + sideMargin, topMargin + buttonWidth + topMargin, buttonWidth, buttonWidth);
         
-
     }
     
     //Hide any of the home screens native components (Filter selection buttons, etc.)
@@ -232,6 +253,9 @@ public:
         
         Reverb_show_button.setEnabled(false);
         Reverb_show_button.setVisible(false);
+        
+        Distortion_show_button.setEnabled(false);
+        Distortion_show_button.setVisible(false);
     }
     
     //Shows all home screen native components and hides whatever effect component was showing
@@ -274,6 +298,11 @@ public:
                 reverbComponent.setVisible(false);
                 currentlyShowingComponent = 0;
                 break;
+            case 'Z': //Distortion
+                distortionComponent.setEnabled(false);
+                distortionComponent.setVisible(false);
+                currentlyShowingComponent = 0;
+                break;
             default:
                 break;
         }
@@ -299,6 +328,9 @@ public:
         Reverb_show_button.setEnabled(true);
         Reverb_show_button.setVisible(true);
         
+        Distortion_show_button.setEnabled(true);
+        Distortion_show_button.setVisible(true);
+        
     }
 
 private:
@@ -312,6 +344,7 @@ private:
     DegradeEffectComponent degradeComponent;
     PhaserEffectComponent phaserComponent;
     ReverbEffectComponent reverbComponent;
+    DistortionEffectComponent distortionComponent;
     
     //Buttons to select Effects
     juce::TextButton Filter_show_button;
@@ -321,6 +354,7 @@ private:
     juce::TextButton Degrade_show_button;
     juce::TextButton Phaser_show_button;
     juce::TextButton Reverb_show_button;
+    juce::TextButton Distortion_show_button;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HomeScreenComponent)
 };

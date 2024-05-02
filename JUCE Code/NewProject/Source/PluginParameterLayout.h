@@ -23,6 +23,8 @@ juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"}
 juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"}; //Delay Xpanse types
 
 juce::StringArray Reverb_Choices{"Schroeder Reverb", "Comb Filter Reverb"}; //Reverb types
+
+juce::StringArray Distortion_Choices{"Tanh", "Cubic Soft", "Square", "Clipping", "Soft Saturation"}; //Distortion Types
 //==============================================================================
 
 //Processing Chain
@@ -38,6 +40,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLay
     auto slot5 = std::make_unique<juce::AudioParameterChoice>("slot5", "Slot5", processorChoices, 5);
     auto slot6 = std::make_unique<juce::AudioParameterChoice>("slot6", "Slot6", processorChoices, 6);
     auto slot7 = std::make_unique<juce::AudioParameterChoice>("slot7", "Slot7", processorChoices, 7);
+    auto slot8 = std::make_unique<juce::AudioParameterChoice>("slot8", "Slot8", processorChoices, 8);
     
     //Efficiently add parameter to list
     params.push_back(std::move(slot1));
@@ -47,6 +50,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createProcessingParameterLay
     params.push_back(std::move(slot5));
     params.push_back(std::move(slot6));
     params.push_back(std::move(slot7));
+    params.push_back(std::move(slot8));
     
     return {params.begin(), params.end()};
     
@@ -316,11 +320,55 @@ juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout(
     
     
     
+    auto APF1fdbk = std::make_unique<juce::AudioParameterFloat>("apf1_fdbk", "Apf1_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    
+    auto APF2fdbk = std::make_unique<juce::AudioParameterFloat>("apf2_fdbk", "Apf2_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    
+    auto combTimeParameter = std::make_unique<juce::AudioParameterFloat>("comb_delay_time", "Comb_Delay_Time", juce::NormalisableRange{0.0f, 1300.f, 1.f, 0.4f, false}, 500.f);
+    
+    auto apfTimeParameter = std::make_unique<juce::AudioParameterFloat>("apf_delay_time", "APF_Delay_Time", juce::NormalisableRange{0.0f, 1300.f, 1.f, 0.4f, false}, 500.f);
+    
+    
+    
     paramsReverb.push_back(std::move(reverbToggleParameter));
     paramsReverb.push_back(std::move(reverbGainParameter));
     paramsReverb.push_back(std::move(reverbWetDryParameter));
     paramsReverb.push_back(std::move(reverbSelector));
-
+    
+    
+    paramsReverb.push_back(std::move(APF1fdbk));
+    paramsReverb.push_back(std::move(APF2fdbk));
+    paramsReverb.push_back(std::move(combTimeParameter));
+    paramsReverb.push_back(std::move(apfTimeParameter));
     
     return {paramsReverb.begin(), paramsReverb.end()}; //Returning vector
+}
+
+//Distortion Parameters
+juce::AudioProcessorValueTreeState::ParameterLayout createDistortionParameterLayout()
+{
+    //Container for all parameters
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> paramsDistortion;
+    
+    auto distToggleParameter = std::make_unique<juce::AudioParameterBool>("distortion_toggle", "Distortion_Toggle", false);
+    
+    auto distGainParameter = std::make_unique<juce::AudioParameterFloat>("distortion_gain", "Distortion_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(), juce::AudioProcessorParameter::genericParameter,[](float value, int){return juce::String(value, 2);});
+    
+    auto distWetDryParameter = std::make_unique<juce::AudioParameterFloat>("distortion_wetdry", "Distortion_Wetdry", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.f);
+    
+    auto distSelector = std::make_unique<juce::AudioParameterChoice>("distortion_type", "Distortion_Type", Distortion_Choices, 0);
+    
+    auto preGain = std::make_unique<juce::AudioParameterFloat>("distortion_pregain", "Distortion_PreGain", juce::NormalisableRange{0.1f, 10.f, 0.001f, 1.f, false}, 1.f);
+    
+    auto thresh = std::make_unique<juce::AudioParameterFloat>("distortion_thresh", "Distortion_thresh", juce::NormalisableRange{0.f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
+    
+    paramsDistortion.push_back(std::move(distToggleParameter));
+    paramsDistortion.push_back(std::move(distGainParameter));
+    paramsDistortion.push_back(std::move(distWetDryParameter));
+    paramsDistortion.push_back(std::move(distSelector));
+    paramsDistortion.push_back(std::move(preGain));
+    paramsDistortion.push_back(std::move(thresh));
+    
+    return {paramsDistortion.begin(), paramsDistortion.end()}; //Returning vector
 }
