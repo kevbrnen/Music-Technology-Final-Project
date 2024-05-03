@@ -67,27 +67,6 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     XpanseGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(XpanseGainLabel);
     
-//Combobox
-    TypeSelector.addItemList(Delay_Choices, 1);
-    TypeSelector.setSelectedId(1);
-    Type_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(vts, "xpanse_type", TypeSelector));
-    addAndMakeVisible(TypeSelector);
-    TypeSelector.onChange = [this, &vts]()
-    {
-        //Show/hide spectral/ping-pong components depending on which is selected
-            if(TypeSelector.getSelectedId() == 1)
-            {
-                setSpectralComponents(false);
-                setPingPongComponents(true);
-            }
-            else if(TypeSelector.getSelectedId() == 2)
-            {
-                setPingPongComponents(false);
-                setSpectralComponents(true);
-            }
-    };
-    
-    
 
 //###### Ping Pong Delay #####
     pingPongDelaySlider_L.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -297,6 +276,33 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     addAndMakeVisible(specCutoff3);
     specCutoff3Label.setText("Cutoff Frequency 3", juce::dontSendNotification);
     addAndMakeVisible(specCutoff3Label);
+    
+    
+    setPingPongComponents(false);
+    setSpectralComponents(false);
+    
+    
+//Combobox
+    TypeSelector.addItemList(Delay_Choices, 1);
+    TypeSelector.setSelectedId(1);
+    Type_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(vts, "xpanse_type", TypeSelector));
+    addAndMakeVisible(TypeSelector);
+    TypeSelector.onChange = [this, &vts]()
+    {
+        //Show/hide spectral/ping-pong components depending on which is selected
+            if(TypeSelector.getSelectedId() == 1)
+            {
+                setSpectralComponents(false);
+                setPingPongComponents(true);
+            }
+            else if(TypeSelector.getSelectedId() == 2)
+            {
+                setPingPongComponents(false);
+                setSpectralComponents(true);
+            }
+    };
+    
+    
 }
 
 DelayXpanseEffectComponent::~DelayXpanseEffectComponent()

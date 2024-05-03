@@ -74,9 +74,55 @@ public:
         g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
         g.setColour (juce::Colours::black);
-        g.setFont (14.0f);
-        g.drawText ("GlobalControlsComponent", getLocalBounds(),
-                    juce::Justification::centred, true);   // draw some placeholder text
+        
+        juce::Font boldFont ("Futura", 35.0f, juce::Font::bold);
+
+        g.setFont (boldFont);
+        
+        switch(hs.getCurrentlyShowingComponent())
+        {
+            case 0:
+                g.drawText ("Home", getLocalBounds(),
+                                juce::Justification::centred, true);
+                break;
+            case 'F': //Filter
+                g.drawText ("Filter", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            case 'D': //Delay
+                g.drawText ("Delay", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            case 'C': //Convolution Reverb
+                g.drawText ("Convolution Reverb", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            case 'X': //Delay Xpanse
+                g.drawText ("Delay-Xpanse", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            case 'G': //Degrade
+                g.drawText ("Degrade", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            case 'P': //Phaser
+                g.drawText ("Phaser", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            case 'R': //Reverb
+                g.drawText ("Reverb", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            case 'Z': //Distortion
+                g.drawText ("Distortion", getLocalBounds(),
+                            juce::Justification::centred, true);
+                break;
+            default:
+                break;
+        }
+        
+        this->repaint();
+        
     }
 
     void resized() override

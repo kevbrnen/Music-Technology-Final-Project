@@ -68,6 +68,8 @@ public:
                     auto newDelayTime = Delay_Time->load();
                     auto Fdbk_amt = Delay_FDBK->load();
                     
+                    WetAmount = Delay_WD->load();
+                    
                     //Set the next target to smooth to as the new delay time
                     delayTimeSmoothing.setTargetValue(newDelayTime);
                     
@@ -78,7 +80,7 @@ public:
                         auto* outData = buffer.getWritePointer(channel);
                         
                         //Push sample to buffer with feedback, determined by feedback amount
-                        circularBuffer.pushSampleToBuffer(channel, inData[i] + (feedback[channel] * Fdbk_amt));
+                        circularBuffer.pushSampleToBuffer(channel, (inData[i] + (feedback[channel] * Fdbk_amt)));
                             
                         //Get the smoothed delay time value
                         auto time = delayTimeSmoothing.getNextValue();
@@ -94,6 +96,7 @@ public:
                         //Feedback for each channel
                         feedback[channel] = outData[i];
                         lastDelay = time;
+                        
                     }
                 }
                 

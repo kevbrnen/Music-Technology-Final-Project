@@ -39,6 +39,8 @@ private:
     juce::ComboBox TypeSelector;
     juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Type_attachment;
+    juce::ComboBox TypeSelector2;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Type_attachment2;
     
     juce::Slider cutoffFrequencySlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoffFrequencyAttachment;
@@ -48,6 +50,18 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>resonanceAttachment;
     juce::Label resonanceLabel;
     
+    
+    juce::TextButton filt2_Toggle;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>Filt2_OnOff_Attachment;
+    juce::Label filt2Label;
+    
+    juce::Slider cutoffFrequencySlider2;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoffFrequencyAttachment2;
+    juce::Label cutoffFrequencyLabel2;
+    
+    juce::Slider resonanceSlider2;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>resonanceAttachment2;
+    juce::Label resonanceLabel2;
     
     juce::Slider filterGainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;

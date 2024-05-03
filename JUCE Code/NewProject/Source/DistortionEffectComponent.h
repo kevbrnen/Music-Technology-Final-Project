@@ -52,5 +52,27 @@ private:
     juce::Label ThreshLabel;
     
     
+    juce::Slider PreCutoffSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>preCutoffAttachment;
+    juce::Label PreCutoffLabel;
+    
+    juce::Slider PreResSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> preResAttachment;
+    juce::Label PreResLabel;
+    
+    juce::Slider PostCutoffSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>postCutoffAttachment;
+    juce::Label PostCutoffLabel;
+    
+    juce::Slider PostResSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> postResAttachment;
+    juce::Label PostResLabel;
+    
+    juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
+    juce::ComboBox PreSelector;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>preType_attachment;
+    juce::ComboBox PostSelector;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>postType_attachment;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionEffectComponent)
 };

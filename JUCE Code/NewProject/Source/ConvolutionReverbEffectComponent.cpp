@@ -47,7 +47,7 @@ ConvolutionReverbEffectComponent::ConvolutionReverbEffectComponent(juce::AudioPr
     ConvolutionWDSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     ConvolutionWDAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "convolution_wetdry", ConvolutionWDSlider));
     ConvolutionWDSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    ConvolutionWDSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    ConvolutionWDSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::seagreen);
     ConvolutionWDSlider.setRange(0.0, 1.0);
     addAndMakeVisible(ConvolutionWDSlider);
     
@@ -59,7 +59,7 @@ ConvolutionReverbEffectComponent::ConvolutionReverbEffectComponent(juce::AudioPr
     ConvolutionPreGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     preGainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "conv_pre_gain", ConvolutionPreGainSlider));
     ConvolutionPreGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    ConvolutionPreGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    ConvolutionPreGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::seagreen);
     ConvolutionPreGainSlider.setTextValueSuffix("dB");
     ConvolutionPreGainSlider.setRange(-48.0, 10.0);
     addAndMakeVisible(ConvolutionPreGainSlider);
@@ -106,15 +106,11 @@ ConvolutionReverbEffectComponent::~ConvolutionReverbEffectComponent()
 
 void ConvolutionReverbEffectComponent::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::lightgreen);   // clear the background
+    g.fillAll (juce::Colours::mediumspringgreen);   // clear the background
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("ConvolutionReverbEffectComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
     
 }
 
@@ -127,7 +123,7 @@ void ConvolutionReverbEffectComponent::resized()
     ConvolutionWDLabel.attachToComponent(&ConvolutionWDSlider, false);
     ConvolutionWDLabel.setJustificationType(juce::Justification::centred);
     
-    ConvolutionPreGainSlider.setBounds(getWidth() - 500, (getHeight()*2/4)+50, 200, 200);
+    ConvolutionPreGainSlider.setBounds(getWidth() - 600, (getHeight()*2/4)+50, 200, 200);
     ConvolutionPreGainLabel.attachToComponent(&ConvolutionPreGainSlider, true);
     
     ConvolutionGainSlider.setBounds(getWidth() - 110, 60, 100, 100);

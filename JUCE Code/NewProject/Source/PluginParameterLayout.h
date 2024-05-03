@@ -14,7 +14,7 @@
 #pragma once
 #include <JuceHeader.h>
 //==============================================================================
-juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser", "Reverb"};  //Effects that can be added to the chain
+juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "Delay-Xpanse", "Degrade", "Phaser", "Reverb", "Distortion"};  //Effects that can be added to the chain
 
 juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"}; //Filter types
 
@@ -85,15 +85,25 @@ juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout(
     
     auto cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("cutoff_frequency", "Cutoff_Frequency", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f);
     
-    auto resonanceParameter = std::make_unique<juce::AudioParameterFloat>("resonance", "Resonance", juce::NormalisableRange{0.f, 10.f, 0.01f, 1.f, false}, 0.1f);
+    auto resonanceParameter = std::make_unique<juce::AudioParameterFloat>("resonance", "Resonance", juce::NormalisableRange{0.1f, 10.f, 0.001f, .6f, false}, 0.1f);
     
     auto filterToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_toggle", "Filter_Toggle", false);
+    
+    auto typeSelector = std::make_unique<juce::AudioParameterChoice>("filter_types", "Filter_Types", Filter_Choices, 0);
+    
+    
+    auto cutoffFrequencyParameter2 = std::make_unique<juce::AudioParameterFloat>("cutoff_frequency2", "Cutoff_Frequency2", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f);
+    
+    auto resonanceParameter2 = std::make_unique<juce::AudioParameterFloat>("resonance2", "Resonance2", juce::NormalisableRange{0.1f, 10.f, 0.001f, .6f, false}, 0.1f);
+    
+    auto filterToggleParameter2 = std::make_unique<juce::AudioParameterBool>("filter_toggle2", "Filter_Toggle2", false);
+    
+    auto typeSelector2 = std::make_unique<juce::AudioParameterChoice>("filter_types2", "Filter_Types2", Filter_Choices, 0);
+    
     
     auto filterGainParameter = std::make_unique<juce::AudioParameterFloat>("filter_gain", "Filter_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     auto filterLFOToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_LFO_toggle", "Filter_LFO_Toggle", false);
-    
-    auto typeSelector = std::make_unique<juce::AudioParameterChoice>("filter_types", "Filter_Types", Filter_Choices, 0);
     
     //Efficiently add parameter to list
     paramsFilt.push_back(std::move(cutoffFrequencyParameter));
@@ -102,6 +112,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout(
     paramsFilt.push_back(std::move(filterGainParameter));
     paramsFilt.push_back(std::move(filterLFOToggleParameter));
     paramsFilt.push_back(std::move(typeSelector));
+    
+    paramsFilt.push_back(std::move(cutoffFrequencyParameter2));
+    paramsFilt.push_back(std::move(resonanceParameter2));
+    paramsFilt.push_back(std::move(filterToggleParameter2));
+    paramsFilt.push_back(std::move(typeSelector2));
 
     
     return {paramsFilt.begin(), paramsFilt.end()}; //Returning vector
@@ -362,6 +377,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout createDistortionParameterLay
     
     auto thresh = std::make_unique<juce::AudioParameterFloat>("distortion_thresh", "Distortion_thresh", juce::NormalisableRange{0.f, 1.f, 0.001f, 1.f, false}, 0.5f);
     
+    auto PRE_cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("distortion_pre_cutoff", "Distortion_Pre_Cutoff", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.5f, false}, 20000.f);
+    
+    auto POST_cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("distortion_post_cutoff", "Distortion_Post_Cutoff", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.5f, false}, 20000.f);
+    
+    auto resonancePre = std::make_unique<juce::AudioParameterFloat>("distortion_pre_resonance", "Distortion_Pre_Resonance", juce::NormalisableRange{0.f, 10.f, 0.01f, 1.f, false}, 0.1f);
+    
+    auto resonancePost = std::make_unique<juce::AudioParameterFloat>("distortion_post_resonance", "Distortion_Post_Resonance", juce::NormalisableRange{0.f, 10.f, 0.01f, 1.f, false}, 0.1f);
+    
+    auto preTypeSelector = std::make_unique<juce::AudioParameterChoice>("pre_filter_type", "Pre_Filter_Type", Filter_Choices, 0);
+    
+    auto postTypeSelector = std::make_unique<juce::AudioParameterChoice>("post_filter_type", "Post_Filter_Type", Filter_Choices, 0);
+    
     
     paramsDistortion.push_back(std::move(distToggleParameter));
     paramsDistortion.push_back(std::move(distGainParameter));
@@ -369,6 +396,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout createDistortionParameterLay
     paramsDistortion.push_back(std::move(distSelector));
     paramsDistortion.push_back(std::move(preGain));
     paramsDistortion.push_back(std::move(thresh));
+    paramsDistortion.push_back(std::move(PRE_cutoffFrequencyParameter));
+    paramsDistortion.push_back(std::move(POST_cutoffFrequencyParameter));
+    paramsDistortion.push_back(std::move(resonancePre));
+    paramsDistortion.push_back(std::move(resonancePost));
+    paramsDistortion.push_back(std::move(preTypeSelector));
+    paramsDistortion.push_back(std::move(postTypeSelector));
     
     return {paramsDistortion.begin(), paramsDistortion.end()}; //Returning vector
 }

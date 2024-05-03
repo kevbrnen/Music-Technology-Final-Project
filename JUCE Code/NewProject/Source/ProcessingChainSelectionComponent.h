@@ -75,10 +75,6 @@ public:
         g.setColour (juce::Colours::white);
         g.drawRect (getLocalBounds(), 4);   // draw an outline around the component
 
-        g.setColour (juce::Colours::white);
-        g.setFont (14.0f);
-        g.drawText ("ProcessingChainSelectionComponent", getLocalBounds(),
-                    juce::Justification::centred, true);   // draw some placeholder text
     }
 
     void resized() override

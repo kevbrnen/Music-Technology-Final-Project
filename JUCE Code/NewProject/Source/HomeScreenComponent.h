@@ -12,6 +12,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "GlobalControlsComponent.h"
 #include "FilterComponent.h"
 #include "DelayEffectComponent.h"
 #include "ConvolutionReverbEffectComponent.h"
@@ -194,9 +195,6 @@ public:
         g.setColour(juce::Colours::lightgrey);
         g.drawRect(getLocalBounds(), 5);
         
-        g.setColour(juce::Colours::black);
-        g.setFont(14.0f);
-        g.drawText("HomeScreenComponent", getLocalBounds(), juce::Justification::centred, true);
         
     }
 
@@ -256,6 +254,7 @@ public:
         
         Distortion_show_button.setEnabled(false);
         Distortion_show_button.setVisible(false);
+        
     }
     
     //Shows all home screen native components and hides whatever effect component was showing
@@ -332,9 +331,16 @@ public:
         Distortion_show_button.setVisible(true);
         
     }
+    
+    char getCurrentlyShowingComponent()
+    {
+        return (this->currentlyShowingComponent);
+    }
 
 private:
+    
     char currentlyShowingComponent = 0; //Keeps track of what Effect is currently on screen
+    
     
     //Components for each effect
     FilterComponent filtComponent;

@@ -92,6 +92,62 @@ DistortionEffectComponent::DistortionEffectComponent(juce::AudioProcessorValueTr
     ThreshLabel.setText("Threshold", juce::dontSendNotification);
     ThreshLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(ThreshLabel);
+    
+    
+//Cutoff Sliders
+    PreCutoffSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    preCutoffAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "distortion_pre_cutoff", PreCutoffSlider));
+    PreCutoffSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
+    PreCutoffSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PreCutoffSlider.setTextValueSuffix("Hz");
+    PreCutoffSlider.setRange(20.0, 20000.0);
+    addAndMakeVisible(PreCutoffSlider);
+    PreCutoffLabel.setText("Pre Filter Frequency", juce::dontSendNotification);
+    addAndMakeVisible(PreCutoffLabel);
+    
+    PostCutoffSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    postCutoffAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "distortion_post_cutoff", PostCutoffSlider));
+    PostCutoffSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
+    PostCutoffSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PostCutoffSlider.setTextValueSuffix("Hz");
+    PostCutoffSlider.setRange(20.0, 20000.0);
+    addAndMakeVisible(PostCutoffSlider);
+    PostCutoffLabel.setText("Post Filter Frequency", juce::dontSendNotification);
+    addAndMakeVisible(PostCutoffLabel);
+    
+//Resonance Sliders
+    PreResSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    preResAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "distortion_pre_resonance", PreResSlider));
+    PreResSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
+    PreResSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PreResSlider.setRange(0.0, 10.0);
+    addAndMakeVisible(PreResSlider);
+    
+    PreResLabel.setText("Resonance", juce::dontSendNotification);
+    addAndMakeVisible(PreResLabel);
+    
+    PostResSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    postResAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "distortion_post_resonance", PostResSlider));
+    PostResSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
+    PostResSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PostResSlider.setRange(0.0, 10.0);
+    addAndMakeVisible(PostResSlider);
+    
+    PostResLabel.setText("Resonance", juce::dontSendNotification);
+    addAndMakeVisible(PostResLabel);
+    
+//Filter Type Selectors
+    PreSelector.addItemList(Filter_Choices, 1);
+    PreSelector.setSelectedId(1);
+    preType_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(vts, "pre_filter_type", PreSelector));
+    addAndMakeVisible(PreSelector);
+    
+    PostSelector.addItemList(Filter_Choices, 1);
+    PostSelector.setSelectedId(1);
+    postType_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(vts, "post_filter_type", PostSelector));
+    addAndMakeVisible(PostSelector);
+    
+
 }
 
 DistortionEffectComponent::~DistortionEffectComponent()
@@ -101,7 +157,7 @@ DistortionEffectComponent::~DistortionEffectComponent()
 void DistortionEffectComponent::paint (juce::Graphics& g)
 {
     
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
+    g.fillAll (juce::Colours::peachpuff);   // clear the background
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
@@ -124,11 +180,34 @@ void DistortionEffectComponent::resized()
     DistortionGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
     DistortionGainLabel.attachToComponent(&DistortionGainSlider, true);
     
-    PreGainSlider.setBounds(100, 60, 150, 150);
-    PreGainLabel.attachToComponent(&PreGainSlider, true);
+    PreGainSlider.setBounds((2*getWidth()/8)-30, 150, 150, 150);
+    PreGainLabel.attachToComponent(&PreGainSlider, false);
+    PreGainLabel.setJustificationType(juce::Justification::centred);
     
-    ThreshSlider.setBounds(100, 200, 150, 150);
-    ThreshLabel.attachToComponent(&ThreshSlider, true);
+    ThreshSlider.setBounds((3*getWidth()/8)-20, 150, 150, 150);
+    ThreshLabel.attachToComponent(&ThreshSlider, false);
+    ThreshLabel.setJustificationType(juce::Justification::centred);
+    
+    
+    PreCutoffSlider.setBounds(50, 50, 150, 150);
+    PreCutoffLabel.attachToComponent(&PreCutoffSlider, false);
+    PreCutoffLabel.setJustificationType(juce::Justification::centred);
+    
+    PreResSlider.setBounds(50, 250, 150, 150);
+    PreResLabel.attachToComponent(&PreResSlider, false);
+    PreResLabel.setJustificationType(juce::Justification::centred);
+    
+    PostCutoffSlider.setBounds((4*getWidth()/8)+50, 50, 150, 150);
+    PostCutoffLabel.attachToComponent(&PostCutoffSlider, false);
+    PostCutoffLabel.setJustificationType(juce::Justification::centred);
+    
+    PostResSlider.setBounds((4*getWidth()/8)+50, 250, 150, 150);
+    PostResLabel.attachToComponent(&PostResSlider, false);
+    PostResLabel.setJustificationType(juce::Justification::centred);
     
     TypeSelector.setBounds(getWidth()-275, getHeight()*2/4 - 75, 200, 30);
+    
+    PreSelector.setBounds(25, 450, 200, 30);
+    
+    PostSelector.setBounds((4*getWidth()/8)+25, 450, 200, 30);
 }
