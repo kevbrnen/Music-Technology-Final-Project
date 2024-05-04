@@ -13,6 +13,7 @@
 
 #include <JuceHeader.h>
 #include "WaveformThumbnailComponent.h"
+#include "BinaryData.h"
 
 //==============================================================================
 /*
@@ -56,11 +57,11 @@ private:
     WaveformThumbnailComponent waveformComponent;
     
     juce::ComboBox IRSelector;
-    juce::StringArray Impulses{"Church-1", "Shipping Container", "Hall-1", "Tent"};
+    juce::StringArray Impulses{"Ballinafad Castle", "Ballymote Castle", "Bedroom", "Church 1", "Church 2", "Shipping Container", "Wooden Hall", "Farmhouse", "Forest", "Friary", "Tent", "Tunnel"};
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>IR_attachment;
     int lastIR;
-    const char* data = BinaryData::ChurchIR1_wav;
-    int Size = BinaryData::ChurchIR1_wavSize;
+    const char* data = BinaryData::Ballinafad_Castle48k_wav;
+    int Size = BinaryData::Ballinafad_Castle48k_wavSize;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConvolutionReverbEffectComponent)
 };

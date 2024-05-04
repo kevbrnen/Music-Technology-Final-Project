@@ -12,6 +12,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "BinaryData.h"
 
 //==============================================================================
 /*
@@ -23,7 +24,8 @@ public:
     {
         formatManager.registerBasicFormats();
         
-        getAudioBufferFromFile(BinaryData::ChurchIR1_wav, BinaryData::ChurchIR1_wavSize);
+        //Get it to load the longest IR first so all are displayed properly
+        getAudioBufferFromFile(BinaryData::church_248k_wav, BinaryData::church_248k_wavSize);
     }
 
     ~WaveformThumbnailComponent() override{}

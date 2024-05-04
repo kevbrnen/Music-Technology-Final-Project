@@ -177,21 +177,53 @@ void ConvolutionReverbEffectComponent::updateThumbnail()
     {
         switch(IR)
         {
-            case 1: //Church
+            case 1: //Ballinafad Castle
+                this->data = BinaryData::Ballinafad_Castle48k_wav;
+                this->Size = BinaryData::Ballinafad_Castle48k_wavSize;
+                break;
+            case 2: //Ballymote Castle
+                this->data = BinaryData::Ballymote_Castle48k_wav;
+                this->Size = BinaryData::Ballymote_Castle48k_wavSize;
+                break;
+            case 3: //Bedroom
+                this->data = BinaryData::Bedroom48k_wav;
+                this->Size = BinaryData::Bedroom48k_wavSize;
+                break;
+            case 4: //Church 1
                 this->data = BinaryData::ChurchIR1_wav;
                 this->Size = BinaryData::ChurchIR1_wavSize;
                 break;
-            case 2:
+            case 6: //Church 2
+                this->data = BinaryData::church_248k_wav;
+                this->Size = BinaryData::church_248k_wavSize;
+                break;
+            case 7: //Shipping Container
                 this->data = BinaryData::DenContainer48k_wav;
                 this->Size = BinaryData::DenContainer48k_wavSize;
                 break;
-            case 3:
+            case 8: //Wooden Hall
                 this->data = BinaryData::DenHall48k_wav;
                 this->Size = BinaryData::DenHall48k_wavSize;
                 break;
-            case 4:
+            case 9: //Farmhouse
+                this->data = BinaryData::Farmhouse48k_wav;
+                this->Size = BinaryData::Farmhouse48k_wavSize;
+                break;
+            case 10: //Forest
+                this->data = BinaryData::Forest48k_wav;
+                this->Size = BinaryData::Forest48k_wavSize;
+                break;
+            case 11: //Friary
+                this->data = BinaryData::Friary48k_wav;
+                this->Size = BinaryData::Friary48k_wavSize;
+                break;
+            case 12: //Tent
                 this->data = BinaryData::Tent48k_wav;
                 this->Size = BinaryData::Tent48k_wavSize;
+                break;
+            case 5: //Tunnel
+                this->data = BinaryData::Tunnel48k_wav;
+                this->Size = BinaryData::Tunnel48k_wavSize;
                 break;
             default:
                 break;

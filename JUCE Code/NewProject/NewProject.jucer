@@ -53,11 +53,23 @@
     </GROUP>
     <GROUP id="{B379C059-32B4-2CB1-254E-468EB68DEADA}" name="ConvolutionReverbEffect">
       <GROUP id="{91BE5FB0-1E69-17CA-BD54-5AECAAAEAACF}" name="IRs">
-        <FILE id="fej5r8" name="DenContainer48k.wav" compile="0" resource="1"
+        <FILE id="ghypQv" name="Ballinafad Castle-48k.wav" compile="0" resource="1"
+              file="Source/Ballinafad Castle-48k.wav"/>
+        <FILE id="MZeIwg" name="Ballymote Castle-48k.wav" compile="0" resource="1"
+              file="Source/Ballymote Castle-48k.wav"/>
+        <FILE id="QASUE0" name="Bedroom-48k.wav" compile="0" resource="1" file="Source/Bedroom-48k.wav"/>
+        <FILE id="GJF7Ik" name="church 2-48k.wav" compile="0" resource="1"
+              file="Source/church 2-48k.wav"/>
+        <FILE id="g4lFHB" name="ChurchIR1.wav" compile="0" resource="1" file="Source/ChurchIR1.wav"/>
+        <FILE id="Qxr8Ap" name="DenContainer48k.wav" compile="0" resource="1"
               file="Source/DenContainer48k.wav"/>
-        <FILE id="tbIybS" name="DenHall48k.wav" compile="0" resource="1" file="Source/DenHall48k.wav"/>
-        <FILE id="arCHtc" name="Tent48k.wav" compile="0" resource="1" file="Source/Tent48k.wav"/>
-        <FILE id="x7lxRc" name="ChurchIR1.wav" compile="0" resource="1" file="Source/ChurchIR1.wav"/>
+        <FILE id="duKN21" name="DenHall48k.wav" compile="0" resource="1" file="Source/DenHall48k.wav"/>
+        <FILE id="npf48X" name="Farmhouse-48k.wav" compile="0" resource="1"
+              file="Source/Farmhouse-48k.wav"/>
+        <FILE id="yB6dKq" name="Forest-48k.wav" compile="0" resource="1" file="Source/Forest-48k.wav"/>
+        <FILE id="QBfN2j" name="Friary-48k.wav" compile="0" resource="1" file="Source/Friary-48k.wav"/>
+        <FILE id="Tbptmi" name="Tent48k.wav" compile="0" resource="1" file="Source/Tent48k.wav"/>
+        <FILE id="JMH4a7" name="Tunnel-48k.wav" compile="0" resource="1" file="Source/Tunnel-48k.wav"/>
       </GROUP>
       <FILE id="V2YgLO" name="ConvolutionReverbEffectAudioProcessor.h" compile="0"
             resource="0" file="Source/ConvolutionReverbEffectAudioProcessor.h"/>

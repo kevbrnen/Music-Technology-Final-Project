@@ -13,6 +13,8 @@
 #include <JuceHeader.h>
 #include "ProcessorBase.h"
 #include "CircularBuffer.h"
+#include "BinaryData.h"
+
 
 class ConvolutionReverbEffectAudioProcessor : public ProcessorBase
 {
@@ -156,19 +158,51 @@ public:
             switch(IR)
             {
                 case 0:
-                    ConvEngine.loadImpulseResponse(BinaryData::ChurchIR1_wav, BinaryData::ChurchIR1_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                    ConvEngine.loadImpulseResponse(BinaryData::Ballinafad_Castle48k_wav, BinaryData::Ballinafad_Castle48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
                                                    juce::dsp::Convolution::Normalise::yes);
                     break;
                 case 1:
-                    ConvEngine.loadImpulseResponse(BinaryData::DenContainer48k_wav, BinaryData::DenContainer48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                    ConvEngine.loadImpulseResponse(BinaryData::Ballymote_Castle48k_wav, BinaryData::Ballymote_Castle48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
                                                    juce::dsp::Convolution::Normalise::yes);
                     break;
                 case 2:
-                    ConvEngine.loadImpulseResponse(BinaryData::DenHall48k_wav, BinaryData::DenHall48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                    ConvEngine.loadImpulseResponse(BinaryData::Bedroom48k_wav, BinaryData::Bedroom48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
                                                    juce::dsp::Convolution::Normalise::yes);
                     break;
                 case 3:
+                    ConvEngine.loadImpulseResponse(BinaryData::ChurchIR1_wav, BinaryData::ChurchIR1_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 4:
+                    ConvEngine.loadImpulseResponse(BinaryData::church_248k_wav, BinaryData::church_248k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 5:
+                    ConvEngine.loadImpulseResponse(BinaryData::DenContainer48k_wav, BinaryData::DenContainer48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 6:
+                    ConvEngine.loadImpulseResponse(BinaryData::DenHall48k_wav, BinaryData::DenHall48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 7:
+                    ConvEngine.loadImpulseResponse(BinaryData::Farmhouse48k_wav, BinaryData::Farmhouse48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 8:
+                    ConvEngine.loadImpulseResponse(BinaryData::Forest48k_wav, BinaryData::Forest48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 9:
+                    ConvEngine.loadImpulseResponse(BinaryData::Friary48k_wav, BinaryData::Friary48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 10:
                     ConvEngine.loadImpulseResponse(BinaryData::Tent48k_wav, BinaryData::Tent48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
+                                                   juce::dsp::Convolution::Normalise::yes);
+                    break;
+                case 11:
+                    ConvEngine.loadImpulseResponse(BinaryData::Tunnel48k_wav, BinaryData::Tunnel48k_wavSize, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::yes, 0,
                                                    juce::dsp::Convolution::Normalise::yes);
                     break;
                 default:

@@ -18,7 +18,7 @@ juce::StringArray processorChoices{"Empty", "Filter", "Delay", "Convolution", "D
 
 juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"}; //Filter types
 
-juce::StringArray IR_Choices{"Church-1", "Shipping Container", "Hall-1", "Tent"}; //Impulse response choices
+juce::StringArray IR_Choices{"Ballinafad Castle", "Ballymote Castle", "Bedroom", "Church 1", "Church 2", "Shipping Container", "Wooden Hall", "Farmhouse", "Forest", "Friary", "Tent", "Tunnel"}; //Impulse response choices
 
 juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"}; //Delay Xpanse types
 
