@@ -167,6 +167,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLa
     auto convPreGainParameter = std::make_unique<juce::AudioParameterFloat>("conv_pre_gain", "Conv_Pre_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     
+    auto preDelayTimeParameter = std::make_unique<juce::AudioParameterFloat>("pre_delay_time", "Pre_Delay_Time", juce::NormalisableRange{0.0f, 249.f, 0.01f, 0.6f, false}, 0.f);
+    
+    auto preDelayFeedbackParameter = std::make_unique<juce::AudioParameterFloat>("pre_delay_fdbk", "Pre_Delay_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+    
     auto convGainParameter = std::make_unique<juce::AudioParameterFloat>("conv_gain", "Conv_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     
@@ -177,6 +181,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLa
     paramsConv.push_back(std::move(convPreGainParameter));
     paramsConv.push_back(std::move(convGainParameter));
     paramsConv.push_back(std::move(impulseSelector));
+    paramsConv.push_back(std::move(preDelayTimeParameter));
+    paramsConv.push_back(std::move(preDelayFeedbackParameter));
     
     
     return {paramsConv.begin(), paramsConv.end()}; //Returning vector

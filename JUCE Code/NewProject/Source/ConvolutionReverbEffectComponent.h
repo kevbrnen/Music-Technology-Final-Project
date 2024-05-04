@@ -45,6 +45,14 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
     juce::Label ConvolutionGainLabel;
     
+    juce::Slider PreDelayTimeSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PreDelayTimeAttachment;
+    juce::Label PreDelayTimeLabel;
+    
+    juce::Slider PreDelayFeedbackSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PreDelayFeedbackAttachment;
+    juce::Label PreDelayFeedbackLabel;
+    
     WaveformThumbnailComponent waveformComponent;
     
     juce::ComboBox IRSelector;

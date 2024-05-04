@@ -82,6 +82,33 @@ ConvolutionReverbEffectComponent::ConvolutionReverbEffectComponent(juce::AudioPr
     ConvolutionGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(ConvolutionGainLabel);
     
+//Pre Delay Time Slider
+    PreDelayTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PreDelayTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "pre_delay_time", PreDelayTimeSlider));
+    PreDelayTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 25);
+    PreDelayTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::seagreen);
+    PreDelayTimeSlider.setTextValueSuffix("ms");
+    PreDelayTimeSlider.setRange(0.0, 249.0);
+    addAndMakeVisible(PreDelayTimeSlider);
+    
+    
+    PreDelayTimeLabel.setText("Pre Delay Time", juce::dontSendNotification);
+    PreDelayTimeLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PreDelayTimeLabel);
+    
+    
+//Pre Delay Feedback amount slider
+    PreDelayFeedbackSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PreDelayFeedbackAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "pre_delay_fdbk", PreDelayFeedbackSlider));
+    PreDelayFeedbackSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 25);
+    PreDelayFeedbackSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::seagreen);
+    PreDelayFeedbackSlider.setRange(0.0, 0.999);
+    addAndMakeVisible(PreDelayFeedbackSlider);
+    
+    PreDelayFeedbackLabel.setText("Feedback Amount", juce::dontSendNotification);
+    PreDelayFeedbackLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PreDelayFeedbackLabel);
+    
 //Waveform Display
     addAndMakeVisible(waveformComponent);
     
@@ -123,8 +150,16 @@ void ConvolutionReverbEffectComponent::resized()
     ConvolutionWDLabel.attachToComponent(&ConvolutionWDSlider, false);
     ConvolutionWDLabel.setJustificationType(juce::Justification::centred);
     
-    ConvolutionPreGainSlider.setBounds(getWidth() - 600, (getHeight()*2/4)+50, 200, 200);
+    ConvolutionPreGainSlider.setBounds(getWidth() - 700, (getHeight()*2/4)+50, 200, 200);
     ConvolutionPreGainLabel.attachToComponent(&ConvolutionPreGainSlider, true);
+    
+    PreDelayTimeSlider.setBounds(getWidth() - 450, (getHeight()*2/4)+25, 100, 100);
+    PreDelayTimeLabel.attachToComponent(&PreDelayTimeSlider, false);
+    PreDelayTimeLabel.setJustificationType(juce::Justification::centred);
+    
+    PreDelayFeedbackSlider.setBounds(getWidth() - 450, (getHeight()*2/4)+150, 100, 100);
+    PreDelayFeedbackLabel.attachToComponent(&PreDelayFeedbackSlider, false);
+    PreDelayFeedbackLabel.setJustificationType(juce::Justification::centred);
     
     ConvolutionGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
     ConvolutionGainLabel.attachToComponent(&ConvolutionGainSlider, true);
