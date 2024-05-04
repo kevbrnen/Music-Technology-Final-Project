@@ -189,8 +189,7 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        auto purpleHue = juce::Colours::purple.getHue();
-        g.fillAll(juce::Colour::fromHSV(purpleHue, 0.5f, 0.5f, 1.0f));
+        g.fillAll(juce::Colours::antiquewhite);
         
         g.setColour(juce::Colours::lightgrey);
         g.drawRect(getLocalBounds(), 5);

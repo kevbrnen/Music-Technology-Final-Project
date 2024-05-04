@@ -157,15 +157,11 @@ DegradeEffectComponent::~DegradeEffectComponent()
 void DegradeEffectComponent::paint (juce::Graphics& g)
 {
 
-    g.fillAll (juce::Colours::antiquewhite);   // clear the background
+    g.fillAll (juce::Colour(176, 203, 166));   // clear the background
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("DegradeEffectComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void DegradeEffectComponent::resized()
@@ -179,19 +175,19 @@ void DegradeEffectComponent::resized()
     DegradeGainSlider.setBounds(getWidth() - 110, 60, 100, 100);
     DegradeGainLabel.attachToComponent(&DegradeGainSlider, true);
     
-    DegradePRECutoff.setBounds(getWidth()/2, getHeight()/6, 150, 150);
+    DegradePRECutoff.setBounds((getWidth()/2) + 100, getHeight()/6, 150, 150);
     DegradePRECutoffLabel.attachToComponent(&DegradePRECutoff, true);
     
-    DegradePOSTCutoff.setBounds(getWidth()/2, 3*(getHeight()/6)+50, 150, 150);
+    DegradePOSTCutoff.setBounds((getWidth()/2) + 100, 3*(getHeight()/6)+50, 150, 150);
     DegradePOSTCutoffLabel.attachToComponent(&DegradePOSTCutoff, true);
     
-    DegradeFrequencySlider.setBounds(100, 20, 200, 200);
+    DegradeFrequencySlider.setBounds(150, 20, 200, 200);
     DegradeFrequencyLabel.attachToComponent(&DegradeFrequencySlider, true);
     
-    BitcrushRateSlider.setBounds(100, getHeight()/2 + 20, 200, 200);
+    BitcrushRateSlider.setBounds(150, getHeight()/2 + 20, 200, 200);
     BitcrushRateLabel.attachToComponent(&BitcrushRateSlider, true);
     
-    Bitcrush_Toggle.setBounds(320, getHeight()/2 + 20, 50, 25);
+    Bitcrush_Toggle.setBounds(370, getHeight()/2 + 20, 50, 25);
     BitcrushToggleLabel.attachToComponent(&Bitcrush_Toggle, true);
 
 }
