@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="xUrdHn" name="Effects-Suite Plug-in" projectType="audioplug"
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" displaySplashScreen="1"
-              jucerFormatVersion="1">
+              jucerFormatVersion="1" companyName="KevinBrennan">
   <MAINGROUP id="fHQQqx" name="Effects-Suite Plug-in">
     <GROUP id="{2832EB3B-573C-7FEB-D65E-4F72BF01F573}" name="DistortionEffect">
       <FILE id="mfzElk" name="DistortionEffectAudioProcessor.h" compile="0"
@@ -100,6 +100,7 @@
             file="Source/SmoothingFilter.h"/>
     </GROUP>
     <GROUP id="{CBDF06D9-8064-D029-CBA1-E68CC7318A83}" name="Source">
+      <FILE id="UclH7r" name="InfoComponent.h" compile="0" resource="0" file="Source/InfoComponent.h"/>
       <FILE id="AJoriT" name="PluginParameterLayout.h" compile="0" resource="0"
             file="Source/PluginParameterLayout.h"/>
       <FILE id="goCPiO" name="ProcessingChainSelectionComponent.h" compile="0"

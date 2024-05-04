@@ -14,6 +14,7 @@
 #include "GlobalControlsComponent.h"
 #include "HomeScreenComponent.h"
 #include "ProcessingChainSelectionComponent.h"
+#include "InfoComponent.h"
 
 //==============================================================================
 /**
@@ -44,6 +45,8 @@ private:
                                              //Gets drawn over by an effect component when the effect is selected
     
     ProcessingChainSelectionComponent procChainComponent; //Processing chain, shown from global controls component
+    
+    InfoComponent infoComponent; //Plugin/effects information
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)

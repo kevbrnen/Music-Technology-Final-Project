@@ -15,6 +15,7 @@
 #include "PluginEditor.h"
 #include "HomeScreenComponent.h"
 #include "ProcessingChainSelectionComponent.h"
+#include "InfoComponent.h"
 
 //==============================================================================
 /*
@@ -22,7 +23,7 @@
 class GlobalControlsComponent  : public juce::Component
 {
 public:
-    GlobalControlsComponent(juce::AudioProcessorValueTreeState& vts, HomeScreenComponent& hs, ProcessingChainSelectionComponent& pc): hs(hs), pc(pc)
+    GlobalControlsComponent(juce::AudioProcessorValueTreeState& vts, HomeScreenComponent& hs, ProcessingChainSelectionComponent& pc, InfoComponent& ic): hs(hs), pc(pc), ic(ic)
     {
 //Gain Slider
         gainSlider.setNumDecimalPlacesToDisplay(2);
@@ -59,6 +60,20 @@ public:
         chainMenuButton.setEnabled(true);
         chainMenuButton.setVisible(true);
         addAndMakeVisible(chainMenuButton);
+        
+//Info Button
+        infoButton.setButtonText("Info");
+        infoButton.setClickingTogglesState(true);
+        infoButton.onClick = [this, &ic](){
+            ic.setEnabled(infoButton.getToggleState());
+            ic.setVisible(infoButton.getToggleState());
+
+        };
+        infoButton.setEnabled(true);
+        infoButton.setVisible(true);
+        addAndMakeVisible(infoButton);
+        
+
     }
 
     ~GlobalControlsComponent() override
@@ -136,12 +151,14 @@ public:
         auto buttonHeight = 50;
         homeButton.setBounds(10, getLocalBounds().getHeight()/6, buttonWidth, buttonHeight);
         chainMenuButton.setBounds(10 + buttonWidth + 10, getLocalBounds().getHeight()/6, buttonWidth, buttonHeight);
+        infoButton.setBounds(10 + buttonWidth + 10 + buttonWidth + 10, getLocalBounds().getHeight()/6, buttonWidth, buttonHeight);
         
     }
 
 private:
     HomeScreenComponent& hs;
     ProcessingChainSelectionComponent& pc;
+    InfoComponent& ic;
     
     juce::Slider gainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
@@ -149,6 +166,7 @@ private:
     
     juce::TextButton homeButton;
     juce::TextButton chainMenuButton;
+    juce::TextButton infoButton;
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GlobalControlsComponent)

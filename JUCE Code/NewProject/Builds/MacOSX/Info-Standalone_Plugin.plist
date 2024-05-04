@@ -8,7 +8,7 @@
     <key>CFBundleIconFile</key>
     <string></string>
     <key>CFBundleIdentifier</key>
-    <string>com.yourcompany.EffectsSuitePlugin</string>
+    <string>com.KevinBrennan.EffectsSuitePlugin</string>
     <key>CFBundleName</key>
     <string>Effects-Suite Plug-in</string>
     <key>CFBundleDisplayName</key>
