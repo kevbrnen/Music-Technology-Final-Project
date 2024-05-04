@@ -72,7 +72,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     pingPongDelaySlider_L.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     Delay_Attachment_L.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "pong_delay_L_time", pingPongDelaySlider_L));
     pingPongDelaySlider_L.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    pingPongDelaySlider_L.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    pingPongDelaySlider_L.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     pingPongDelaySlider_L.setTextValueSuffix("ms");
     pingPongDelaySlider_L.setRange(0.0, 1999.0);
     addAndMakeVisible(pingPongDelaySlider_L);
@@ -83,7 +83,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     pingPongDelaySlider_R.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     Delay_Attachment_R.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "pong_delay_R_time", pingPongDelaySlider_R));
     pingPongDelaySlider_R.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    pingPongDelaySlider_R.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    pingPongDelaySlider_R.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     pingPongDelaySlider_R.setTextValueSuffix("ms");
     pingPongDelaySlider_R.setRange(0.0, 1999.0);
     addAndMakeVisible(pingPongDelaySlider_R);
@@ -95,7 +95,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     pingPongFDBKSlider_L.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     FDBK_Attachment_L.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "pong_delay_L_fdbk", pingPongFDBKSlider_L));
     pingPongFDBKSlider_L.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    pingPongFDBKSlider_L.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    pingPongFDBKSlider_L.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     pingPongFDBKSlider_L.setRange(0.0, 0.999);
     addAndMakeVisible(pingPongFDBKSlider_L);
     FDBKLabel_L.setText("Left Feedback Amount", juce::dontSendNotification);
@@ -105,7 +105,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     pingPongFDBKSlider_R.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     FDBK_Attachment_R.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "pong_delay_R_fdbk", pingPongFDBKSlider_R));
     pingPongFDBKSlider_R.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    pingPongFDBKSlider_R.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    pingPongFDBKSlider_R.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     pingPongFDBKSlider_R.setRange(0.0, 0.999);
     addAndMakeVisible(pingPongFDBKSlider_R);
     FDBKLabel_R.setText("Right Feedback Amount", juce::dontSendNotification);
@@ -117,7 +117,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band1Gain.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band1Gain_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band1_gain", Band1Gain));
     Band1Gain.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    Band1Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band1Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band1Gain.setTextValueSuffix("dB");
     Band1Gain.setRange(-48.0, 10.0);
     addAndMakeVisible(Band1Gain);
@@ -128,7 +128,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band2Gain.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band2Gain_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band2_gain", Band2Gain));
     Band2Gain.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    Band2Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band2Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band2Gain.setTextValueSuffix("dB");
     Band2Gain.setRange(-48.0, 10.0);
     addAndMakeVisible(Band2Gain);
@@ -139,7 +139,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band3Gain.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band3Gain_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band3_gain", Band3Gain));
     Band3Gain.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    Band3Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band3Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band3Gain.setTextValueSuffix("dB");
     Band3Gain.setRange(-48.0, 10.0);
     addAndMakeVisible(Band3Gain);
@@ -151,7 +151,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band4Gain.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band4Gain_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band4_gain", Band4Gain));
     Band4Gain.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    Band4Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band4Gain.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band4Gain.setTextValueSuffix("dB");
     Band4Gain.setRange(-48.0, 10.0);
     addAndMakeVisible(Band4Gain);
@@ -164,7 +164,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band1Time.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band1Time_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band1_time", Band1Time));
     Band1Time.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band1Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band1Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band1Time.setTextValueSuffix("ms");
     Band1Time.setRange(0.0, 1499.0);
     addAndMakeVisible(Band1Time);
@@ -175,7 +175,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band2Time.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band2Time_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band2_time", Band2Time));
     Band2Time.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band2Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band2Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band2Time.setTextValueSuffix("ms");
     Band2Time.setRange(0.0, 1499.0);
     addAndMakeVisible(Band2Time);
@@ -186,7 +186,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band3Time.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band3Time_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band3_time", Band3Time));
     Band3Time.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band3Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band3Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band3Time.setTextValueSuffix("ms");
     Band3Time.setRange(0.0, 1499.0);
     addAndMakeVisible(Band3Time);
@@ -197,7 +197,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band4Time.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band4Time_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band4_time", Band4Time));
     Band4Time.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band4Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band4Time.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band4Time.setTextValueSuffix("ms");
     Band4Time.setRange(0.0, 1499.0);
     addAndMakeVisible(Band4Time);
@@ -209,7 +209,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band1FDBK.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band1FDBK_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band1_fdbk", Band1FDBK));
     Band1FDBK.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band1FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band1FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band1FDBK.setRange(0.0, 0.999);
     addAndMakeVisible(Band1FDBK);
     Band1FDBKLabel.setText("Band 1 Feedback", juce::dontSendNotification);
@@ -219,7 +219,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band2FDBK.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band2FDBK_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band2_fdbk", Band2FDBK));
     Band2FDBK.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band2FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band2FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band2FDBK.setRange(0.0, 0.999);
     addAndMakeVisible(Band2FDBK);
     Band2FDBKLabel.setText("Band 2 Feedback", juce::dontSendNotification);
@@ -229,7 +229,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band3FDBK.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band3FDBK_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band3_fdbk", Band3FDBK));
     Band3FDBK.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band3FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band3FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band3FDBK.setRange(0.0, 0.999);
     addAndMakeVisible(Band3FDBK);
     Band3FDBKLabel.setText("Band 3 Feedback", juce::dontSendNotification);
@@ -239,7 +239,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     Band4FDBK.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     band4FDBK_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_band4_fdbk", Band4FDBK));
     Band4FDBK.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    Band4FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    Band4FDBK.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     Band4FDBK.setRange(0.0, 0.999);
     addAndMakeVisible(Band4FDBK);
     Band4FDBKLabel.setText("Band 4 Feedback", juce::dontSendNotification);
@@ -250,7 +250,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     specCutoff1.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     specCutoff1_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_cutoff1", specCutoff1));
     specCutoff1.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    specCutoff1.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    specCutoff1.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     specCutoff1.setTextValueSuffix("Hz");
     specCutoff1.setRange(20.0, 20000.0);
     addAndMakeVisible(specCutoff1);
@@ -260,7 +260,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     specCutoff2.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     specCutoff2_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_cutoff2", specCutoff2));
     specCutoff2.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    specCutoff2.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    specCutoff2.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     specCutoff2.setTextValueSuffix("Hz");
     specCutoff2.setRange(20.0, 20000.0);
     addAndMakeVisible(specCutoff2);
@@ -270,7 +270,7 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     specCutoff3.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     specCutoff3_attachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "spec_cutoff3", specCutoff3));
     specCutoff3.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    specCutoff3.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    specCutoff3.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(229, 83, 110));
     specCutoff3.setTextValueSuffix("Hz");
     specCutoff3.setRange(20.0, 20000.0);
     addAndMakeVisible(specCutoff3);
@@ -316,10 +316,6 @@ void DelayXpanseEffectComponent::paint (juce::Graphics& g)
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("DelayXpanseEffectComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void DelayXpanseEffectComponent::resized()
@@ -338,26 +334,30 @@ void DelayXpanseEffectComponent::resized()
     
     
 //Ping Pong Delay
-    pingPongDelaySlider_L.setBounds(100, getHeight()/4, 150, 150);
-    pingPongDelaySlider_R.setBounds(350, getHeight()/4, 150, 150);
-    DelayLabel_L.attachToComponent(&pingPongDelaySlider_L, true);
-    DelayLabel_R.attachToComponent(&pingPongDelaySlider_R, true);
+    pingPongDelaySlider_L.setBounds(100, 50, 200, 200);
+    pingPongDelaySlider_R.setBounds(400, 50, 200, 200);
+    DelayLabel_L.attachToComponent(&pingPongDelaySlider_L, false);
+    DelayLabel_L.setJustificationType(juce::Justification::centred);
+    DelayLabel_R.attachToComponent(&pingPongDelaySlider_R, false);
+    DelayLabel_R.setJustificationType(juce::Justification::centred);
     
-    pingPongFDBKSlider_L.setBounds(100, 3*getHeight()/4, 100, 100);
-    pingPongFDBKSlider_R.setBounds(350, 3*getHeight()/4, 100, 100);
-    FDBKLabel_L.attachToComponent(&pingPongFDBKSlider_L, true);
-    FDBKLabel_R.attachToComponent(&pingPongFDBKSlider_R, true);
+    pingPongFDBKSlider_L.setBounds(125, (3*getHeight()/4)-50, 150, 150);
+    pingPongFDBKSlider_R.setBounds(425, (3*getHeight()/4)-50, 150, 150);
+    FDBKLabel_L.attachToComponent(&pingPongFDBKSlider_L, false);
+    FDBKLabel_L.setJustificationType(juce::Justification::centred);
+    FDBKLabel_R.attachToComponent(&pingPongFDBKSlider_R, false);
+    FDBKLabel_R.setJustificationType(juce::Justification::centred);
     
     
 //Spectral Delay
-    specCutoff1.setBounds(100, 20, 150, 150);
-    specCutoff2.setBounds(100, getHeight()/3 + 20, 150, 150);
-    specCutoff3.setBounds(100, 2*getHeight()/3 + 20, 150, 150);
+    specCutoff1.setBounds(100, 10, 150, 150);
+    specCutoff2.setBounds(100, getHeight()/3 + 10, 150, 150);
+    specCutoff3.setBounds(100, 2*getHeight()/3 + 10, 150, 150);
     specCutoff1Label.attachToComponent(&specCutoff1, true);
     specCutoff2Label.attachToComponent(&specCutoff2, true);
     specCutoff3Label.attachToComponent(&specCutoff3, true);
     
-    Band1Gain.setBounds(300, 20, 100, 100);
+    Band1Gain.setBounds(300, 25, 100, 100);
     Band2Gain.setBounds(300, getHeight()/4 + 20, 100, 100);
     Band3Gain.setBounds(300, 2*getHeight()/4 + 20, 100, 100);
     Band4Gain.setBounds(300, 3*getHeight()/4 + 20, 100, 100);
@@ -370,7 +370,7 @@ void DelayXpanseEffectComponent::resized()
     Band3GainLabel.setJustificationType(juce::Justification::centred);
     Band4GainLabel.setJustificationType(juce::Justification::centred);
     
-    Band1Time.setBounds(450, 20, 100, 100);
+    Band1Time.setBounds(450, 25, 100, 100);
     Band2Time.setBounds(450, getHeight()/4 + 20, 100, 100);
     Band3Time.setBounds(450, 2*getHeight()/4 + 20, 100, 100);
     Band4Time.setBounds(450, 3*getHeight()/4 + 20, 100, 100);
@@ -383,7 +383,7 @@ void DelayXpanseEffectComponent::resized()
     Band3TimeLabel.setJustificationType(juce::Justification::centred);
     Band4TimeLabel.setJustificationType(juce::Justification::centred);
     
-    Band1FDBK.setBounds(600, 20, 100, 100);
+    Band1FDBK.setBounds(600, 25, 100, 100);
     Band2FDBK.setBounds(600, getHeight()/4 + 20, 100, 100);
     Band3FDBK.setBounds(600, 2*getHeight()/4 + 20, 100, 100);
     Band4FDBK.setBounds(600, 3*getHeight()/4 + 20, 100, 100);
