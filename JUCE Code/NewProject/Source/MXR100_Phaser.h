@@ -27,6 +27,7 @@ public:
         wet_dry = Phaser_Parameters.getRawParameterValue("phaser_wet_dry");
         q_val = Phaser_Parameters.getRawParameterValue("phaser_q");
         mod_width = Phaser_Parameters.getRawParameterValue("phaser_mod_width");
+        fdbkAmt = Phaser_Parameters.getRawParameterValue("phaser_fdbk");
         
     };
     
@@ -63,8 +64,10 @@ public:
             auto sampL = leftChannel[sample];
             auto sampR = rightChannel[sample];
             
-            auto wetL = (fdbkL * fdbkAmt) + (sampL * (1-fdbkAmt));
-            auto wetR = (fdbkR * fdbkAmt) + (sampR * (1-fdbkAmt));
+            auto fdbk = fdbkAmt->load();
+            
+            auto wetL = (fdbkL * fdbk) + (sampL * (1-fdbk));
+            auto wetR = (fdbkR * fdbk) + (sampR * (1-fdbk));
 
             auto wd_amt = wet_dry->load();
 
@@ -176,7 +179,7 @@ private:
     
     float fdbkL = 0;
     float fdbkR = 0;
-    float fdbkAmt = 0.6;
+    std::atomic<float>* fdbkAmt = nullptr;
     
     std::atomic<float>* q_val = nullptr;
     float c2;

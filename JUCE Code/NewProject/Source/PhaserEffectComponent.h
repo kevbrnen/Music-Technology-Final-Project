@@ -54,6 +54,10 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserModWidthAttachment;
     juce::Label PhaserModWidthLabel;
     
+    juce::Slider PhaserFDBKSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserFDBKAttachment;
+    juce::Label PhaserFDBKLabel;
+    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PhaserEffectComponent)
 };

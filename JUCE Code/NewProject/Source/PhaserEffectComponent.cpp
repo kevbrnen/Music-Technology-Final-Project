@@ -72,12 +72,12 @@ PhaserEffectComponent::PhaserEffectComponent(juce::AudioProcessorValueTreeState&
     PhaserSpeedSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     PhaserSpeedAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_lfo_speed", PhaserSpeedSlider));
     PhaserSpeedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    PhaserSpeedSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserSpeedSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
     PhaserSpeedSlider.setTextValueSuffix("Hz");
     PhaserSpeedSlider.setRange(0.0, 10.0);
     addAndMakeVisible(PhaserSpeedSlider);
     
-    PhaserSpeedLabel.setText("Speed", juce::dontSendNotification);
+    PhaserSpeedLabel.setText("Modulation Speed", juce::dontSendNotification);
     PhaserSpeedLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(PhaserSpeedLabel);
     
@@ -85,7 +85,7 @@ PhaserEffectComponent::PhaserEffectComponent(juce::AudioProcessorValueTreeState&
     PhaserIntensitySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     PhaserIntensityAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_intensity", PhaserIntensitySlider));
     PhaserIntensitySlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    PhaserIntensitySlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserIntensitySlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
     PhaserIntensitySlider.setRange(1.0, 4.0, 1);
     addAndMakeVisible(PhaserIntensitySlider);
     
@@ -97,7 +97,7 @@ PhaserEffectComponent::PhaserEffectComponent(juce::AudioProcessorValueTreeState&
     PhaserQSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     PhaserQAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_q", PhaserQSlider));
     PhaserQSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    PhaserQSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserQSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
     PhaserQSlider.setRange(0.0, 10.0);
     addAndMakeVisible(PhaserQSlider);
     
@@ -109,13 +109,26 @@ PhaserEffectComponent::PhaserEffectComponent(juce::AudioProcessorValueTreeState&
     PhaserModWidthSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     PhaserModWidthAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_mod_width", PhaserModWidthSlider));
     PhaserModWidthSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    PhaserModWidthSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserModWidthSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
     PhaserModWidthSlider.setRange(0.0, 1.0);
     addAndMakeVisible(PhaserModWidthSlider);
     
     PhaserModWidthLabel.setText("Modulation Width", juce::dontSendNotification);
     PhaserModWidthLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(PhaserModWidthLabel);
+    
+//Phaser Feedback
+    PhaserFDBKSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PhaserFDBKAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_fdbk", PhaserFDBKSlider));
+    PhaserFDBKSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    PhaserFDBKSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
+    PhaserFDBKSlider.setRange(0.0, 1.0);
+    addAndMakeVisible(PhaserFDBKSlider);
+    
+    PhaserFDBKLabel.setText("Feedback Amount", juce::dontSendNotification);
+    PhaserFDBKLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PhaserFDBKLabel);
+
 
 
 }
@@ -126,15 +139,11 @@ PhaserEffectComponent::~PhaserEffectComponent()
 
 void PhaserEffectComponent::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::silver);   // clear the background
+    g.fillAll (juce::Colours::orange);   // clear the background
 
     g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("PhaserEffectComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void PhaserEffectComponent::resized()
@@ -148,15 +157,23 @@ void PhaserEffectComponent::resized()
     PhaserWDSlider.setBounds(getWidth() - 110, 200, 100, 100);
     PhaserWDLabel.attachToComponent(&PhaserWDSlider, true);
     
-    PhaserSpeedSlider.setBounds(50, getHeight()/4, 150, 150);
-    PhaserSpeedLabel.attachToComponent(&PhaserSpeedSlider, true);
+    PhaserSpeedSlider.setBounds(350, (getHeight()/4), 150, 150);
+    PhaserSpeedLabel.attachToComponent(&PhaserSpeedSlider, false);
+    PhaserSpeedLabel.setJustificationType(juce::Justification::centred);
     
-    PhaserIntensitySlider.setBounds(300, getHeight()/4, 150, 150);
-    PhaserIntensityLabel.attachToComponent(&PhaserIntensitySlider, true);
+    PhaserIntensitySlider.setBounds(550, (getHeight()/4), 150, 150);
+    PhaserIntensityLabel.attachToComponent(&PhaserIntensitySlider, false);
+    PhaserIntensityLabel.setJustificationType(juce::Justification::centred);
     
-    PhaserQSlider.setBounds(50, (getHeight()/4) + 200 , 150, 150);
-    PhaserQLabel.attachToComponent(&PhaserQSlider, true);
+    PhaserModWidthSlider.setBounds(100, (getHeight()/8) , 150, 150);
+    PhaserModWidthLabel.attachToComponent(&PhaserModWidthSlider, false);
+    PhaserModWidthLabel.setJustificationType(juce::Justification::centred);
     
-    PhaserModWidthSlider.setBounds(300, (getHeight()/4) + 200, 150, 150);
-    PhaserModWidthLabel.attachToComponent(&PhaserModWidthSlider, true);
+    PhaserQSlider.setBounds(100, 3*(getHeight()/8)+100, 150, 150);
+    PhaserQLabel.attachToComponent(&PhaserQSlider, false);
+    PhaserQLabel.setJustificationType(juce::Justification::centred);
+    
+    PhaserFDBKSlider.setBounds(450, 3*(getHeight()/8)+150, 150, 150);
+    PhaserFDBKLabel.attachToComponent(&PhaserFDBKSlider, false);
+    PhaserFDBKLabel.setJustificationType(juce::Justification::centred);
 }

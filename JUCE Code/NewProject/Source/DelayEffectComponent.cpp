@@ -80,7 +80,7 @@ DelayEffectComponent::DelayEffectComponent(juce::AudioProcessorValueTreeState& v
     DelayTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DelayTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "delay_time", DelayTimeSlider));
     DelayTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    DelayTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
+    DelayTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::grey);
     DelayTimeSlider.setTextValueSuffix("ms");
     DelayTimeSlider.setRange(0.0, 2999.0);
     addAndMakeVisible(DelayTimeSlider);
@@ -95,7 +95,7 @@ DelayEffectComponent::DelayEffectComponent(juce::AudioProcessorValueTreeState& v
     DelayFeedbackSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DelayFeedbackAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "delay_fdbk", DelayFeedbackSlider));
     DelayFeedbackSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    DelayFeedbackSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
+    DelayFeedbackSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::grey);
     DelayFeedbackSlider.setRange(0.0, 0.999);
     addAndMakeVisible(DelayFeedbackSlider);
     
@@ -108,7 +108,7 @@ DelayEffectComponent::DelayEffectComponent(juce::AudioProcessorValueTreeState& v
     DelayWDSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DelayWDAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "delay_wetdry", DelayWDSlider));
     DelayWDSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
-    DelayWDSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkorange);
+    DelayWDSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::grey);
     DelayWDSlider.setRange(0.0, 1.0);
     addAndMakeVisible(DelayWDSlider);
     
@@ -141,7 +141,7 @@ DelayEffectComponent::~DelayEffectComponent()
 void DelayEffectComponent::paint (juce::Graphics& g)
 {
 
-    g.fillAll(juce::Colours::orange);   // clear the background
+    g.fillAll(juce::Colours::silver);   // clear the background
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component

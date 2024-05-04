@@ -317,6 +317,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createPhaserParameterLayout(
     
     auto phaserModWidthParameter = std::make_unique<juce::AudioParameterFloat>("phaser_mod_width", "Phaser_Mod_Width", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
     
+    auto phaserFDBKParameter = std::make_unique<juce::AudioParameterFloat>("phaser_fdbk", "Phaser_FDBK", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
     
     
     paramsPhaser.push_back(std::move(phaserToggleParameter));
@@ -326,6 +328,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createPhaserParameterLayout(
     paramsPhaser.push_back(std::move(phaserWetDryParameter));
     paramsPhaser.push_back(std::move(phaserQParameter));
     paramsPhaser.push_back(std::move(phaserModWidthParameter));
+    paramsPhaser.push_back(std::move(phaserFDBKParameter));
 
     
     return {paramsPhaser.begin(), paramsPhaser.end()}; //Returning vector

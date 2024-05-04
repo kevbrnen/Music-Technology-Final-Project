@@ -55,11 +55,11 @@ public:
         
         //Setup LPFs
         LPF_Pre.prepareToPlay(sampleRate, samplesPerBlock);
-        LPF_Pre.setCutoffFrequency(0.5 * fs_new);
+        LPF_Pre.setCutoffFrequency(1000);
         LPF_Pre.setType(1);
         
         LPF_Post.prepareToPlay(sampleRate, samplesPerBlock);
-        LPF_Post.setCutoffFrequency(0.5 * fs_new);
+        LPF_Post.setCutoffFrequency(1000);
         LPF_Post.setType(1);
         
         //Downsampling factor
