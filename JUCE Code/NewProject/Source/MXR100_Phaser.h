@@ -25,6 +25,8 @@ public:
         speed = Phaser_Parameters.getRawParameterValue("phaser_lfo_speed");
         intensity = Phaser_Parameters.getRawParameterValue("phaser_intensity");
         wet_dry = Phaser_Parameters.getRawParameterValue("phaser_wet_dry");
+        q_val = Phaser_Parameters.getRawParameterValue("phaser_q");
+        mod_width = Phaser_Parameters.getRawParameterValue("phaser_mod_width");
         
     };
     
@@ -61,49 +63,74 @@ public:
             auto sampL = leftChannel[sample];
             auto sampR = rightChannel[sample];
             
-            auto wetL = sampL;
-            auto wetR = sampR;
-            
-            float tempL = 0.f;
-            float tempR = 0.f;
-            
+            auto wetL = (fdbkL * fdbkAmt) + (sampL * (1-fdbkAmt));
+            auto wetR = (fdbkR * fdbkAmt) + (sampR * (1-fdbkAmt));
+
             auto wd_amt = wet_dry->load();
+
             
-            for (int i = 0; i < 10; ++i) {
-                auto a1 = calculateCoefficient(currentLFOval, i);
+            for (int i = 0; i < 10; ++i)
+            {
+                calculateCoefficient(currentLFOval, i);
+                calculateVariance(intensity->load());
                 
-                y_L = wd_amt * ((a1 * wetL) + tempL - (a1 * y_1L[i]));
-                tempL = y_1L[i];
-                y_1L[i] = y_L;
+                auto wL = wetL - (this->c1 * d1L[i]) - (this->c2 * d2L[i]);
+                auto yL = (wL * this->c2) + (this->c1 * d1L[i]) + d2L[i];
+                d2L[i] = d1L[i];
+                d1L[i] = wL;
+                wetL = yL;
                 
-                y_R = wd_amt * ((a1 * wetR) + tempR - (a1 * y_1R[i]));
-                tempR = y_1R[i];
-                y_1R[i] = y_R;
+                auto wR = wetR - (this->c1 * d1R[i]) - (this->c2 * d2R[i]);
+                auto yR = (wR * this->c2) + (this->c1 * d1R[i]) + d2R[i];
+                d2R[i] = d1R[i];
+                d1R[i] = wR;
+                wetR = yR;
                 
-                wetL = y_L;
-                wetR = y_R;
             }
             
-            leftChannelOut[sample] = wetL + sampL;
-            rightChannelOut[sample] = wetR + sampR;
+            fdbkL = wetL;
+            fdbkR = wetR;
+            
+            leftChannelOut[sample] = (wetL * wd_amt) + (sampL * (1-wd_amt));
+            rightChannelOut[sample] = (wetR * wd_amt) + (sampR * (1-wd_amt));
         }
     };
 
     float calculateLFOVal()
     {
-        auto t = k/fs;
-        k++;
-        float val = (amplitude * sin(2 * M_PI * currentSpeed * t));
-        val = std::max(-1.0f, std::min(1.0f, val));
-        return val;
+        //Spectral Music Design - Lazzarini
+        auto val = ((mod_width->load())/2) * (1 + sin(this->phase));
         
+        this->phase += (2 * M_PI * (this->currentSpeed/this->fs));
+        
+        if(this->phase >= (2*M_PI))
+        {
+            this->phase -= (2*M_PI);
+        }
+        else if(this->phase < 0)
+        {
+            this->phase += (2*M_PI);
+        }
+        
+        
+        return val;
     };
     
-    float calculateCoefficient(float lfoVal, int i)
+    void calculateCoefficient(float lfoVal, int i)
     {
-        float a1 = (std::tan(M_PI * ((centerFrequency + i*variance) + (lfoVal * variance)) / fs) - 1) / (std::tan(M_PI * ((centerFrequency + i*variance) + (lfoVal * variance)) / fs) + 1);
-            
-        return a1;
+        auto B = (centerFrequency + i*variance)/(q_val->load());
+        float o = 0;
+        if(i == 0)
+        {
+            o = (2 * M_PI * (lfoVal * (centerFrequency))/fs);
+        }
+        else
+        {
+            o = (2 * M_PI * (centerFrequency + (lfoVal * (centerFrequency + i*variance)))/fs);
+        }
+        
+        this->c2 = std::exp((-2 * M_PI * B)/fs);
+        this->c1 = -(1 + this->c2) * std::cos(o);
     };
     
     void calculateVariance(int intensity)
@@ -134,28 +161,33 @@ private:
     juce::dsp::ProcessSpec Spec;
     
     float fs;
-    float centerFrequency = 750;
+    float centerFrequency = 1000;
     
     std::atomic<float>* speed = nullptr;
-    float currentSpeed = 0.5;
+    float currentSpeed = 0.5f;
     float lastSpeed;
+    float phase = 0.f;
+    std::atomic<float>* mod_width = nullptr;
     
-    float amplitude = 3;
     float variance;
     std::atomic<float>* intensity = nullptr;
     int lastIntensity;
     int k = 0;
     
+    float fdbkL = 0;
+    float fdbkR = 0;
+    float fdbkAmt = 0.6;
+    
+    std::atomic<float>* q_val = nullptr;
+    float c2;
+    float c1;
+    
     std::atomic<float>* wet_dry = nullptr;
     
-    const static int numAllpasses = 8;
-    float tempX[2];
-    float tempY[2][numAllpasses];
-    
-    float y_L = 0.f;
-    float y_R = 0.f;
-    float y_1L[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    float y_1R[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float d1L[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float d2L[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float d1R[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float d2R[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     
     SmoothingFilter smoother;
     

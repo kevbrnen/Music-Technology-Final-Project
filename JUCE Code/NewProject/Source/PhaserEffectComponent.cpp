@@ -92,6 +92,30 @@ PhaserEffectComponent::PhaserEffectComponent(juce::AudioProcessorValueTreeState&
     PhaserIntensityLabel.setText("Intensity", juce::dontSendNotification);
     PhaserIntensityLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(PhaserIntensityLabel);
+    
+//Phaser Q
+    PhaserQSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PhaserQAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_q", PhaserQSlider));
+    PhaserQSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    PhaserQSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserQSlider.setRange(0.0, 10.0);
+    addAndMakeVisible(PhaserQSlider);
+    
+    PhaserQLabel.setText("Q", juce::dontSendNotification);
+    PhaserQLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PhaserQLabel);
+    
+//Phaser Mod Width
+    PhaserModWidthSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    PhaserModWidthAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "phaser_mod_width", PhaserModWidthSlider));
+    PhaserModWidthSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    PhaserModWidthSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PhaserModWidthSlider.setRange(0.0, 1.0);
+    addAndMakeVisible(PhaserModWidthSlider);
+    
+    PhaserModWidthLabel.setText("Modulation Width", juce::dontSendNotification);
+    PhaserModWidthLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(PhaserModWidthLabel);
 
 
 }
@@ -129,4 +153,10 @@ void PhaserEffectComponent::resized()
     
     PhaserIntensitySlider.setBounds(300, getHeight()/4, 150, 150);
     PhaserIntensityLabel.attachToComponent(&PhaserIntensitySlider, true);
+    
+    PhaserQSlider.setBounds(50, (getHeight()/4) + 200 , 150, 150);
+    PhaserQLabel.attachToComponent(&PhaserQSlider, true);
+    
+    PhaserModWidthSlider.setBounds(300, (getHeight()/4) + 200, 150, 150);
+    PhaserModWidthLabel.attachToComponent(&PhaserModWidthSlider, true);
 }

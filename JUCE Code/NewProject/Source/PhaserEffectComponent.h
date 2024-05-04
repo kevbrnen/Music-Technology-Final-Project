@@ -46,6 +46,14 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserIntensityAttachment;
     juce::Label PhaserIntensityLabel;
     
+    juce::Slider PhaserQSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserQAttachment;
+    juce::Label PhaserQLabel;
+    
+    juce::Slider PhaserModWidthSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>PhaserModWidthAttachment;
+    juce::Label PhaserModWidthLabel;
+    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PhaserEffectComponent)
 };
