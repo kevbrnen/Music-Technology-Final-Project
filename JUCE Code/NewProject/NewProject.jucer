@@ -15,6 +15,10 @@
             file="Source/VariableDistortion.h"/>
     </GROUP>
     <GROUP id="{41BD0CAB-48C1-DFAC-7DC9-EBCB814B5EAC}" name="ReverbEffect">
+      <FILE id="roMgZP" name="DelayingAllpassReverberator.h" compile="0"
+            resource="0" file="Source/DelayingAllpassReverberator.h"/>
+      <FILE id="LaYLIh" name="FDNReverberator.h" compile="0" resource="0"
+            file="Source/FDNReverberator.h"/>
       <FILE id="c4f8QM" name="ReverbEffectAudioProcessor.h" compile="0" resource="0"
             file="Source/ReverbEffectAudioProcessor.h"/>
       <FILE id="v1BeNN" name="ReverbEffectComponent.cpp" compile="1" resource="0"

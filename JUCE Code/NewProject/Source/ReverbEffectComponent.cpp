@@ -75,16 +75,90 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
             if(TypeSelector.getSelectedId() == 1)
             {
                 setCombComponents(false);
+                setFDNComponents(false);
                 setSchroederComponents(true);
             }
             else if(TypeSelector.getSelectedId() == 2)
             {
                 setSchroederComponents(false);
+                setFDNComponents(false);
                 setCombComponents(true);
             }
+            else if(TypeSelector.getSelectedId() == 3)
+            {
+                setSchroederComponents(false);
+                setCombComponents(false);
+                setFDNComponents(true);
+            }
     };
+    
+    PreCutoffSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    preCutoffAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_pre_cutoff", PreCutoffSlider));
+    PreCutoffSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
+    PreCutoffSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PreCutoffSlider.setTextValueSuffix("Hz");
+    PreCutoffSlider.setRange(20.0, 20000.0);
+    addAndMakeVisible(PreCutoffSlider);
+    PreCutoffLabel.setText("Pre Filter Frequency", juce::dontSendNotification);
+    addAndMakeVisible(PreCutoffLabel);
+    
+    PreResSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    preResAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_pre_resonance", PreResSlider));
+    PreResSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
+    PreResSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PreResSlider.setRange(0.0, 10.0);
+    addAndMakeVisible(PreResSlider);
+    
+    PreResLabel.setText("Resonance", juce::dontSendNotification);
+    addAndMakeVisible(PreResLabel);
+    
+    PreSelector.addItemList(Filter_Choices, 1);
+    PreSelector.setSelectedId(1);
+    preType_attachment.reset(new juce::AudioProcessorValueTreeState::ComboBoxAttachment(vts, "reverb_pre_filter_type", PreSelector));
+    addAndMakeVisible(PreSelector);
+    
+    
+    preTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    preTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_pre_delay", preTimeSlider));
+    preTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    preTimeSlider.setTextValueSuffix("ms");
+    preTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    preTimeSlider.setRange(0, 2000);
+    addAndMakeVisible(preTimeSlider);
 
+    preTimeLabel.setText("Pre Delay", juce::dontSendNotification);
+    preTimeLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(preTimeLabel);
+    
 
+//Schroeder
+    APF1FDBKSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    APF1FDBKAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "apf1_fdbk", APF1FDBKSlider));
+    APF1FDBKSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    APF1FDBKSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    APF1FDBKSlider.setRange(0, 1);
+    addAndMakeVisible(APF1FDBKSlider);
+    
+    APF1FDBKLabel.setText("Allpass Feedback", juce::dontSendNotification);
+    APF1FDBKLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(APF1FDBKLabel);
+    
+    
+    CombTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    CombTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "comb_delay_time", CombTimeSlider));
+    CombTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    CombTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    CombTimeSlider.setTextValueSuffix("ms");
+    CombTimeSlider.setRange(1, 2000);
+    addAndMakeVisible(CombTimeSlider);
+    
+    CombTimeLabel.setText("Comb Filter Delay", juce::dontSendNotification);
+    CombTimeLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(CombTimeLabel);
+    
+    setSchroederComponents(false);
+    setCombComponents(false);
+    setFDNComponents(false);
 }
 
 ReverbEffectComponent::~ReverbEffectComponent()
@@ -93,12 +167,6 @@ ReverbEffectComponent::~ReverbEffectComponent()
 
 void ReverbEffectComponent::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
 
     g.fillAll (juce::Colours::sienna);   // clear the background
 
@@ -124,15 +192,53 @@ void ReverbEffectComponent::resized()
     ReverbGainLabel.attachToComponent(&ReverbGainSlider, true);
     
     TypeSelector.setBounds(getWidth()-275, getHeight()*2/4 - 75, 200, 30);
-
+    
+    
+    preTimeSlider.setBounds(250, 175, 150, 150);
+    preTimeLabel.attachToComponent(&preTimeSlider, false);
+    preTimeLabel.setJustificationType(juce::Justification::centred);
+    
+    
+    PreCutoffSlider.setBounds(50, 50, 150, 150);
+    PreCutoffLabel.attachToComponent(&PreCutoffSlider, false);
+    PreCutoffLabel.setJustificationType(juce::Justification::centred);
+    
+    PreResSlider.setBounds(50, 250, 150, 150);
+    PreResLabel.attachToComponent(&PreResSlider, false);
+    PreResLabel.setJustificationType(juce::Justification::centred);
+    
+    PreSelector.setBounds(25, 450, 200, 30);
+    
+    
+    
+    APF1FDBKSlider.setBounds(500, 50, 150, 150);
+    APF1FDBKLabel.attachToComponent(&APF1FDBKSlider, false);
+    APF1FDBKLabel.setJustificationType(juce::Justification::centred);
+    
+    CombTimeSlider.setBounds(500, 350, 150, 150);
+    CombTimeLabel.attachToComponent(&CombTimeSlider, false);
+    CombTimeLabel.setJustificationType(juce::Justification::centred);
+    
 }
 
 void ReverbEffectComponent::setSchroederComponents(bool show)
 {
+    APF1FDBKSlider.setEnabled(show);
+    APF1FDBKSlider.setVisible(show);
+    APF1FDBKLabel.setVisible(show);
     
+    
+    CombTimeSlider.setEnabled(show);
+    CombTimeSlider.setVisible(show);
+    CombTimeLabel.setVisible(show);
 }
 
 void ReverbEffectComponent::setCombComponents(bool show)
+{
+    
+}
+
+void ReverbEffectComponent::setFDNComponents(bool show)
 {
     
 }

@@ -22,7 +22,7 @@ juce::StringArray IR_Choices{"Ballinafad Castle", "Ballymote Castle", "Bedroom",
 
 juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"}; //Delay Xpanse types
 
-juce::StringArray Reverb_Choices{"Schroeder Reverb", "Comb Filter Reverb"}; //Reverb types
+juce::StringArray Reverb_Choices{"Schroeder Reverb", "Delaying Allpass Reverb", "FDN Reverb"}; //Reverb types
 
 juce::StringArray Distortion_Choices{"Tanh", "Cubic Soft", "Square", "Clipping", "Soft Saturation"}; //Distortion Types
 //==============================================================================
@@ -167,7 +167,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createConvolutionParameterLa
     auto convPreGainParameter = std::make_unique<juce::AudioParameterFloat>("conv_pre_gain", "Conv_Pre_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     
-    auto preDelayTimeParameter = std::make_unique<juce::AudioParameterFloat>("pre_delay_time", "Pre_Delay_Time", juce::NormalisableRange{0.0f, 249.f, 0.01f, 0.6f, false}, 0.f);
+    auto preDelayTimeParameter = std::make_unique<juce::AudioParameterFloat>("pre_delay_time", "Pre_Delay_Time", juce::NormalisableRange{0.0f, 249.f, 1.f, 0.6f, false}, 0.f);
     
     auto preDelayFeedbackParameter = std::make_unique<juce::AudioParameterFloat>("pre_delay_fdbk", "Pre_Delay_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
     
@@ -350,13 +350,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout(
     
     
     
-    auto APF1fdbk = std::make_unique<juce::AudioParameterFloat>("apf1_fdbk", "Apf1_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
+    auto preTimeParameter = std::make_unique<juce::AudioParameterFloat>("reverb_pre_delay", "Reverb_Pre_Delay", juce::NormalisableRange{0.0f, 2000.f, 1.f, 0.4f, false}, 0.f);
     
-    auto APF2fdbk = std::make_unique<juce::AudioParameterFloat>("apf2_fdbk", "Apf2_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.5f);
     
-    auto combTimeParameter = std::make_unique<juce::AudioParameterFloat>("comb_delay_time", "Comb_Delay_Time", juce::NormalisableRange{0.0f, 1300.f, 1.f, 0.4f, false}, 500.f);
     
-    auto apfTimeParameter = std::make_unique<juce::AudioParameterFloat>("apf_delay_time", "APF_Delay_Time", juce::NormalisableRange{0.0f, 1300.f, 1.f, 0.4f, false}, 500.f);
+    auto PRE_cutoffFrequencyParameter = std::make_unique<juce::AudioParameterFloat>("reverb_pre_cutoff", "Reverb_Pre_Cutoff", juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.5f, false}, 20000.f);
+    
+    auto resonancePre = std::make_unique<juce::AudioParameterFloat>("reverb_pre_resonance", "Reverb_Pre_Resonance", juce::NormalisableRange{0.f, 10.f, 0.01f, 1.f, false}, 0.1f);
+    
+    auto preTypeSelector = std::make_unique<juce::AudioParameterChoice>("reverb_pre_filter_type", "Reverb_Pre_Filter_Type", Filter_Choices, 0);
+    
+    
+    
+    
+    auto APF1fdbk = std::make_unique<juce::AudioParameterFloat>("apf1_fdbk", "Apf1_Fdbk", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.1f);
+    
+    auto combTimeParameter = std::make_unique<juce::AudioParameterFloat>("comb_delay_time", "Comb_Delay_Time", juce::NormalisableRange{1.0f, 2000.f, 1.f, 0.4f, false}, 100.f);
     
     
     
@@ -365,11 +374,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout(
     paramsReverb.push_back(std::move(reverbWetDryParameter));
     paramsReverb.push_back(std::move(reverbSelector));
     
+    paramsReverb.push_back(std::move(preTimeParameter));
+    paramsReverb.push_back(std::move(PRE_cutoffFrequencyParameter));
+    paramsReverb.push_back(std::move(resonancePre));
+    paramsReverb.push_back(std::move(preTypeSelector));
     
     paramsReverb.push_back(std::move(APF1fdbk));
-    paramsReverb.push_back(std::move(APF2fdbk));
     paramsReverb.push_back(std::move(combTimeParameter));
-    paramsReverb.push_back(std::move(apfTimeParameter));
     
     return {paramsReverb.begin(), paramsReverb.end()}; //Returning vector
 }

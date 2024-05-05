@@ -122,7 +122,7 @@ private:
     std::atomic<float>* Delay_on = nullptr;
     
     std::atomic<float>* Delay_Gain = nullptr;
-    float lastGain;
+    float lastGain = 0;
     
     std::atomic<float>* Delay_Time = nullptr;
     float lastDelay;
