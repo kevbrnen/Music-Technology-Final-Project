@@ -349,7 +349,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout(
     auto reverbSelector = std::make_unique<juce::AudioParameterChoice>("reverb_type", "Reverb_Type", Reverb_Choices, 0);
     
     
-    
+    auto preGainParameter = std::make_unique<juce::AudioParameterFloat>("reverb_pre_gain", "Reverb_Pre_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
+                                                                           juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     auto preTimeParameter = std::make_unique<juce::AudioParameterFloat>("reverb_pre_delay", "Reverb_Pre_Delay", juce::NormalisableRange{0.0f, 2000.f, 1.f, 0.4f, false}, 0.f);
     
     
@@ -369,18 +370,28 @@ juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout(
     
     
     
+    auto dapTimeParameter = std::make_unique<juce::AudioParameterFloat>("reverb_dap_delay_time", "Reverb_DAP_Delay_Time", juce::NormalisableRange{0.0f, 2000.f, 1.f, 0.4f, false}, 0.0f);
+    
+    auto dapGParameter = std::make_unique<juce::AudioParameterFloat>("reverb_dap_g", "Reverb_DAP_G", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 0.4f, false}, 0.0f);
+    
+    
     paramsReverb.push_back(std::move(reverbToggleParameter));
     paramsReverb.push_back(std::move(reverbGainParameter));
     paramsReverb.push_back(std::move(reverbWetDryParameter));
     paramsReverb.push_back(std::move(reverbSelector));
     
+    paramsReverb.push_back(std::move(preGainParameter));
     paramsReverb.push_back(std::move(preTimeParameter));
+    
     paramsReverb.push_back(std::move(PRE_cutoffFrequencyParameter));
     paramsReverb.push_back(std::move(resonancePre));
     paramsReverb.push_back(std::move(preTypeSelector));
     
     paramsReverb.push_back(std::move(APF1fdbk));
     paramsReverb.push_back(std::move(combTimeParameter));
+    
+    paramsReverb.push_back(std::move(dapTimeParameter));
+    paramsReverb.push_back(std::move(dapGParameter));
     
     return {paramsReverb.begin(), paramsReverb.end()}; //Returning vector
 }

@@ -26,7 +26,7 @@ public:
     void resized() override;
     
     void setSchroederComponents(bool show);
-    void setCombComponents(bool show);
+    void setDAPComponents(bool show);
     void setFDNComponents(bool show);
 
 private:
@@ -43,6 +43,10 @@ private:
     juce::Label ReverbGainLabel;
     
     
+    
+    juce::Slider ReverbPreGainSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>preGainAttachment;
+    juce::Label ReverbPreGainLabel;
     
     juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
     juce::ComboBox PreSelector;
@@ -72,6 +76,15 @@ private:
     juce::Slider CombTimeSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>CombTimeAttachment;
     juce::Label CombTimeLabel;
+    
+//Delaying Allpass Parameters
+    juce::Slider DapTimeSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>DapTimeAttachment;
+    juce::Label DapTimeLabel;
+    
+    juce::Slider DapGSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>DapGAttachment;
+    juce::Label DapGLabel;
     
     
     

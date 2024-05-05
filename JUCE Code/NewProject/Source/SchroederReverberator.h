@@ -75,11 +75,15 @@ public:
                 auto delayedL = parallelDelayLines[i].getDelayedSample(0, delays[i]);
                 auto delayedR = parallelDelayLines[i].getDelayedSample(1, delays[i]);
                 
-                outCombL += *delayedL;
-                outCombR += *delayedR;
+                
+                outCombL += (*delayedL);
+                outCombR += (*delayedR);
+                
+                *delayedL *= gains[i];
+                *delayedR *= gains[i];
             
-                parallelDelayLines[i].pushSampleToBuffer(0, ((*delayedL * gains[i]) + inDataL[sample]));
-                parallelDelayLines[i].pushSampleToBuffer(1, ((*delayedR * gains[i]) + inDataR[sample]));
+                parallelDelayLines[i].pushSampleToBuffer(0, (*delayedL + inDataL[sample]));
+                parallelDelayLines[i].pushSampleToBuffer(1, (*delayedR + inDataR[sample]));
             }
             
             auto delayedAPF1L = APFLine1.getDelayedSample(0, apDelays[0]);
@@ -115,14 +119,14 @@ public:
 
     juce::AudioProcessorValueTreeState& Reverb_Parameters;
 private:
-    static const int N = 4;
+    static const int N = 16;
     
     float sampleRate;
     
     CircularBuffer parallelDelayLines[N];
     CircularBuffer APFLine1, APFLine2;
-    float gains[4] = {0.6, 0.4, 0.4, 0.63};
-    double delays[4] = {29.7, 37.1, 53.7, 79.12}; //(100ms/3^i)
+    float gains[16] = {0.7, 0.5, 0.7, 0.63, 0.53, 0.49, 0.394, 0.433, 0.352, 0.392, 0.323, 0.269, 0.214, 0.324, 0.54, 0.38};
+    double delays[16] = {29.7, 37.1, 53.7, 79.12, 42, 33, 14, 4, 6, 9, 42, 33, 14, 4, 6, 9}; //(100ms/3^i)
     double apDelays[4] = {34.2, 49, 42, 38.3};
     
     int maxDelay;

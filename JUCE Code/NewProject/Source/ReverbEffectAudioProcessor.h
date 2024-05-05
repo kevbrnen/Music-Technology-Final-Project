@@ -64,6 +64,13 @@ public:
             dry.copyFrom(0, 0, buffer, 0, 0, buffer.getNumSamples());
             dry.copyFrom(1, 0, buffer, 1, 0, buffer.getNumSamples());
             
+            
+//Pre Gain
+            //Apply pre-gain to the buffer, before the processing
+            auto preGain = juce::Decibels::decibelsToGain(*Reverb_Parameters.getRawParameterValue("reverb_pre_gain") + 0.0);
+            buffer.applyGain(preGain);
+            
+            
 // Pre Filter
             //Check if the type of filter has changed, if so update the type
             auto pre_type_index = Reverb_Parameters.getRawParameterValue("reverb_pre_filter_type");
@@ -126,7 +133,7 @@ public:
             }
             else if(Type->load() == 2)
             {
-                fdnProcessor.processBlock(buffer);
+                //fdnProcessor.processBlock(buffer);
             }
           
             

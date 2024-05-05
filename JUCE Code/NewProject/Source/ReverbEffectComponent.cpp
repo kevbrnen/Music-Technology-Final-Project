@@ -74,7 +74,7 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     {
             if(TypeSelector.getSelectedId() == 1)
             {
-                setCombComponents(false);
+                setDAPComponents(false);
                 setFDNComponents(false);
                 setSchroederComponents(true);
             }
@@ -82,16 +82,29 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
             {
                 setSchroederComponents(false);
                 setFDNComponents(false);
-                setCombComponents(true);
+                setDAPComponents(true);
             }
             else if(TypeSelector.getSelectedId() == 3)
             {
                 setSchroederComponents(false);
-                setCombComponents(false);
+                setDAPComponents(false);
                 setFDNComponents(true);
             }
     };
     
+//Pre Gain
+    ReverbPreGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    preGainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_pre_gain", ReverbPreGainSlider));
+    ReverbPreGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    ReverbPreGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    ReverbPreGainSlider.setTextValueSuffix("dB");
+    ReverbPreGainSlider.setRange(-48.0, 10.0);
+    addAndMakeVisible(ReverbPreGainSlider);
+    ReverbPreGainLabel.setText("Pre Gain", juce::dontSendNotification);
+    ReverbPreGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(ReverbPreGainLabel);
+    
+//Pre Filter
     PreCutoffSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     preCutoffAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_pre_cutoff", PreCutoffSlider));
     PreCutoffSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 200, 35);
@@ -156,8 +169,37 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     CombTimeLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(CombTimeLabel);
     
+    
+    
+//Delaying Allpass
+    DapTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    DapTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_dap_delay_time", DapTimeSlider));
+    DapTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    DapTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    DapTimeSlider.setRange(0, 1999);
+    addAndMakeVisible(DapTimeSlider);
+    
+    DapTimeLabel.setText("Time", juce::dontSendNotification);
+    DapTimeLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(DapTimeLabel);
+    
+    
+    DapGSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    DapGAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_dap_g", DapGSlider));
+    DapGSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    DapGSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    DapGSlider.setTextValueSuffix("ms");
+    DapGSlider.setRange(0, 0.999);
+    addAndMakeVisible(DapGSlider);
+    
+    DapGLabel.setText("G", juce::dontSendNotification);
+    DapGLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(DapGLabel);
+    
+
+    
     setSchroederComponents(false);
-    setCombComponents(false);
+    setDAPComponents(false);
     setFDNComponents(false);
 }
 
@@ -193,8 +235,11 @@ void ReverbEffectComponent::resized()
     
     TypeSelector.setBounds(getWidth()-275, getHeight()*2/4 - 75, 200, 30);
     
+    ReverbPreGainSlider.setBounds(250, 100, 150, 150);
+    ReverbPreGainLabel.attachToComponent(&ReverbPreGainSlider, false);
+    ReverbPreGainLabel.setJustificationType(juce::Justification::centred);
     
-    preTimeSlider.setBounds(250, 175, 150, 150);
+    preTimeSlider.setBounds(250, 300, 150, 150);
     preTimeLabel.attachToComponent(&preTimeSlider, false);
     preTimeLabel.setJustificationType(juce::Justification::centred);
     
@@ -216,8 +261,18 @@ void ReverbEffectComponent::resized()
     APF1FDBKLabel.setJustificationType(juce::Justification::centred);
     
     CombTimeSlider.setBounds(500, 350, 150, 150);
-    CombTimeLabel.attachToComponent(&CombTimeSlider, false);
-    CombTimeLabel.setJustificationType(juce::Justification::centred);
+    DapTimeLabel.attachToComponent(&CombTimeSlider, false);
+    DapTimeLabel.setJustificationType(juce::Justification::centred);
+    
+    
+    
+    DapTimeSlider.setBounds(500, 50, 150, 150);
+    DapTimeLabel.attachToComponent(&DapTimeSlider, false);
+    DapTimeLabel.setJustificationType(juce::Justification::centred);
+    
+    DapGSlider.setBounds(500, 350, 150, 150);
+    DapGLabel.attachToComponent(&DapGSlider, false);
+    DapGLabel.setJustificationType(juce::Justification::centred);
     
 }
 
@@ -227,15 +282,20 @@ void ReverbEffectComponent::setSchroederComponents(bool show)
     APF1FDBKSlider.setVisible(show);
     APF1FDBKLabel.setVisible(show);
     
-    
     CombTimeSlider.setEnabled(show);
     CombTimeSlider.setVisible(show);
     CombTimeLabel.setVisible(show);
 }
 
-void ReverbEffectComponent::setCombComponents(bool show)
+void ReverbEffectComponent::setDAPComponents(bool show)
 {
+    DapTimeSlider.setEnabled(show);
+    DapTimeSlider.setVisible(show);
+    DapTimeLabel.setVisible(show);
     
+    DapGSlider.setEnabled(show);
+    DapGSlider.setVisible(show);
+    DapGLabel.setVisible(show);
 }
 
 void ReverbEffectComponent::setFDNComponents(bool show)
