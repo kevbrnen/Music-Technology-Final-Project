@@ -85,8 +85,6 @@
             file="Source/WaveformThumbnailComponent.h"/>
     </GROUP>
     <GROUP id="{E2ACCCC9-E748-8E4C-D99B-94EF70CFF040}" name="LFOs">
-      <FILE id="pExuHg" name="LFOThumbnailComponent.h" compile="0" resource="0"
-            file="Source/LFOThumbnailComponent.h"/>
       <FILE id="QgEfde" name="LFOProcessor.h" compile="0" resource="0" file="Source/LFOProcessor.h"/>
       <FILE id="uANRU5" name="Birds_LFO.wav" compile="0" resource="1" file="Source/Birds_LFO.wav"/>
     </GROUP>

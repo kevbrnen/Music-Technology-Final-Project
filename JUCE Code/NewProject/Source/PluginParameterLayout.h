@@ -25,6 +25,8 @@ juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"}; //Delay X
 juce::StringArray Reverb_Choices{"Schroeder Reverb", "Delaying Allpass Reverb", "FDN Reverb"}; //Reverb types
 
 juce::StringArray Distortion_Choices{"Tanh", "Cubic Soft", "Square", "Clipping", "Saturation"}; //Distortion Types
+
+juce::StringArray LFO_Choices{"Sin", "Square", "Saw", "Birds"}; //LFO Types
 //==============================================================================
 
 //Processing Chain
@@ -141,7 +143,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout createDelayParameterLayout()
     auto delayGainParameter = std::make_unique<juce::AudioParameterFloat>("delay_gain", "Delay_Gain", juce::NormalisableRange<float>(-48.0f, 10.0f), 0.0f, juce::String(),
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     
+    
     auto delayLFOToggleParameter = std::make_unique<juce::AudioParameterBool>("delay_LFO_toggle", "Delay_LFO_Toggle", false);
+    
+    auto lfoSelector = std::make_unique<juce::AudioParameterChoice>("delay_lfo_type", "Delay_LFO_Type", LFO_Choices, 0);
+    
+    auto lfoSpeed = std::make_unique<juce::AudioParameterFloat>("delay_lfo_speed", "Delay_LFO_Speed", juce::NormalisableRange{0.f, 10.f, 0.001f, 0.6f, false}, 0.5f);
+    
+    auto lfoModWidth = std::make_unique<juce::AudioParameterFloat>("delay_lfo_modwidth", "Delay_LFO_ModWidth", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
+    
+    
+    auto delayTimeLFOParameter = std::make_unique<juce::AudioParameterFloat>("delay_time_lfo", "Delay_Time_LFO", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+    
+    auto delayWetDryLFOParameter = std::make_unique<juce::AudioParameterFloat>("delay_wetdry_lfo", "Delay_WetDry_LFO", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+    
+    auto delayFeedbackLFOParameter = std::make_unique<juce::AudioParameterFloat>("delay_fdbk_lfo", "Delay_FDBK_LFO", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
     
     
     paramsDelay.push_back(std::move(delayToggleParameter));
@@ -149,7 +166,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout createDelayParameterLayout()
     paramsDelay.push_back(std::move(delayFeedbackParameter));
     paramsDelay.push_back(std::move(delayWetDryParameter));
     paramsDelay.push_back(std::move(delayGainParameter));
+    
     paramsDelay.push_back(std::move(delayLFOToggleParameter));
+    paramsDelay.push_back(std::move(lfoSelector));
+    paramsDelay.push_back(std::move(lfoSpeed));
+    paramsDelay.push_back(std::move(lfoModWidth));
+    paramsDelay.push_back(std::move(delayTimeLFOParameter));
+    paramsDelay.push_back(std::move(delayWetDryLFOParameter));
+    paramsDelay.push_back(std::move(delayFeedbackLFOParameter));
     
     return {paramsDelay.begin(), paramsDelay.end()}; //Returning vector
 }

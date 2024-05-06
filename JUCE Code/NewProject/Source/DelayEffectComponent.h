@@ -12,7 +12,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "LFOThumbnailComponent.h"
 
 //==============================================================================
 /*
@@ -51,7 +50,31 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
     juce::Label delayGainLabel;
     
-    LFOThumbnailComponent LFOThumb;
+    
+    juce::ComboBox LFOSelector;
+    juce::StringArray LFO_Choices{"Sin", "Square", "Saw", "Birds"};
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>LFO_attachment;
+    
+    juce::Slider LFOSpeedSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>LFOSpeedAttachment;
+    juce::Label LFOSpeedLabel;
+    
+    juce::Slider LFOModWidthSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>LFOModWidthAttachment;
+    juce::Label LFOModWidthLabel;
+    
+    
+    juce::Slider TimeLFOSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>timeLFOAttachment;
+    juce::Label TimeLFOLabel;
+    
+    juce::Slider FDBKLFOSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>fdbkLFOAttachment;
+    juce::Label FDBKLFOLabel;
+    
+    juce::Slider WDLFOSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>wdLFOAttachment;
+    juce::Label WDLFOLabel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayEffectComponent)
 };

@@ -12,7 +12,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "LFOThumbnailComponent.h"
 
 //==============================================================================
 /*
@@ -66,8 +65,6 @@ private:
     juce::Slider filterGainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>gainAttachment;
     juce::Label filterGainLabel;
-    
-    LFOThumbnailComponent LFOThumb;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterComponent)
 };

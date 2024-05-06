@@ -28,9 +28,15 @@ public:
         Delay_Time = Delay_Parameters.getRawParameterValue("delay_time");
         Delay_FDBK = Delay_Parameters.getRawParameterValue("delay_fdbk");
         Delay_WD = Delay_Parameters.getRawParameterValue("delay_wetdry");
+        
         Delay_LFO_on = Delay_Parameters.getRawParameterValue("delay_LFO_toggle");
+        Delay_LFO_type = Delay_Parameters.getRawParameterValue("delay_lfo_type");
+        Delay_LFO_Speed = Delay_Parameters.getRawParameterValue("delay_lfo_speed");
+        Delay_LFO_ModWidth = Delay_Parameters.getRawParameterValue("delay_lfo_modwidth");
         
-        
+        Delay_Time_LFO = Delay_Parameters.getRawParameterValue("delay_time_lfo");
+        Delay_FDBK_LFO = Delay_Parameters.getRawParameterValue("delay_fdbk_lfo");
+        Delay_WD_LFO = Delay_Parameters.getRawParameterValue("delay_wetdry_lfo");
     };
     
     ~DelayEffectAudioProcessor(){};
@@ -44,12 +50,22 @@ public:
         pluginSpec.maximumBlockSize = samplesPerBlock;
         pluginSpec.numChannels = 2;
         
+        this->maxDelay = ((sampleRate/1000.0f)*3000.0f);
+        
         //Set up buffer with num channels, max possible delay in samples and the sample rate
-        circularBuffer.initBuffer(2, (int)((sampleRate/1000.0f)*3000.0f), sampleRate);
+        circularBuffer.initBuffer(2, (int)this->maxDelay, sampleRate);
         
         //Used for smoothing changes in delay time
         lastDelay = Delay_Time->load();
         delayTimeSmoothing.reset(sampleRate, 0.005);
+        
+        LFO.prepareToPlay(sampleRate, samplesPerBlock);
+        
+        LastLFOSpeed = Delay_LFO_Speed->load();
+        LastLFOMW = Delay_LFO_ModWidth->load();
+        
+        LFO.setSpeed(LastLFOSpeed);
+        LFO.setMW(LastLFOMW);
     };
     
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override
@@ -69,6 +85,41 @@ public:
                     auto Fdbk_amt = Delay_FDBK->load();
                     
                     WetAmount = Delay_WD->load();
+                    
+                    if(LFOOn != 0.f)
+                    {
+                        //Check if LFO speed was updated
+                        auto newSpeed = Delay_LFO_Speed->load();
+                        if(newSpeed != LastLFOSpeed)
+                        {
+                            LFO.setSpeed(newSpeed);
+                            LastLFOSpeed = newSpeed;
+                        }
+                        
+                        //Check if LFO mod width was updated
+                        auto newMW = Delay_LFO_ModWidth->load();
+                        if(newMW != LastLFOMW)
+                        {
+                            LFO.setMW(newMW);
+                            LastLFOMW = newMW;
+                        }
+                        
+                        //Get the next LFO val
+                        auto lfoVal = LFO.getNextLFOVal(Delay_LFO_type->load());
+                        
+                        auto timeAmt = Delay_Time_LFO->load();
+                        auto wetAmt = Delay_WD_LFO->load();
+                        auto fdbkAmt = Delay_FDBK_LFO->load();
+                        
+                        //Apply LFO val and parameter amount vals to parameters if there is
+                        //LFO to apply (Amt > 0)
+                        if(wetAmt > 0.0f){WetAmount *= (lfoVal * wetAmt);}
+                        
+                        if(timeAmt > 0.0f){newDelayTime += std::min((newDelayTime * lfoVal * timeAmt),this->maxDelay);}
+                        
+                        if(fdbkAmt > 0.0f){Fdbk_amt *= (lfoVal * fdbkAmt);}
+                            
+                    }
                     
                     //Set the next target to smooth to as the new delay time
                     delayTimeSmoothing.setTargetValue(newDelayTime);
@@ -135,8 +186,19 @@ private:
     std::atomic<float>* Delay_WD = nullptr;
     
     std::atomic<float>* Delay_LFO_on = nullptr;
+    std::atomic<float>* Delay_LFO_type = nullptr;
+    std::atomic<float>* Delay_LFO_Speed = nullptr;
+    std::atomic<float>* Delay_LFO_ModWidth = nullptr;
+    std::atomic<float>* Delay_Time_LFO = nullptr;
+    std::atomic<float>* Delay_FDBK_LFO = nullptr;
+    std::atomic<float>* Delay_WD_LFO = nullptr;
+    
+    float LastLFOSpeed;
+    float LastLFOMW;
     
     LFOProcessor LFO;
+    
+    float maxDelay = 0;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayEffectAudioProcessor);
 };

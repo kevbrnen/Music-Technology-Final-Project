@@ -98,9 +98,6 @@ FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& vts)
     LFOLabel.setText("LFO", juce::dontSendNotification);
     LFOLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(LFOLabel);
-    
-//LFO Display
-    addAndMakeVisible(LFOThumb);
 
     
 //Cutoff Slider
@@ -209,8 +206,7 @@ void FilterComponent::resized()
     resonanceSlider2.setBounds(655, getHeight()/4, 150, 150);
     resonanceLabel2.attachToComponent(&resonanceSlider2, true);
     
-    LFOThumb.setBounds(getWidth()-200, 300, 190, 75);
-    
     TypeSelector.setBounds(160, getHeight()/8, 200, 30);
     TypeSelector2.setBounds(605, getHeight()/8, 200, 30);
+    
 }
