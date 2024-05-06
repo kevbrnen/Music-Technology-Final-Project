@@ -107,12 +107,40 @@ juce::AudioProcessorValueTreeState::ParameterLayout createFilterParameterLayout(
                                                                            juce::AudioProcessorParameter::genericParameter, [](float value, int){return juce::String(value, 2);});
     auto filterLFOToggleParameter = std::make_unique<juce::AudioParameterBool>("filter_LFO_toggle", "Filter_LFO_Toggle", false);
     
+    auto lfoSelector = std::make_unique<juce::AudioParameterChoice>("filter_lfo_type", "Filter_LFO_Type", LFO_Choices, 0);
+    
+    auto lfoSpeed = std::make_unique<juce::AudioParameterFloat>("filter_lfo_speed", "Filter_LFO_Speed", juce::NormalisableRange{0.f, 10.f, 0.001f, 0.6f, false}, 0.5f);
+    
+    auto lfoModWidth = std::make_unique<juce::AudioParameterFloat>("filter_lfo_modwidth", "Filter_LFO_ModWidth", juce::NormalisableRange{0.0f, 1.f, 0.001f, 1.f, false}, 0.5f);
+    
+    
+    
+    auto Cutoff1LFOParameter = std::make_unique<juce::AudioParameterFloat>("filter1_cutoff_lfo", "Filter1_Cutoff_LFO", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+    
+    auto Res1LFOParameter = std::make_unique<juce::AudioParameterFloat>("filter1_res_lfo", "Filter1_Res_LFO", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+    
+    auto Cutoff2LFOParameter = std::make_unique<juce::AudioParameterFloat>("filter2_cutoff_lfo", "Filter2_Cutoff_LFO", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+    
+    auto Res2LFOParameter = std::make_unique<juce::AudioParameterFloat>("filter2_res_lfo", "Filter2_Res_LFO", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+ 
+    
     //Efficiently add parameter to list
     paramsFilt.push_back(std::move(cutoffFrequencyParameter));
     paramsFilt.push_back(std::move(resonanceParameter));
     paramsFilt.push_back(std::move(filterToggleParameter));
     paramsFilt.push_back(std::move(filterGainParameter));
+    
+    
     paramsFilt.push_back(std::move(filterLFOToggleParameter));
+    paramsFilt.push_back(std::move(lfoSelector));
+    paramsFilt.push_back(std::move(lfoSpeed));
+    paramsFilt.push_back(std::move(lfoModWidth));
+    paramsFilt.push_back(std::move(Cutoff1LFOParameter));
+    paramsFilt.push_back(std::move(Res1LFOParameter));
+    paramsFilt.push_back(std::move(Cutoff2LFOParameter));
+    paramsFilt.push_back(std::move(Res2LFOParameter));
+    
+    
     paramsFilt.push_back(std::move(typeSelector));
     
     paramsFilt.push_back(std::move(cutoffFrequencyParameter2));

@@ -86,6 +86,7 @@ public:
                     
                     WetAmount = Delay_WD->load();
                     
+// LFO Processing
                     if(LFOOn != 0.f)
                     {
                         //Check if LFO speed was updated
@@ -115,11 +116,12 @@ public:
                         //LFO to apply (Amt > 0)
                         if(wetAmt > 0.0f){WetAmount *= (lfoVal * wetAmt);}
                         
-                        if(timeAmt > 0.0f){newDelayTime += std::min((newDelayTime * lfoVal * timeAmt),this->maxDelay);}
+                        if(timeAmt > 0.0f){newDelayTime += std::min((newDelayTime * lfoVal * timeAmt),(this->maxDelay - 1));}
                         
                         if(fdbkAmt > 0.0f){Fdbk_amt *= (lfoVal * fdbkAmt);}
                             
                     }
+                    
                     
                     //Set the next target to smooth to as the new delay time
                     delayTimeSmoothing.setTargetValue(newDelayTime);

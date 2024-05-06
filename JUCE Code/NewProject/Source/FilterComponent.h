@@ -35,6 +35,40 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>Filter_LFO_Toggle_Attachment;
     juce::Label LFOLabel;
     
+    juce::ComboBox LFOSelector;
+    juce::StringArray LFO_Choices{"Sin", "Square", "Saw", "Birds"};
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>LFO_attachment;
+    
+    juce::Slider LFOSpeedSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>LFOSpeedAttachment;
+    juce::Label LFOSpeedLabel;
+    
+    juce::Slider LFOModWidthSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>LFOModWidthAttachment;
+    juce::Label LFOModWidthLabel;
+    
+    
+    juce::Slider Cutoff1LFOSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoff1LFOAttachment;
+    juce::Label cutoff1LFOLabel;
+    
+    juce::Slider Res1LFOSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>res1LFOAttachment;
+    juce::Label res1LFOLabel;
+    
+    juce::Slider Cutoff2LFOSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>cutoff2LFOAttachment;
+    juce::Label cutoff2LFOLabel;
+    
+    juce::Slider Res2LFOSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>res2LFOAttachment;
+    juce::Label res2LFOLabel;
+    
+    
+    
+    
+    
+    
     juce::ComboBox TypeSelector;
     juce::StringArray Filter_Choices{"Allpass", "Lowpass", "Bandpass", "Highpass"};
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Type_attachment;
