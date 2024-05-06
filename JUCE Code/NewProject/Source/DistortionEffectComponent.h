@@ -40,7 +40,7 @@ private:
     juce::Label DistortionGainLabel;
     
     juce::ComboBox TypeSelector;
-    juce::StringArray Distortion_Choices{"Tanh", "Cubic Soft", "Square", "Clipping", "Soft Saturation"};
+    juce::StringArray Distortion_Choices{"Tanh", "Cubic Soft", "Square", "Clipping", "Saturation"};
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>Type_attachment;
     
     juce::Slider PreGainSlider;

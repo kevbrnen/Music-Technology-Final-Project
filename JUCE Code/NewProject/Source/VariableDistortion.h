@@ -75,6 +75,9 @@ public:
     {
 
         float temp = 0;
+        
+        samp = std::pow(samp, 3);
+        
         samp *= gain;
         
         if(samp <= -(thresh))
@@ -117,15 +120,15 @@ public:
         
         if(samp <= -(thresh))
         {
-            temp = -(2/3);
+            temp = -(2.0f/3.0f);
         }
         else if((-(thresh)<= samp) && (samp <= (thresh)))
         {
-            temp = samp - (std::pow(samp, 3)/3);
+            temp = samp - (std::pow(samp, 3)/3.0f);
         }
         else if(samp >= (thresh))
         {
-            temp = 2/3;
+            temp = 2.0f/3.0f;
         }
 
         return temp;
@@ -135,9 +138,11 @@ public:
     {
         float temp = 0;
         
+        samp *= gain;
+        
         if(abs(samp) <= (thresh))
         {
-                temp = 2*(samp * gain);
+                temp = 2*(samp);
         }
         else if((thresh) <= abs(samp))
         {

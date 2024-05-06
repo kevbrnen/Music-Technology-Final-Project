@@ -75,18 +75,18 @@ DistortionEffectComponent::DistortionEffectComponent(juce::AudioProcessorValueTr
     PreGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     preGainAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "distortion_pregain", PreGainSlider));
     PreGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    PreGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    PreGainSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(198, 88, 245));
     PreGainSlider.setRange(1, 10.0);
     addAndMakeVisible(PreGainSlider);
     PreGainLabel.setText("Gain Factor", juce::dontSendNotification);
     PreGainLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(PreGainLabel);
 
-//Gain Slider
+//Threshold Slider
     ThreshSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     threshAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "distortion_thresh", ThreshSlider));
     ThreshSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    ThreshSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    ThreshSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(198, 88, 245));
     ThreshSlider.setRange(0, 1);
     addAndMakeVisible(ThreshSlider);
     ThreshLabel.setText("Threshold", juce::dontSendNotification);
@@ -157,15 +157,10 @@ DistortionEffectComponent::~DistortionEffectComponent()
 void DistortionEffectComponent::paint (juce::Graphics& g)
 {
     
-    g.fillAll (juce::Colours::peachpuff);   // clear the background
+    g.fillAll (juce::Colour(192, 151, 209));   // clear the background
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("DistortionEffectComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void DistortionEffectComponent::resized()

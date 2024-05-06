@@ -148,7 +148,7 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     APF1FDBKSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     APF1FDBKAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "apf1_fdbk", APF1FDBKSlider));
     APF1FDBKSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    APF1FDBKSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    APF1FDBKSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(255, 83, 83));
     APF1FDBKSlider.setRange(0, 1);
     addAndMakeVisible(APF1FDBKSlider);
     
@@ -160,7 +160,7 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     CombTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     CombTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "comb_delay_time", CombTimeSlider));
     CombTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    CombTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    CombTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(255, 83, 83));
     CombTimeSlider.setTextValueSuffix("ms");
     CombTimeSlider.setRange(1, 2000);
     addAndMakeVisible(CombTimeSlider);
@@ -175,7 +175,7 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     DapTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DapTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_dap_delay_time", DapTimeSlider));
     DapTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    DapTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    DapTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(255, 83, 83));
     DapTimeSlider.setRange(0, 1999);
     addAndMakeVisible(DapTimeSlider);
     
@@ -187,7 +187,7 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     DapGSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DapGAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_dap_g", DapGSlider));
     DapGSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    DapGSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    DapGSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(255, 83, 83));
     DapGSlider.setRange(0, 0.999);
     addAndMakeVisible(DapGSlider);
     
@@ -199,7 +199,7 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     FDNTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     FDNTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "fdn_time", FDNTimeSlider));
     FDNTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    FDNTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    FDNTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(255, 83, 83));
     FDNTimeSlider.setRange(0, 1999);
     addAndMakeVisible(FDNTimeSlider);
     
@@ -211,7 +211,7 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     FDNFdbkSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     FDNFdbkAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "fdn_fdbk", FDNFdbkSlider));
     FDNFdbkSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    FDNFdbkSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    FDNFdbkSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(255, 83, 83));
     FDNFdbkSlider.setRange(-0.999, 0.999);
     addAndMakeVisible(FDNFdbkSlider);
     
@@ -233,15 +233,11 @@ ReverbEffectComponent::~ReverbEffectComponent()
 void ReverbEffectComponent::paint (juce::Graphics& g)
 {
 
-    g.fillAll (juce::Colours::sienna);   // clear the background
+    g.fillAll (juce::Colour(171, 45, 36));   // clear the background
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
 
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("ReverbEffectComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void ReverbEffectComponent::resized()

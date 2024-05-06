@@ -37,7 +37,9 @@ public:
         filtComponent.setVisible(false);
         
         //Filter Button
-        Filter_show_button.setButtonText("Filter"); //Create a button to toggle the filter component on a*nd off
+        Filter_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        Filter_show_button.setColour(juce::TextButton::textColourOffId, juce::Colours::blue);
+        Filter_show_button.setButtonText("Filter"); //Create a button to toggle the filter component on and off
         Filter_show_button.onClick = [this](){ //Enables/disables depending on button state
                 hideHomeScreenComponents();
                 filtComponent.setEnabled(true);
@@ -45,7 +47,6 @@ public:
                 
                 currentlyShowingComponent = 'F'; //Tells us what component is currently being shown
         };
-        
         addAndMakeVisible(Filter_show_button);
 
 //Delay
@@ -55,6 +56,8 @@ public:
         delayComponent.setVisible(false);
         
         //Delay Button
+        Delay_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        Delay_show_button.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
         Delay_show_button.setButtonText("Delay");
         Delay_show_button.onClick = [this]()
         {
@@ -74,6 +77,8 @@ public:
         convolutionComponent.setVisible(false);
         
         //Convolution Reverb Button
+        Convolution_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        Convolution_show_button.setColour(juce::TextButton::textColourOffId, juce::Colours::green);
         Convolution_show_button.setButtonText("Convolution Reverb");
         Convolution_show_button.onClick = [this]()
         {
@@ -93,6 +98,8 @@ public:
         delayXpanseComponent.setVisible(false);
         
         //DelayXpanse Button
+        DelayXpanse_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        DelayXpanse_show_button.setColour(juce::TextButton::textColourOffId, juce::Colour::fromHSV (0.0f, 0.5f, 0.7f, 1.0f));
         DelayXpanse_show_button.setButtonText("Delay-Xpanse");
         DelayXpanse_show_button.onClick = [this]()
         {
@@ -112,6 +119,8 @@ public:
         degradeComponent.setVisible(false);
         
         //Degrade Button
+        Degrade_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        Degrade_show_button.setColour(juce::TextButton::textColourOffId, juce::Colours::lightgreen);
         Degrade_show_button.setButtonText("Degrade");
         Degrade_show_button.onClick = [this]()
         {
@@ -131,6 +140,8 @@ public:
         phaserComponent.setVisible(false);
         
         //Phaser Button
+        Phaser_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        Phaser_show_button.setColour(juce::TextButton::textColourOffId, juce::Colours::darkorange);
         Phaser_show_button.setButtonText("Phaser");
         Phaser_show_button.onClick = [this]()
         {
@@ -150,6 +161,8 @@ public:
         reverbComponent.setVisible(false);
         
         //Reverb Button
+        Reverb_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        Reverb_show_button.setColour(juce::TextButton::textColourOffId, juce::Colour(171, 45, 36));
         Reverb_show_button.setButtonText("Reverb");
         Reverb_show_button.onClick = [this]()
         {
@@ -169,6 +182,8 @@ public:
         distortionComponent.setVisible(false);
         
         //Distortion Button
+        Distortion_show_button.setColour(juce::TextButton::buttonColourId, juce::Colours::silver);
+        Distortion_show_button.setColour(juce::TextButton::textColourOffId, juce::Colours::purple);
         Distortion_show_button.setButtonText("Distortion");
         Distortion_show_button.onClick = [this]()
         {
@@ -192,7 +207,7 @@ public:
         g.fillAll(juce::Colours::antiquewhite);
         
         g.setColour(juce::Colours::lightgrey);
-        g.drawRect(getLocalBounds(), 5);
+        g.drawRect(getLocalBounds(), 1);
         
 //        auto buttonArea = Filter_show_button.getLocalBounds();
 //        auto edge = 4;
@@ -224,7 +239,7 @@ public:
         
         //Buttons to select effects
         auto sideMargin = getWidth()/10;
-        auto topMargin = getHeight()/8;
+        auto topMargin = (getHeight()/8)+25;
         auto buttonWidth = getWidth()/8;
         //Row 1
         Filter_show_button.setBounds(sideMargin, topMargin, buttonWidth, buttonWidth);

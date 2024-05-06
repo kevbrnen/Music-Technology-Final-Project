@@ -24,7 +24,7 @@ juce::StringArray Xpanse_Choices{"Ping-Pong Delay", "Spectral Delay"}; //Delay X
 
 juce::StringArray Reverb_Choices{"Schroeder Reverb", "Delaying Allpass Reverb", "FDN Reverb"}; //Reverb types
 
-juce::StringArray Distortion_Choices{"Tanh", "Cubic Soft", "Square", "Clipping", "Soft Saturation"}; //Distortion Types
+juce::StringArray Distortion_Choices{"Tanh", "Cubic Soft", "Square", "Clipping", "Saturation"}; //Distortion Types
 //==============================================================================
 
 //Processing Chain

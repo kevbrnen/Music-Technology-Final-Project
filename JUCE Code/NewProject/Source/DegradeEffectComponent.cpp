@@ -72,7 +72,7 @@ DegradeEffectComponent::DegradeEffectComponent(juce::AudioProcessorValueTreeStat
     DegradePRECutoff.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     PRECutoffAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "pre_cutoff_frequency", DegradePRECutoff));
     DegradePRECutoff.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    DegradePRECutoff.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    DegradePRECutoff.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(84, 179, 82));
     DegradePRECutoff.setTextValueSuffix("Hz");
     DegradePRECutoff.setRange(20.0, 20000.0);
     addAndMakeVisible(DegradePRECutoff);
@@ -85,7 +85,7 @@ DegradeEffectComponent::DegradeEffectComponent(juce::AudioProcessorValueTreeStat
     DegradePOSTCutoff.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     POSTCutoffAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "post_cutoff_frequency", DegradePOSTCutoff));
     DegradePOSTCutoff.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    DegradePOSTCutoff.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    DegradePOSTCutoff.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(84, 179, 82));
     DegradePOSTCutoff.setTextValueSuffix("Hz");
     DegradePOSTCutoff.setRange(20.0, 20000.0);
     addAndMakeVisible(DegradePOSTCutoff);
@@ -98,7 +98,7 @@ DegradeEffectComponent::DegradeEffectComponent(juce::AudioProcessorValueTreeStat
     DegradeFrequencySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     FrequencyAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "degrade_frequency", DegradeFrequencySlider));
     DegradeFrequencySlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    DegradeFrequencySlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    DegradeFrequencySlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(84, 179, 82));
     DegradeFrequencySlider.setTextValueSuffix("Hz");
     DegradeFrequencySlider.setRange(10.0, 48000.0);
     addAndMakeVisible(DegradeFrequencySlider);
@@ -139,7 +139,7 @@ DegradeEffectComponent::DegradeEffectComponent(juce::AudioProcessorValueTreeStat
     BitcrushRateSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     BitcrushRateAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "bitcrush_rate", BitcrushRateSlider));
     BitcrushRateSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
-    BitcrushRateSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    BitcrushRateSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colour(84, 179, 82));
     BitcrushRateSlider.setTextValueSuffix("Bit");
     BitcrushRateSlider.setRange(1, 24);
     addAndMakeVisible(BitcrushRateSlider);

@@ -83,10 +83,10 @@ public:
     void paint (juce::Graphics& g) override
     {
 
-        g.fillAll (juce::Colours::lightgrey);   // clear the background
+        g.fillAll (juce::Colours::silver);   // clear the background
 
         g.setColour (juce::Colours::grey);
-        g.drawRect (getLocalBounds(), 5);   // draw an outline around the component
+        g.drawRect (getLocalBounds(), 2.5);   // draw an outline around the component
 
         g.setColour (juce::Colours::black);
         
