@@ -188,13 +188,36 @@ ReverbEffectComponent::ReverbEffectComponent(juce::AudioProcessorValueTreeState&
     DapGAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "reverb_dap_g", DapGSlider));
     DapGSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
     DapGSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
-    DapGSlider.setTextValueSuffix("ms");
     DapGSlider.setRange(0, 0.999);
     addAndMakeVisible(DapGSlider);
     
     DapGLabel.setText("G", juce::dontSendNotification);
     DapGLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     addAndMakeVisible(DapGLabel);
+    
+//FDN
+    FDNTimeSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    FDNTimeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "fdn_time", FDNTimeSlider));
+    FDNTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    FDNTimeSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    FDNTimeSlider.setRange(0, 1999);
+    addAndMakeVisible(FDNTimeSlider);
+    
+    FDNTimeLabel.setText("Time", juce::dontSendNotification);
+    FDNTimeLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(FDNTimeLabel);
+    
+    
+    FDNFdbkSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    FDNFdbkAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(vts, "fdn_fdbk", FDNFdbkSlider));
+    FDNFdbkSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+    FDNFdbkSlider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::black);
+    FDNFdbkSlider.setRange(-0.999, 0.999);
+    addAndMakeVisible(FDNFdbkSlider);
+    
+    FDNFdbkLabel.setText("Feedback", juce::dontSendNotification);
+    FDNFdbkLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(FDNFdbkLabel);
     
 
     
@@ -256,13 +279,13 @@ void ReverbEffectComponent::resized()
     
     
     
-    APF1FDBKSlider.setBounds(500, 50, 150, 150);
+    CombTimeSlider.setBounds(500, 50, 150, 150);
+    CombTimeLabel.attachToComponent(&CombTimeSlider, false);
+    CombTimeLabel.setJustificationType(juce::Justification::centred);
+    
+    APF1FDBKSlider.setBounds(500, 350, 150, 150);
     APF1FDBKLabel.attachToComponent(&APF1FDBKSlider, false);
     APF1FDBKLabel.setJustificationType(juce::Justification::centred);
-    
-    CombTimeSlider.setBounds(500, 350, 150, 150);
-    DapTimeLabel.attachToComponent(&CombTimeSlider, false);
-    DapTimeLabel.setJustificationType(juce::Justification::centred);
     
     
     
@@ -273,6 +296,16 @@ void ReverbEffectComponent::resized()
     DapGSlider.setBounds(500, 350, 150, 150);
     DapGLabel.attachToComponent(&DapGSlider, false);
     DapGLabel.setJustificationType(juce::Justification::centred);
+    
+    
+    
+    FDNTimeSlider.setBounds(500, 50, 150, 150);
+    FDNTimeLabel.attachToComponent(&FDNTimeSlider, false);
+    FDNTimeLabel.setJustificationType(juce::Justification::centred);
+    
+    FDNFdbkSlider.setBounds(500, 350, 150, 150);
+    FDNFdbkLabel.attachToComponent(&FDNFdbkSlider, false);
+    FDNFdbkLabel.setJustificationType(juce::Justification::centred);
     
 }
 
@@ -300,5 +333,11 @@ void ReverbEffectComponent::setDAPComponents(bool show)
 
 void ReverbEffectComponent::setFDNComponents(bool show)
 {
+    FDNTimeSlider.setEnabled(show);
+    FDNTimeSlider.setVisible(show);
+    FDNTimeLabel.setVisible(show);
     
+    FDNFdbkSlider.setEnabled(show);
+    FDNFdbkSlider.setVisible(show);
+    FDNFdbkLabel.setVisible(show);
 }

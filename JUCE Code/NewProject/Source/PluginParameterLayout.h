@@ -375,6 +375,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout(
     auto dapGParameter = std::make_unique<juce::AudioParameterFloat>("reverb_dap_g", "Reverb_DAP_G", juce::NormalisableRange{0.0f, 0.999f, 0.001f, 0.4f, false}, 0.0f);
     
     
+    
+    auto fdnTimeParameter = std::make_unique<juce::AudioParameterFloat>("fdn_time", "FDN_Time", juce::NormalisableRange{0.0f, 2000.f, 1.f, 0.4f, false}, 25.f);
+    
+    auto fdnFDBKParameter = std::make_unique<juce::AudioParameterFloat>("fdn_fdbk", "FDN_FDBK", juce::NormalisableRange{-0.999f, 0.999f, 0.001f, 1.f, false}, 0.0f);
+    
+    
     paramsReverb.push_back(std::move(reverbToggleParameter));
     paramsReverb.push_back(std::move(reverbGainParameter));
     paramsReverb.push_back(std::move(reverbWetDryParameter));
@@ -392,6 +398,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout createReverbParameterLayout(
     
     paramsReverb.push_back(std::move(dapTimeParameter));
     paramsReverb.push_back(std::move(dapGParameter));
+    
+    paramsReverb.push_back(std::move(fdnTimeParameter));
+    paramsReverb.push_back(std::move(fdnFDBKParameter));
     
     return {paramsReverb.begin(), paramsReverb.end()}; //Returning vector
 }

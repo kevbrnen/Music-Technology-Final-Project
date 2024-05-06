@@ -278,10 +278,6 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
     addAndMakeVisible(specCutoff3Label);
     
     
-    setPingPongComponents(false);
-    setSpectralComponents(false);
-    
-    
 //Combobox
     TypeSelector.addItemList(Delay_Choices, 1);
     TypeSelector.setSelectedId(1);
@@ -302,6 +298,9 @@ DelayXpanseEffectComponent::DelayXpanseEffectComponent(juce::AudioProcessorValue
             }
     };
     
+    
+    setPingPongComponents(false);
+    setSpectralComponents(false);
     
 }
 

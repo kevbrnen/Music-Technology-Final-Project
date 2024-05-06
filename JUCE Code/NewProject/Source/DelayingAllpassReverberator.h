@@ -42,12 +42,13 @@ public:
         auto* inDataR = buffer.getReadPointer(1);
         auto* outDataL = buffer.getWritePointer(0);
         auto* outDataR = buffer.getWritePointer(1);
-
+        
         auto del = delTime->load();
         auto g = G->load();
         
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            
             auto delayedL = delayLine.getDelayedSample(0, del);
             auto delayedR = delayLine.getDelayedSample(1, del);
             

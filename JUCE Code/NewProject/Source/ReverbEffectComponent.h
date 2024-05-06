@@ -86,6 +86,15 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>DapGAttachment;
     juce::Label DapGLabel;
     
+//FDN Parameters
+    juce::Slider FDNTimeSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>FDNTimeAttachment;
+    juce::Label FDNTimeLabel;
+    
+    juce::Slider FDNFdbkSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>FDNFdbkAttachment;
+    juce::Label FDNFdbkLabel;
+    
     
     
     juce::ComboBox TypeSelector;

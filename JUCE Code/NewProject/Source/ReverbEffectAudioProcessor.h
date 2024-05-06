@@ -133,7 +133,7 @@ public:
             }
             else if(Type->load() == 2)
             {
-                //fdnProcessor.processBlock(buffer);
+                fdnProcessor.processBlock(buffer);
             }
           
             
@@ -176,8 +176,8 @@ private:
     std::atomic<float>* Reverb_Gain = nullptr;
     std::atomic<float>* PreDel = nullptr;
     std::atomic<float>* Type = nullptr;
-    float lastGain;
-    float lastDelay;
+    float lastGain = 0;
+    float lastDelay = 0;
     juce::LinearSmoothedValue<float> delayTimeSmoothing {500.0f};
     float feedback[2] = {0.0, 0.0};
     
