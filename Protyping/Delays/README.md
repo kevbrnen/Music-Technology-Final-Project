@@ -1,4 +1,4 @@
-CircularBuffer.py:
+### [CircularBuffer.py](/Basic%20Delays/CircularBuffer.py):
     CircularBuffer.py has two classes. 
 
     CircularBuffer implements a basic circular buffer and provides related 
@@ -12,11 +12,11 @@ CircularBuffer.py:
 
     Examples of both of these classes in use can be seen in CircularBufferTest.ipynb.
 
-DigitalDelay - 
+### DigitalDelay - 
     DigitalDelay.ipynb uses the circular buffer class. It is similar to the testing
     implementations, but also includes wet/dry control and feedback amount control
 
-SpectralDelay - 
+### SpectralDelay - 
     SpectralDelay.ipynb uses cascading allpass filters and the associated delay 
     introduced and phase response to delay different frequencies by different amounts.
 
