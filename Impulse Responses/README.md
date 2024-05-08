@@ -4,7 +4,7 @@
 - "REW Responses" Contains the Room EQ Wizard impulse response measurement files I used to record responses for use in the Convolution Reverb Effect, using the Umik-1 acoustical measurement microphone.
 
 
-## [ExtractingResponses.ipynb](Impulse%20Responses/ExtractingResponses.ipynb) - 
+## [ExtractingResponses.ipynb](/ExtractingResponses.ipynb) - 
 ExtractingResponses.ipynb shows an example of how impulse responses can be extracted using different methods; 
 
 - Claps/Balloon pops: where the sound itself is the impulse.
