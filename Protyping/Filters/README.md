@@ -32,7 +32,7 @@ BandPass.ipynb looks at implementations of band pass filters.
 
 ### [Notch](./Notch.ipynb) - 
 Notch.ipynb looks at notch/bandstop filter implementations.
-    I tested the differences between bandwidth and Q, similar to BansPass.ipynb
+    I tested the differences between bandwidth and Q, similar to BandPass.ipynb
     but couldnt find much of a difference.
 
   I tested the butterworth bandstop filter. I found it to be more accurate for lower orders 
@@ -49,7 +49,7 @@ AllPass.ipynb looks at first and second order allpass implementations
     interesting outcomes.
 
 
-### [Shelving Filters](./Shelves.ipynb):
+### [Shelving Filters](./Shelves.ipynb) - 
 Shelves.ipynb looks at low and high shelf implementations.
     The Q control allows you to change the steepness of the transition, as well
     as introducing some resonance around the cutoff frequency.
