@@ -1,6 +1,6 @@
 # Real Time Audio Effect Processing
 ## A JUCE Effects Suite Plug-in Implementation
-## Music Technology Final Project 2024
+## Music Technology Final Project 2024 - Kevin Brennan
 
 ### Introduction
 This repository contains all Python prototyping and C++ JUCE implementation code for my Final Project. The Idea for my project was to investigate different types of effects and prototype them in Python. From this I could create an Effects Suite VST plug-in using JUCE. My main goals for the project were to:
@@ -13,12 +13,12 @@ This repository contains all Python prototyping and C++ JUCE implementation code
 
 ### Description
 The project is broken down into different folders:
-- [Impulse Responses](Impulse Responses/README.md) contains all code relating to, and any recordings of impulse responses I used in the project.
-- [JUCE Code] contains all JUCE project files and source code for my plug-in.
-- [LFOs] contains some code for creating custom LFOs.
-- [NTS-1] contains some effect testing code for the Korg NTS-1.
-- [Prototyping] contains all of my prototyping code.
-- [Sound Examples] contains some sound examples I created throughout the course of the project and for progress colloquiums
+- [Impulse Responses](Impulse%20Responses/README.md) contains all code relating to, and any recordings of impulse responses I used in the project.
+- [JUCE Code](Juce%20Code/README.md) contains all JUCE project files and source code for my plug-in.
+- [LFOs](LFOs/README.md) contains some code for creating custom LFOs.
+- [NTS-1](NTS-1/README.md) contains some effect testing code for the Korg NTS-1.
+- [Prototyping](Prototyping/README.md) contains all of my prototyping code.
+- [Sound Examples](Sound%20Examples/README.md) contains some sound examples I created throughout the course of the project and for progress colloquiums
 
 ### Usage
 Installation Information
