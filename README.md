@@ -13,7 +13,7 @@ This repository contains all Python prototyping and C++ JUCE implementation code
 
 ### Description
 The project is broken down into different folders:
-- [Impulse Responses] contains all code relating to, and any recordings of impulse responses I used in the project.
+- [Impulse Responses](Impulse Responses/README.md) contains all code relating to, and any recordings of impulse responses I used in the project.
 - [JUCE Code] contains all JUCE project files and source code for my plug-in.
 - [LFOs] contains some code for creating custom LFOs.
 - [NTS-1] contains some effect testing code for the Korg NTS-1.
