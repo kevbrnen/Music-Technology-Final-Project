@@ -1,2 +1,0 @@
-Folder containing prototyped versions in python of all effects.
-Mostly using Jupyter notebooks for prototyping.

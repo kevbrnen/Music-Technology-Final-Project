@@ -1,3 +1,3 @@
 ### NTS-1
 This is some code I used to test my circular buffer delay implementation on a Korg NTS-1 I was given by my supervisor. We had hoped I would be able to use the NTS as a bridge between the Python prototypes and the JUCE implementation. After testing it for a while, and having started the JUCE implementation, I realised how long the JUCE implementation might take, and decided I would be better off focusing my time on that, so that I could fully get to grips with the framework.
-I would like to revisit the NTS-1 at a later stage. Given how long it can take to create UI in juce, having that control in a standalone device to quickly test out effects and parameters with would make things much more streamlined
+I would like to revisit the NTS-1 at a later stage. Given how long it can take to create UI in juce, having that control in a standalone device to quickly test out effects and parameters with could make things easier.
