@@ -25,5 +25,5 @@ A smaller amount, say 70 filters, works better with more transient sounds like
 You can take it to an extreme if you use hundreds or thousands of filters, and 
     get some really unique effects with less transient, smoother sounds.
 
-### [Ping Pong Delay](./Advanced%20Delays/PingPong.ipynb)
+### [Ping Pong Delay](./Advanced%20Delays/PingPong.ipynb) - 
 PingPong.ipynb implements a ping pong delay effect from a block diagram. Inputs as well as delay feedback paths are crossed over, which results in the ping pong effect.
