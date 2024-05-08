@@ -63,7 +63,14 @@ public:
         LPF_Post.setType(1);
         
         //Downsampling factor
-        N = (int)(sampleRate/fs_new);
+        if(fs_new > sampleRate)
+        {
+            N = 1;
+        }
+        else
+        {
+            N = (int)(sampleRate/fs_new);
+        }
         
         this->sampleRate = sampleRate;
         
@@ -88,7 +95,14 @@ public:
             auto fs_new = Degrade_Frequency->load();
             
             //Downsample factor
-            N = (int)(sampleRate/fs_new);
+            if(fs_new > sampleRate)
+            {
+                N = 1;
+            }
+            else
+            {
+                N = (int)(sampleRate/fs_new);
+            }
             
             //Check if bitcrushing on and what the selected rate is
             auto bitOn = Bitcrush_on->load();
