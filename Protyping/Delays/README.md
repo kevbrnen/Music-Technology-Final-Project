@@ -1,4 +1,4 @@
-### [CircularBuffer.py](/Basic%20Delays/CircularBuffer.py):
+### [CircularBuffer.py](./Basic%20Delays/CircularBuffer.py):
     CircularBuffer.py has two classes. 
 
     CircularBuffer implements a basic circular buffer and provides related 
