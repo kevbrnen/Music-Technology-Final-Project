@@ -122,7 +122,7 @@ public:
                 }
             }
             
-            
+            //Processing depending on selected type
             if(Type->load() == 0)
             {
                 schroederProcessor.processBlock(buffer);

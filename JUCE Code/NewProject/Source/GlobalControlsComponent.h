@@ -94,6 +94,7 @@ public:
 
         g.setFont (boldFont);
         
+        //For displaying Title text
         switch(hs.getCurrentlyShowingComponent())
         {
             case 0:

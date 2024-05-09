@@ -5,6 +5,7 @@
     Created: 5 May 2024 7:54:49pm
     Author:  Kevin Brennan
 
+    A simple Delaying Allpass Filter Reverb implementation
   ==============================================================================
 */
 
@@ -30,9 +31,6 @@ public:
         this->maxDelay = (sampleRate/1000) * 3000;
         
         delayLine.initBuffer(2, this->maxDelay, (int)sampleRate);
-        
-//        this->del = 70;
-//        this->g = 0.6;
 
     };
     
@@ -69,8 +67,6 @@ private:
     
     std::atomic<float>* delTime = nullptr;
     std::atomic<float>* G = nullptr;
-//    float del = 70;
-//    float g = 0.6;
     
     int maxDelay;
     float lastDelay = 0;

@@ -5,6 +5,7 @@
     Created: 1 May 2024 5:55:06pm
     Author:  Kevin Brennan
 
+    A simple Schroeder Reverberator implementation with 16 delay lines in parallel and 2 allpass filters
   ==============================================================================
 */
 
@@ -29,6 +30,7 @@ public:
         
         this->maxDelay = (sampleRate/1000) * 3000;
 
+        //Setting up array of delay lines makes processing easier and tidies up code
         for(int i = 0; i < N; ++i)
         {
             parallelDelayLines[i].initBuffer(2, this->maxDelay, (int)sampleRate);
@@ -111,6 +113,7 @@ public:
     
     void recalculateDelays(float time)
     {
+        //Calculating each delay line length using - (Time_ms/3^i)
         for(int i = 0; i < N; ++i)
         {
             delays[i] = (time)/(std::pow(3, i));
@@ -126,7 +129,7 @@ private:
     CircularBuffer parallelDelayLines[N];
     CircularBuffer APFLine1, APFLine2;
     float gains[16] = {0.7, 0.5, 0.7, 0.63, 0.53, 0.49, 0.394, 0.433, 0.352, 0.392, 0.323, 0.269, 0.214, 0.324, 0.54, 0.38};
-    double delays[16] = {29.7, 37.1, 53.7, 79.12, 42, 33, 14, 4, 6, 9, 42, 33, 14, 4, 6, 9}; //(100ms/3^i)
+    double delays[16] = {29.7, 37.1, 53.7, 79.12, 42, 33, 14, 4, 6, 9, 42, 33, 14, 4, 6, 9};
     double apDelays[4] = {34.2, 49, 42, 38.3};
     
     int maxDelay;

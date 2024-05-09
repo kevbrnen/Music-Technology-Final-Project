@@ -209,19 +209,6 @@ public:
         g.setColour(juce::Colours::lightgrey);
         g.drawRect(getLocalBounds(), 1);
         
-//        auto buttonArea = Filter_show_button.getLocalBounds();
-//        auto edge = 4;
-//         
-//        buttonArea.removeFromLeft (edge);
-//        buttonArea.removeFromTop (edge);
-//         
-//        // shadow
-//        g.setColour (juce::Colours::darkgrey.withAlpha (0.5f));
-//        g.fillRect (buttonArea);
-//         
-//        auto offset = Filter_show_button.isDown() ? -edge / 2 : -edge;
-//        buttonArea.translate (offset, offset);
-        
     }
 
     void resized() override

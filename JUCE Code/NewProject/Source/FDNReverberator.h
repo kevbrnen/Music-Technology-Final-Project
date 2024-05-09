@@ -5,6 +5,7 @@
     Created: 5 May 2024 8:10:01pm
     Author:  Kevin Brennan
 
+    A simple 3x3 Feedback Delay Network Reverb implementation
   ==============================================================================
 */
 

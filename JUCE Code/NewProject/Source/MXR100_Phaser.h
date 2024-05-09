@@ -10,6 +10,8 @@
     R. Kiiski, F. Esqueda, and V. Välimäki, “Time-variant gray-box mod-
     eling of a phaser pedal,” in Proc. Int. Conf. Digital Audio Effects
     (DAFx-16), Brno, Czech Republic, Sep. 2016.
+ 
+    "Spectral Music Design - Victor Lazzarini" Phase Shifter implementation
   ==============================================================================
 */
 

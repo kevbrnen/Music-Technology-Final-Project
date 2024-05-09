@@ -83,7 +83,7 @@ public:
             
             
             
-// Distortion Processing
+// Distortion Processing using variable distortion and currently set type
             distort.processBlock(buffer);
             
             

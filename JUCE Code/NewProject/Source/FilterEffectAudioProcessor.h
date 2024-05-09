@@ -185,7 +185,7 @@ public:
                 }
                 
             }
-            else
+            else //Non LFO Processing
             {
                 //Get and set resonance and cutoff freqs
                 varFilt.setResonance(res);

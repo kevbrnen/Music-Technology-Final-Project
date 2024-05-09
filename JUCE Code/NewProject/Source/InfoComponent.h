@@ -5,6 +5,7 @@
     Created: 4 May 2024 3:19:16pm
     Author:  Kevin Brennan
 
+    A class for displaying info about the plug-in and the effects
   ==============================================================================
 */
 
@@ -13,18 +14,17 @@
 #include <JuceHeader.h>
 #include "HomeScreenComponent.h"
 
-//==============================================================================
-/*
-*/
+
 class InfoComponent  : public juce::Component
 {
 public:
     InfoComponent(HomeScreenComponent& hs): hs(hs)
     {
+        //Label to show info text
         addAndMakeVisible(plugin_InfoLabel);
         plugin_InfoLabel.setColour (juce::Label::backgroundColourId, juce::Colours::transparentBlack);
         
-        
+        //Info text for each part of the plugin
         plugin_InfoText << "From the home screen you can select what effects you want to use.\nThe 'Chain' button allows you to choose what order to process through the effects in. Duplicating effects can become unstable, each effect only has one instance.\nYou have a global plug-in gain control in the top right corner.";
         
         filter_InfoText << "Filter 1 (left) is always on.\nFilter 2 (right) can be toggled on/off.\nYou can select different types of filters using the dropdown menus.\nYou have control over the cutoff frequencies and resonances of each filter.\n\nYou can control cutoff frequencies and resonances using the LFO. Toggle it on and choose the amount each parameter is modulated around the set parameter values.";
@@ -51,13 +51,6 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        /* This demo code just fills the component's background and
-           draws some placeholder text to get you started.
-
-           You should replace everything in this method with your own
-           drawing code..
-        */
-
         g.fillAll (juce::Colours::black);   // clear the background
 
         g.setColour (juce::Colours::white);
@@ -67,6 +60,7 @@ public:
 
         g.setFont (boldFont);
         
+        //Change info text depending on the currently showing component
         switch(hs.getCurrentlyShowingComponent())
         {
             case 0:
