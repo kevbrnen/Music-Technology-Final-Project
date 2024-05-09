@@ -21,4 +21,6 @@ The project is broken down into different folders:
 - [Sound Examples](Sound%20Examples/) contains some sound examples I created throughout the course of the project and for progress colloquiums
 
 ### Usage
-Installation information for the VST3 plug-in can be found [here](./JUCE%20Code/README.md)
+Installation information for the VST3 plug-in can be found [here](./JUCE%20Code/README.md).
+
+Prototyping Jupyter Notebook files can be found [here](./Prototyping/README.md), with relevant information as to how effects work, analysis and plots.
