@@ -11,5 +11,8 @@ pictures of plugin
 
 ### Installation/Build information
 #### Installing The Plug-in
+The .vst3 files are located [here](./Plug-in%20builds/) for Windows and MacOS. The plug-in was built using XCode on an Intel Mac. The Windows build was created using JUCE on a Windows virtual machine and Visual Studio 2022.
+
 #### Building The Plug-in
+In order to build the plug-in yourself. First make sure you have [XCode](https://developer.apple.com/xcode/)(for Mac) or [Visual Studio](https://visualstudio.microsoft.com/)(for Windows).
 
