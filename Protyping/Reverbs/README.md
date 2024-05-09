@@ -1,7 +1,7 @@
-ConvolutionReverb_Balloon_pop - 
-    ConvolutionReverb_Balloon_pop.ipynb uses a balloon pop recorded in a hall as an 
-    impulse for convolution reverb. This implementation applies it with both time based 
-    and fft based convolution. It simply applies it, no wet/dry or other controls
+# Reverbs
+
+# [Convolution Reverb](./Convolution%20Reverb/)- 
+[ConvolutionReverb_Balloon_pop.ipynb](./Convolution%20Reverb/ConvolutionReverb_Balloon_pop.ipynb) uses a balloon pop recorded in a hall as an impulse for convolution reverb. This implementation applies it with both time based and fft based convolution. 
 
 CombFilterReverb - 
     CombFilterReverb.ipynb gives a comb filter implementation (Feedback delay), plotting of
