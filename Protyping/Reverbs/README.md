@@ -2,6 +2,7 @@
 
 ### [Convolution Reverb](./Convolution%20Reverb/)- 
 [ConvolutionReverb_Balloon_pop.ipynb](./Convolution%20Reverb/ConvolutionReverb_Balloon_pop.ipynb) uses a balloon pop recorded in a hall as an impulse for convolution reverb. This implementation applies it with both time based and fft based convolution. 
+
 [ConvFromIR.ipynb](./Convolution%20Reverb/ConvFromIR.ipynb) convolves a song snippet with an impulse recorded using Room EQ Wizard.
 
 ### [Comb Filter Reverb](./Simulated%20Reverbs/CombFilterReverb.ipynb) - 
