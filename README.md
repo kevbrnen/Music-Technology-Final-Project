@@ -13,12 +13,12 @@ This repository contains all Python prototyping and C++ JUCE implementation code
 
 ### Description
 The project is broken down into different folders:
-- [Impulse Responses](Impulse%20Responses/) contains all code relating to, and any recordings of impulse responses I used in the project.
-- [JUCE Code](Juce%20Code/) contains all JUCE project files and source code for my plug-in.
-- [LFOs](LFOs/) contains some code for creating custom LFOs.
-- [NTS-1](NTS-1/) contains some effect testing code for the Korg NTS-1.
-- [Prototyping](Prototyping/) contains all of my prototyping code.
-- [Sound Examples](Sound%20Examples/) contains some sound examples I created throughout the course of the project and for progress colloquiums
+- [Impulse Responses](./Impulse%20Responses/) contains all code relating to, and any recordings of impulse responses I used in the project.
+- [JUCE Code](./JUCE%20Code/) contains all JUCE project files and source code for my plug-in.
+- [LFOs](./LFOs/) contains some code for creating custom LFOs.
+- [NTS-1](./NTS-1/) contains some effect testing code for the Korg NTS-1.
+- [Prototyping](./Prototyping/) contains all of my prototyping code.
+- [Sound Examples](./Sound%20Examples/) contains some sound examples I created throughout the course of the project and for progress colloquiums
 
 ### Usage
 Installation information for the VST3 plug-in can be found [here](./JUCE%20Code/README.md).
