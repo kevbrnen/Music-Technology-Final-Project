@@ -18,7 +18,8 @@ In order to build the plug-in yourself. First make sure you have [XCode](https:/
 You can download the [NewProject.jucer](./NewProject/NewProject.jucer) file, along with all of the [source code](./NewProject/Source). 
 * Open the jucer file using the Projucer. 
 * Make sure the source code paths in the Projucer are correct for wherever you downloaded them to.
-* Make sure to have the below modules selected.<img width="361" alt="Screenshot 2024-05-09 at 10 17 07" src="https://github.com/kevbrnen/Music-Technology-Final-Project/assets/147145956/dac93a21-889b-4600-bee4-9d5d01fe3e6c">
+* Make sure to have the below modules selected.
+<img width="361" alt="Screenshot 2024-05-09 at 10 17 07" src="https://github.com/kevbrnen/Music-Technology-Final-Project/assets/147145956/dac93a21-889b-4600-bee4-9d5d01fe3e6c">
 
 * Choose your selected exporter from the dropdown menu and press the icon to open the IDE.
 * Once the IDE is open, you can build the VST3. 
