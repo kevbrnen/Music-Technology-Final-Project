@@ -19,12 +19,14 @@ You can download the [NewProject.jucer](./NewProject/NewProject.jucer) file, alo
 * Open the jucer file using the Projucer. 
 * Make sure the source code paths in the Projucer are correct for wherever you downloaded them to.
 * Make sure to have the below modules selected.
+<img width="361" alt="Screenshot 2024-05-09 at 10 17 07" src="https://github.com/kevbrnen/Music-Technology-Final-Project/assets/147145956/dac93a21-889b-4600-bee4-9d5d01fe3e6c">
+
 * Choose your selected exporter from the dropdown menu and press the icon to open the IDE.
 * Once the IDE is open, you can build the VST3. 
 * Once the build is complete the plug-in should show up in the products/builds folder.
 
 ### Using the Plug-in
-Once you have the .vst3 file for your platform, you can use it in any DAW you wish. You can either link your DAW directly to wherever the plug-in is located on your system (Usually under Plug-Ins in preferences/settings in your DAW). Alternatively you can place the .vst3 file in your systems VST folder.
+Once you have the .vst3 file for your platform, you can use it in any DAW you wish. You can either link your DAW directly to wherever the plug-in is located on your system (Usually under Plug-Ins in preferences/settings in your DAW). Alternatively you can place the .vst3 file in your systems VST folder. Then rescan for plug-ins in your DAW and it should show up.
 - On Windows:
     "C:\Program Files\Common Files\VST3"
 - On Mac:
