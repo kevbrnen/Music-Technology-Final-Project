@@ -10,6 +10,8 @@ This repository contains all Python prototyping and C++ JUCE implementation code
 * Create something using everything I have learned in both Music Technology and Computer Science.
 * Improve my C++ skills.
 * Improve my Python skills.
+  
+<img width="999" alt="Screenshot 2024-05-09 at 10 33 13" src="https://github.com/kevbrnen/Music-Technology-Final-Project/assets/147145956/1be763d8-c5d8-46b8-9897-80270fcfb487">
 
 ### Description
 The project is broken down into different folders:
