@@ -41,13 +41,14 @@ public:
     //==============================================================================
     void prepareToPlay(double sampleRate, int samplesPerBlock) override
     {
+        this->fs = sampleRate;
+        
         schroederProcessor.prepareToPlay(sampleRate, samplesPerBlock);
         delApProcessor.prepareToPlay(sampleRate, samplesPerBlock);
         fdnProcessor.prepareToPlay(sampleRate, samplesPerBlock);
         
         preDelay.initBuffer(2, (sampleRate/1000)*3000, (int)sampleRate);
         lastDelay = PreDel->load();
-        delayTimeSmoothing.reset(sampleRate, 0.05);
         
         //Setup variable filter
         preFilt.prepareToPlay(sampleRate, samplesPerBlock);
@@ -95,8 +96,10 @@ public:
             {
                 auto newDelayTime = PreDel->load();
                 
-                //Set the next target to smooth to as the new delay time
-                delayTimeSmoothing.setTargetValue(newDelayTime);
+                //Smoothing delay time changes
+                float ht_constant = .3f;
+                smoothingFac = std::pow((0.5), (1.f/(this->fs * ht_constant)));
+                float delayTime = smoothingFac*(lastDelay) + (1-smoothingFac)*newDelayTime;
                 
                 //loop through channels and process
                 for(int channel = 0; channel < 2 ; ++channel)
@@ -106,20 +109,17 @@ public:
                     
                     //Push sample to buffer with feedback, determined by feedback amount
                     preDelay.pushSampleToBuffer(channel, inData[i]);
-                        
-                    //Get the smoothed delay time value
-                    auto time = delayTimeSmoothing.getNextValue();
                     
                     //Get the delayed sample at the last delay time and the delayed sample at the new delay time
                     auto delayedSample_oldVal = preDelay.getDelayedSample(channel, lastDelay);
-                    auto delayedSample_newVal = preDelay.getDelayedSample(channel, time);
+                    auto delayedSample_newVal = preDelay.getDelayedSample(channel, delayTime);
                         
                     //Interpolate between old and new delayed samples, compute wet/dry combination and add to output
                     outData[i] = (((*delayedSample_newVal * (1-C)) + (*delayedSample_oldVal * C)));
                         
-                    lastDelay = time;
                     feedback[channel] = outData[i];
                 }
+                lastDelay = delayTime;
             }
             
             //Processing depending on selected type
@@ -170,6 +170,7 @@ public:
     
 private:
     
+    double fs = 0;
     std::atomic<float>* Reverb_on = nullptr;
     std::atomic<float>* Reverb_WD = nullptr;
     
@@ -178,7 +179,7 @@ private:
     std::atomic<float>* Type = nullptr;
     float lastGain = 0;
     float lastDelay = 0;
-    juce::LinearSmoothedValue<float> delayTimeSmoothing {500.0f};
+    float smoothingFac = 0.99f;
     float feedback[2] = {0.0, 0.0};
     
     VariableFilter preFilt;

@@ -57,7 +57,6 @@ public:
         
         //Used for smoothing changes in delay time
         lastDelay = Delay_Time->load();
-        delayTimeSmoothing.reset(sampleRate, 0.005);
         
         LFO.prepareToPlay(sampleRate, samplesPerBlock);
         
@@ -75,7 +74,7 @@ public:
             
             if(effectOn != 0.0f) //Process if the effect is on
             {
-                auto C = 0.6; //interpolation factor
+                auto C = 0.7; //interpolation factor
                 
                 for(int i = 0; i < buffer.getNumSamples(); ++i)
                 {
@@ -85,6 +84,11 @@ public:
                     auto Fdbk_amt = Delay_FDBK->load();
                     
                     WetAmount = Delay_WD->load();
+                    
+                    float ht_constant = .3f;
+                    smoothingFac = std::pow((0.5), (1.f/(pluginSpec.sampleRate * ht_constant)));
+                    float delayTime = smoothingFac*(lastDelay) + (1-smoothingFac)*newDelayTime;
+                    lastDelay = delayTime;
                     
 // LFO Processing
                     if(LFOOn != 0.f)
@@ -116,7 +120,7 @@ public:
                         //LFO to apply (Amt > 0)
                         if(wetAmt > 0.0f){WetAmount *= (lfoVal * wetAmt);}
                         
-                        if(timeAmt > 0.0f){newDelayTime += std::min((newDelayTime * lfoVal * timeAmt),(this->maxDelay - 1));}
+                        if(timeAmt > 0.0f){newDelayTime += std::min((delayTime * lfoVal * timeAmt),(this->maxDelay - 1));}
                         
                         if(fdbkAmt > 0.0f){Fdbk_amt *= (lfoVal * fdbkAmt);}
                             
@@ -124,7 +128,7 @@ public:
                     
                     
                     //Set the next target to smooth to as the new delay time
-                    delayTimeSmoothing.setTargetValue(newDelayTime);
+                    //delayTimeSmoothing.setTargetValue(newDelayTime);
                     
                     //loop through channels and process
                     for(int channel = 0; channel < 2 ; ++channel)
@@ -134,21 +138,16 @@ public:
                         
                         //Push sample to buffer with feedback, determined by feedback amount
                         circularBuffer.pushSampleToBuffer(channel, (inData[i] + (feedback[channel] * Fdbk_amt)));
-                            
-                        //Get the smoothed delay time value
-                        auto time = delayTimeSmoothing.getNextValue();
                         
                         //Get the delayed sample at the last delay time and the delayed sample at the new delay time
-                        auto delayedSample_oldVal = circularBuffer.getDelayedSample(channel, lastDelay);
-                        auto delayedSample_newVal = circularBuffer.getDelayedSample(channel, time);
+                        auto delayedSample_newVal = circularBuffer.getDelayedSample(channel, delayTime);
                             
                         //Interpolate between old and new delayed samples, compute wet/dry combination and add to output
-                        outData[i] = (((*delayedSample_newVal * (1-C)) + (*delayedSample_oldVal * C)) * WetAmount) + (inData[i] * (1 - WetAmount));
-                            
+                        outData[i] = (((*delayedSample_newVal * (1-C)) + (delayedSample_oldVal * C)) * WetAmount) + (inData[i] * (1 - WetAmount));
+                        delayedSample_oldVal = *delayedSample_newVal;
                             
                         //Feedback for each channel
                         feedback[channel] = outData[i];
-                        lastDelay = time;
                         
                     }
                 }
@@ -179,8 +178,8 @@ private:
     
     std::atomic<float>* Delay_Time = nullptr;
     float lastDelay;
-    juce::LinearSmoothedValue<float> delayTimeSmoothing {500.0f};
-    SmoothingFilter SmoothingLPF;
+    float smoothingFac = 0.99f;
+    float delayedSample_oldVal = 0.f;
     
     std::atomic<float>* Delay_FDBK = nullptr;
     float feedback[2];

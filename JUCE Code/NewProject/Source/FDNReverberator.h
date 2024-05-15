@@ -49,23 +49,28 @@ public:
         auto* inDataR = buffer.getReadPointer(1);
         auto* outDataL = buffer.getWritePointer(0);
         auto* outDataR = buffer.getWritePointer(1);
-
-        auto time = Time->load();
-        if(time != lastTime)
-        {
-            recalculateDelays(time);
-            this->lastTime = time;
-        }
-        
-        auto fdbk = FDBK->load();
-        if(fdbk != lastFdbk)
-        {
-            recalculateMatrix(fdbk);
-            this->lastFdbk = fdbk;
-        }
         
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            //For smoothing Delay time Changes
+            auto time = Time->load();
+            float ht_constant = .3f;
+            smoothingFac = std::pow((0.5), (1.f/(this->sampleRate * ht_constant)));
+            float delayTime = smoothingFac*(lastTime) + (1-smoothingFac)*time;
+            
+            if(delayTime != lastTime)
+            {
+                recalculateDelays(delayTime);
+                this->lastTime = delayTime;
+            }
+            
+            auto fdbk = FDBK->load();
+            if(fdbk != lastFdbk)
+            {
+                recalculateMatrix(fdbk);
+                this->lastFdbk = fdbk;
+            }
+            
             for(int i = 0; i < N; ++i)
             {
                 //Delayed samples
@@ -154,6 +159,7 @@ private:
     int maxDelay;
     float lastTime = 0;
     float lastFdbk = 0;
+    float smoothingFac = 0.99f;
     
     std::atomic<float>* Time = nullptr;
     std::atomic<float>* FDBK = nullptr;

@@ -91,6 +91,24 @@ public:
             
         for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            //Smoothing changes in delay
+            auto newDelayTime1 = band1Time->load();
+            auto newDelayTime2 = band2Time->load();
+            auto newDelayTime3 = band3Time->load();
+            auto newDelayTime4 = band4Time->load();
+            
+            float ht_constant = .3f;
+            smoothingFac = std::pow((0.5), (1.f/(Spec.sampleRate * ht_constant)));
+            
+            float delayTime1 = smoothingFac*(lastDelay1) + (1-smoothingFac)*newDelayTime1;
+            lastDelay1 = delayTime1;
+            float delayTime2 = smoothingFac*(lastDelay2) + (1-smoothingFac)*newDelayTime2;
+            lastDelay2 = delayTime2;
+            float delayTime3 = smoothingFac*(lastDelay3) + (1-smoothingFac)*newDelayTime3;
+            lastDelay3 = delayTime3;
+            float delayTime4 = smoothingFac*(lastDelay4) + (1-smoothingFac)*newDelayTime4;
+            lastDelay4 = delayTime4;
+            
             for(int channel = 0; channel < 2 ; ++channel)
             {
                 auto* inData = buffer.getReadPointer(channel);
@@ -122,18 +140,19 @@ public:
                 hiDelay1.pushSampleToBuffer(channel, (band2 + (fdbk_amt2->load() * feedback[channel][1])));
                 loDelay2.pushSampleToBuffer(channel, (band3 + (fdbk_amt3->load() * feedback[channel][2])));
                 hiDelay2.pushSampleToBuffer(channel, (band4 + (fdbk_amt4->load() * feedback[channel][3])));
+                
 
                 //Get delayed samples and add them to output
-                auto delayed_b1 = loDelay1.getDelayedSample(channel, band1Time->load());
+                auto delayed_b1 = loDelay1.getDelayedSample(channel, delayTime1);
                 outData[sample] = *delayed_b1;
                 
-                auto delayed_b2 = hiDelay1.getDelayedSample(channel, band2Time->load());
+                auto delayed_b2 = hiDelay1.getDelayedSample(channel, delayTime2);
                 outData[sample] += *delayed_b2;
                     
-                auto delayed_b3 = loDelay2.getDelayedSample(channel, band3Time->load());
+                auto delayed_b3 = loDelay2.getDelayedSample(channel, delayTime3);
                 outData[sample] += *delayed_b3;
                     
-                auto delayed_b4 = hiDelay2.getDelayedSample(channel, band4Time->load());
+                auto delayed_b4 = hiDelay2.getDelayedSample(channel, delayTime4);
                 outData[sample] += *delayed_b4;
 
                 //Store feedbacks for next iteration
@@ -179,4 +198,10 @@ private:
     std::atomic<float>* cutoff1 = nullptr;
     std::atomic<float>* cutoff2 = nullptr;
     std::atomic<float>* cutoff3 = nullptr;
+    
+    float smoothingFac = 0.99f;
+    float lastDelay1 = 0.f;
+    float lastDelay2 = 0.f;
+    float lastDelay3 = 0.f;
+    float lastDelay4 = 0.f;
 };

@@ -25,10 +25,8 @@ class CircularBuffer:
         self.buffer = np.zeros(int(self.buffer_size), dtype= float)
         self.buffer_index = 0
 
-    # Returns the current sample from the buffer.
-    # Implements fractional delay by linearly interpolating
-    # between the current sample to be taken and the next sample. Weighted
-    # using the fractional delay amount
+    # Returns the current sample from the buffer. Implements fractional delay by linearly interpolating between the current sample 
+    # to be taken and the next sample. Weighted using the fractional delay amount
     def get_sample_from_buffer(self) -> float:
         """Returns the current sample from the buffer."""
 

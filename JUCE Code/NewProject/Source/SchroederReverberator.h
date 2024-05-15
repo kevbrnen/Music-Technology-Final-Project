@@ -51,19 +51,24 @@ public:
         auto* outDataL = buffer.getWritePointer(0);
         auto* outDataR = buffer.getWritePointer(1);
         
-        auto fdbk1 = APF_FDBK1->load();
-        auto combtime = combTime->load();
-        
-        
-        if(combtime != lastDelay)
-        {
-            recalculateDelays(combtime);
-            lastDelay = combtime;
-        }
-        
-
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            auto fdbk1 = APF_FDBK1->load();
+            auto combtime = combTime->load();
+            
+            //For Smoothing Delay time changes
+            float ht_constant = .3f;
+            smoothingFac = std::pow((0.5), (1.f/(this->sampleRate * ht_constant)));
+            float delayTime = smoothingFac*(lastDelay) + (1-smoothingFac)*combtime;
+            
+            
+            if(delayTime != lastDelay)
+            {
+                recalculateDelays(delayTime);
+                lastDelay = delayTime;
+            }
+            
+            
             float outCombL = 0.f;
             float outCombR = 0.f;
             
@@ -134,6 +139,7 @@ private:
     
     int maxDelay;
     float lastDelay = 0;
+    float smoothingFac = 0.f;
 
     std::atomic<float>* APF_FDBK1 = nullptr;
     std::atomic<float>* combTime = nullptr;

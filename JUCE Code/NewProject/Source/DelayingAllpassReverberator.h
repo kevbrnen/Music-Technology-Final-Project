@@ -41,14 +41,21 @@ public:
         auto* outDataL = buffer.getWritePointer(0);
         auto* outDataR = buffer.getWritePointer(1);
         
-        auto del = delTime->load();
-        auto g = G->load();
         
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
+            auto del = delTime->load();
             
-            auto delayedL = delayLine.getDelayedSample(0, del);
-            auto delayedR = delayLine.getDelayedSample(1, del);
+            //For smoothing delay time changes
+            float ht_constant = .3f;
+            smoothingFac = std::pow((0.5), (1.f/(this->sampleRate * ht_constant)));
+            float delayTime = smoothingFac*(lastDelay) + (1-smoothingFac)*del;
+            lastDelay = delayTime;
+            
+            auto g = G->load();
+            
+            auto delayedL = delayLine.getDelayedSample(0, delayTime);
+            auto delayedR = delayLine.getDelayedSample(1, delayTime);
             
             delayLine.pushSampleToBuffer(0, (inDataL[sample] + ((*delayedL) * g)));
             delayLine.pushSampleToBuffer(1, (inDataR[sample] + ((*delayedR) * g)));
@@ -70,5 +77,7 @@ private:
     
     int maxDelay;
     float lastDelay = 0;
+    float smoothingFac = 0.99f;
+    
 };
 

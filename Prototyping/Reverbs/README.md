@@ -6,8 +6,7 @@
 [ConvFromIR.ipynb](./Convolution%20Reverb/ConvFromIR.ipynb) convolves a song snippet with an impulse recorded using Room EQ Wizard.
 
 ### [Comb Filter Reverb](./Simulated%20Reverbs/CombFilterReverb.ipynb) - 
-CombFilterReverb.ipynb gives a comb filter implementation (Feedback delay), plotting of
-    the response of the system, and a comb filter reverberator implementation.
+CombFilterReverb.ipynb gives a comb filter implementation (Feedback delay), plotting of the response of the system, and a comb filter reverberator implementation.
 
 ### [Delaying Allpass Reverb](./Simulated%20Reverbs/DelayingAllpassReverb.ipynb) - 
 Based off the impulse response of an all pass filter. 

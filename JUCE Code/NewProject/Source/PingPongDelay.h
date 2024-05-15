@@ -29,6 +29,8 @@ public:
     //Pre playback initialisation
     void prepareToPlay(double sampleRate, int samplesPerBlock)
     {
+        this->fs = sampleRate;
+        
         Maxsamps = (int)((sampleRate/1000.f) * maxDel);
         Lsamps = (int)((sampleRate/1000.f) * (Ltime->load()));
         Rsamps = (int)((sampleRate/1000.f) * (Rtime->load()));
@@ -53,9 +55,24 @@ public:
             LBuffer.pushSampleToBuffer(0, bufinputL);
             RBuffer.pushSampleToBuffer(0, bufinputR);
             
+            //Smoothing Delay time changes
+            //Smoothing changes in delay
+            auto newDelayTimeL = Ltime->load();
+            auto newDelayTimeR = Rtime->load();
+            
+            //For Smoothing Delay time changes
+            float ht_constant = .3f;
+            smoothingFac = std::pow((0.5), (1.f/(this->fs * ht_constant)));
+            
+            float delayTimeL = smoothingFac*(lastDelayL) + (1-smoothingFac)*newDelayTimeL;
+            lastDelayL = delayTimeL;
+            float delayTimeR = smoothingFac*(lastDelayR) + (1-smoothingFac)*newDelayTimeR;
+            lastDelayR = delayTimeR;
+            
+            
             //Get the delayed sample
-            delayedL = *LBuffer.getDelayedSample(0, (Ltime->load()));
-            delayedR = *RBuffer.getDelayedSample(0, (Rtime->load()));
+            delayedL = *LBuffer.getDelayedSample(0, (delayTimeL));
+            delayedR = *RBuffer.getDelayedSample(0, (delayTimeR));
             
             auto tempL = delayedL;
             auto tempR = delayedR;
@@ -71,6 +88,11 @@ private:
     CircularBuffer LBuffer;
     CircularBuffer RBuffer;
     float delayedL, delayedR = 0.f;
+    
+    double fs = 0.f;
+    
+    float smoothingFac = 0.99f;
+    float lastDelayL, lastDelayR = 0.f;
     
     float maxDel = 2000;
     std::atomic<float>* Ltime = nullptr; //float Ltime = 200;

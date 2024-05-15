@@ -46,7 +46,6 @@ public:
         preDelay.initBuffer(2, (int)((sampleRate/1000.0f)*250.0f), sampleRate);
         //Used for smoothing changes in delay time
         lastDelay = Delay_Time->load();
-        delayTimeSmoothing.reset(sampleRate, 0.005);
         
         updateFile(0);
     };
@@ -84,8 +83,10 @@ public:
                 auto newDelayTime = Delay_Time->load();
                 auto Fdbk_amt = Delay_FDBK->load();
                 
-                //Set the next target to smooth to as the new delay time
-                delayTimeSmoothing.setTargetValue(newDelayTime);
+                //Smoothing delay time changes
+                float ht_constant = .3f;
+                smoothingFac = std::pow((0.5), (1.f/(pluginSpec.sampleRate * ht_constant)));
+                float delayTime = smoothingFac*(lastDelay) + (1-smoothingFac)*newDelayTime;
                 
                 //loop through channels and process
                 for(int channel = 0; channel < 2 ; ++channel)
@@ -96,20 +97,18 @@ public:
                     //Push sample to buffer with feedback, determined by feedback amount
                     preDelay.pushSampleToBuffer(channel, (inData[i] + (feedback[channel] * Fdbk_amt)));
                         
-                    //Get the smoothed delay time value
-                    auto time = delayTimeSmoothing.getNextValue();
                     
                     //Get the delayed sample at the last delay time and the delayed sample at the new delay time
                     auto delayedSample_oldVal = preDelay.getDelayedSample(channel, lastDelay);
-                    auto delayedSample_newVal = preDelay.getDelayedSample(channel, time);
-                        
+                    auto delayedSample_newVal = preDelay.getDelayedSample(channel, delayTime);
+                    
                     //Interpolate between old and new delayed samples, compute wet/dry combination and add to output
                     outData[i] = (((*delayedSample_newVal * (1-C)) + (*delayedSample_oldVal * C)));
                         
                     //Feedback for each channel
                     feedback[channel] = outData[i];
-                    lastDelay = time;
                 }
+                lastDelay = delayTime;
             }
             
             
@@ -224,12 +223,12 @@ private:
     
     std::atomic<float>* Conv_Gain = nullptr;
     float lastGain;
+    float smoothingFac = 0.99f;
 
-    float lastIR = 0;
+    float lastIR = 0.f;
     
     std::atomic<float>* Delay_Time = nullptr;
     float lastDelay;
-    juce::LinearSmoothedValue<float> delayTimeSmoothing {500.0f};
     std::atomic<float>* Delay_FDBK = nullptr;
     float feedback[2];
     
