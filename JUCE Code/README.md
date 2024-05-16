@@ -11,7 +11,7 @@ pictures of plugin
 
 ### Installation/Build information
 #### Installing The Plug-in
-The .vst3 files are located [here](./Plug-in%20builds/) for Windows and MacOS. The plug-in was built using XCode on an Intel Mac. The Windows build was created using JUCE on a Windows virtual machine and Visual Studio 2022.
+The .vst3 files are located [here](./Plug-in%20builds/) for Windows and MacOS. You can use a website like [this](https://download-directory.github.io/) for downloading directly from the repository, just copy the URL of the file you want to download. The plug-in was built using XCode on an Intel Mac. The Windows build was created using JUCE on a Windows virtual machine and Visual Studio 2022.
 
 #### Building The Plug-in
 In order to build the plug-in yourself. First make sure you have [XCode](https://developer.apple.com/xcode/) (for Mac) or [Visual Studio](https://visualstudio.microsoft.com/) (for Windows). Also make sure to install [JUCE](https://juce.com/get-juce/) for your desired platform and follow [this](https://docs.juce.com/master/tutorial_new_projucer_project.html) tutorial to get everything up and running.
